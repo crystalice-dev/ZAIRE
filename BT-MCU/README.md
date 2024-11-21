@@ -3,7 +3,8 @@ updated: 11-21-2024 15:30🕞
 
 (See the README.md file in the upper level for more information.)
 
-This is the FIRMWARE uses esp-idf MASTER (5.5v at the time). 
+This FIRMWARE uses esp-idf MASTER (5.5v at the time).</br>
+This FIRMWARE has been tailored for ESP32 3.3V WROOM.</br>
 
 ## FIRMWARE contents
 *BLUETOOTH CLASSIC -> A2DP with AVR Controller for AUDIO CONTROL. (PLAY/PAUSE; NEXT; PREVIOUS).</br>
