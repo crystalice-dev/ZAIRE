@@ -1,4 +1,9 @@
 # BLUETOOTH MCU FIRMWARE
+*    Author  : YANN KABAMBI
+*    Title   : ZAIRE_HELMET_BLUETOOTH_MCU_FIRMWARE
+*    Version : 2.0
+*    Describ : WALKIE - BLIND SPOT MONITORE - GPS - BH1750 - TEMP
+*    walkie  : zuoyi001 -> https://github.com/zuoyi001/ESP32_walkie_talkie
 updated: 11-21-2024 15:30🕞
 
 (See the README.md file in the upper level for more information.)
