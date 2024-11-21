@@ -6,7 +6,7 @@ updated: 11-21-2024 15:30🕞
 This is the FIRMWARE uses esp-idf MASTER (5.5v at the time). 
 
 ## FIRMWARE contents
-*BLUETOOTH CLASSIC -> A2DP with AVR Controller for AUDIO CONTROL. (PLAY/PAUSE; NEXT; PREVIOUS).<\br>
+*BLUETOOTH CLASSIC -> A2DP with AVR Controller for AUDIO CONTROL. (PLAY/PAUSE; NEXT; PREVIOUS).</br>
 *BLUETOOTH HFP_HF  -> Phone Call handler
 *BLUETOOTH BLE -> Device and Mobile App handler.
 *RTC -> uses UART to set/get local time from the onBoard UART. (time is set as soon as Mobile phone app communicates with the device). 
