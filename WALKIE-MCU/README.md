@@ -11,22 +11,13 @@ updated: 11-21-2024 15:30🕞
 (See the README.md file in the upper level for more information.)
 
 This FIRMWARE uses ARDUINO FRAMEWORK (2.2.3 at the time).</br>
-This FIRMWARE has been tailored for ESP32 [ESP32DEV MODULE] (MUST BE 2.0v > Version < 3.0v).
+This FIRMWARE has been tailored for ESP32 [ESP32DEV MODULE] (MUST BE 2.0v > version < 3.0v).
 
 ## FIRMWARE contents
-*BLUETOOTH CLASSIC -> A2DP with AVR Controller for AUDIO CONTROL. (PLAY/PAUSE; NEXT; PREVIOUS).</br>
-*BLUETOOTH HFP_HF  -> Phone Call handler</br>
-*BLUETOOTH BLE -> Device and Mobile App handler.</br>
-*RTC -> uses UART to set/get local time from the onBoard UART. (time is set as soon as Mobile phone app communicates with the device).</br>
+*WALKIE -> Written by zuoyi001 (https://github.com/zuoyi001/ESP32_walkie_talkie) .</br>
+*GPS    -> Uses Uses MB6</br>
+*Light  -> Uses BH1750.</br>
+*TEMP   -> TBH </br>
 
-The **FIRMWARE** contains one source file in C language [main.c](main/main.c). The file is located in folder [main](main).</br>
-
-```
-├── CMakeLists.txt
-├── main
-│   ├── CMakeLists.txt
-│   └── main.c
-└── README.md                  This is the file you are currently reading
-```
 
 
