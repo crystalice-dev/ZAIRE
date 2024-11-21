@@ -12,7 +12,7 @@ This FIRMWARE has been tailored for ESP32 3.3V WROOM.</br>
 *BLUETOOTH BLE -> Device and Mobile App handler.</br>
 *RTC -> uses UART to set/get local time from the onBoard UART. (time is set as soon as Mobile phone app communicates with the device).</br>
 
-The  **FIRMWARE** contains one source file in C language [main.c](main/main.c). The file is located in folder [main](main).</br>
+The **FIRMWARE** contains one source file in C language [main.c](main/main.c). The file is located in folder [main](main).</br>
 
 ```
 ├── CMakeLists.txt
