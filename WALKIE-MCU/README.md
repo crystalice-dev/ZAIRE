@@ -11,7 +11,7 @@ updated: 11-21-2024 15:30🕞
 (See the README.md file in the upper level for more information.)
 
 This FIRMWARE uses ARDUINO FRAMEWORK (2.2.3 at the time).</br>
-This FIRMWARE has been tailored for ESP32 (MUST BE 2.0v > Version < 3.0v).
+This FIRMWARE has been tailored for ESP32 [ESP32DEV MODULE] (MUST BE 2.0v > Version < 3.0v).
 
 ## FIRMWARE contents
 *BLUETOOTH CLASSIC -> A2DP with AVR Controller for AUDIO CONTROL. (PLAY/PAUSE; NEXT; PREVIOUS).</br>
