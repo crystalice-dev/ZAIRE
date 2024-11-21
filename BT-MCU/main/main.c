@@ -2,7 +2,6 @@
 *
 *    Author  -> YANN KABAMBI
 *    Title   -> ZAIRE_HELMET_BT_MCU_FIRMWARE
-*    Version -> 1.0
 *    Describ: A2DP/HFP - BLIND SPOT - BUZZER - BLE - EEPROM 
 *
 */
