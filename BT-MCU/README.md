@@ -3,7 +3,7 @@
 *    Title   : ZAIRE_HELMET_BLUETOOTH_MCU_FIRMWARE
 *    Version : 2.0
 *    Describ : A2DP/HFP - BLE - RTC
-*    
+
 updated: 11-21-2024 15:30🕞
 
 (See the README.md file in the upper level for more information.)
