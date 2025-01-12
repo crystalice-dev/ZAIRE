@@ -14,3 +14,7 @@ cd wiringPi
 ./build
 
 echo '--ZAIRE HELMETS CAMERA AND GPIOs REQ COMPLETED--'
+
+##use
+#ffmpeg -f v4l2 -framerate 25 -video_size 640x480  -i /dev/video0 -c:v libx264 -preset veryfast -f mp4 ~/Desktop/video.mp4
+
