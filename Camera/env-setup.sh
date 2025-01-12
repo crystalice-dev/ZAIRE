@@ -2,6 +2,8 @@
 
 echo '--ZAIRE HELMETS CAMERA REQ--'
 sudo apt update
+sudo apt install build-essential
+sudo atp-get install -y gcc
 sudo apt-get install -y libraspberrypi-bin
 sudo apt-get install -y ffmpeg
 echo '--ZAIRE HELMETS GPIOs REQ--'
