@@ -1,5 +1,6 @@
 | Target: ESP32-S3| </br>
 | Envmnt: ESP-IDF 5.5.0 | </br>
+| Firm V: 5.0 | </br>
 | Author: Yann Kabambi  | </br>
 
 # zaire helmets - central hub unit
@@ -17,13 +18,6 @@ The following contians a list of all the responsibilities this firmware has:
 * Remote connection && communication.
 * Sends mac addr of helmets in the 'MESH'.
 * Share helmet's walkie mac address for walkie-talkie.
-
-This example need at least two ESP devices:
-
-
-## How to use example
-
-### Configure the project
 
 
 
