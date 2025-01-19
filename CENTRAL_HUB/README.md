@@ -1,6 +1,6 @@
 | Target: ESP32-S3| </br>
 | Envmnt: ESP-IDF 5.5.0 | </br>
-| Firm V: 5.0 | </br>
+| vrsion: 5.0 | </br>
 | Author: Yann Kabambi  | </br>
 
 # zaire helmets - central hub unit
