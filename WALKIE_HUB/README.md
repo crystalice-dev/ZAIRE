@@ -5,7 +5,7 @@
 
 # zaire helmets - WALKIE hub unit
 #### IMPORTANT: ARDUINO IDE -> BOARD MANAGER -> ESP32 by Espressif System VERSION *2.0.17*
-####### ANY VERSION ABOVE THAT WILL NOT WORK!!!
+###### ANY VERSION ABOVE THAT WILL NOT WORK!!!
 (See the README.md file in the upper level 'zaire_helmets' directory for more information about This whole project.)
 
 The following contains a list of all the responsibilities this firmware has:
