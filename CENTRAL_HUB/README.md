@@ -3,9 +3,9 @@
 
 # zaire helmets - central hub unit
 
-(See the README.md file in the upper level 'examples' directory for more information about examples.)
+(See the README.md file in the upper level 'zaire_helmets' directory for more information about This whole project.)
 
-This example shows how to use ESPNOW of wifi. Example does the following steps:
+The following contians a list of all the responsibilities this firmware has:
 
 * Start WiFi.
 * Initialize ESPNOW.
