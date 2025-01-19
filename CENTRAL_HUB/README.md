@@ -1,4 +1,4 @@
-<center>| Targets |  | ESP32-S3 |<center/></br>
+<middle>| Targets |  | ESP32-S3 |<middle/></br>
 | ----------------- | - |
 
 # zaire helmets - central hub unit
