@@ -12,7 +12,7 @@ The following contains a list of all the responsibilities this firmware has:
 
   * All camera functions (start/stop dashcam, take picture ie capture).
   * Process VISION software files (if enabled && depending on firmware version).
-  * Read/Write data to sdCard ('CONFIG.zh' || 'CONFIG.zhf' depending on version).
+  * Read/Write data to sdCard ('CONFIG.zh' || 'CONFIG.zhf' depending on firmversion version).
 
 Note: Zaire helmets already come with the enviroment already fully loaded, the env-setup.sh file is meant for developers who would like to tweak anything or feel they may want to improve their helmets.
    
