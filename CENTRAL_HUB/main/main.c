@@ -1,16 +1,24 @@
 /*
-    RESPONSIBILITY:
-        * Connect to other compatible devices via classic BT -- HFP_HF
-        * Temp Watch
-        * BlindStop Monitoring
-        * REMOTE -- CONNECTION
-        * CONNECT TO TO OTHER HELMETS FOR WALKIE
-        * CAMERA
-        * 
-        // NOTES:
-        All the err check uses espressif's ESP_OK or ESP_FAIL returning:
-            0 - passed
-            1 - failed       
+    | Target: ESP32-S3|
+    | Envmnt: ESP-IDF 5.5.0 |
+    | vrsion: 5.0 |
+    | Author: Yann Kabambi |
+
+    zaire helmets - central hub unit
+    (See the README.md file in the upper level 'zaire_helmets' directory for more information about This whole project.)
+
+    The following contians a list of all the responsibilities this firmware has:
+
+    All camera functions (start/stop dashcam, take picture ie capture).
+    All UART communication [central data process for BM83 - walkie - (RPi depending on firmware version) ].
+    Blindspot monitoring (trigger led pin to walkie).
+    Connect to other zaire helmet during 'MESH' connection.
+    Check BATTERY LEVEL -- MAX17048G+T10.
+    Check Temp -- AHT20_C2757850.
+    Remote connection && communication.
+    Sends mac addr of helmets in the 'MESH'.
+    Share helmet's walkie mac address for walkie-talkie.
+    ENJOY - YANN KABAMBI !!
 */
 
 #include "globalVar.h"
