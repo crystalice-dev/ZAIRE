@@ -1,5 +1,5 @@
 | Targets |    | ESP32-S3 |
-
+| Enviroment | | ESP-IDF 5.5.0 |
 
 # zaire helmets - central hub unit
 
