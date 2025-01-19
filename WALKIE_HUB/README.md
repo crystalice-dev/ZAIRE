@@ -1,11 +1,11 @@
 | Target: ESP32| </br>
 | Envmnt: ARDUINO 2.3.4| </br>
-    |ESPRESSIF BOARD VER: 2.0.17 | #### VERY IMPORTANT </br>
 | vrsion: 5.0 | </br>
 | Author: Yann Kabambi | </br>
 
-# zaire helmets - central hub unit
-
+# zaire helmets - WALKIE hub unit
+#### IMPORTANT: ARDUINO IDE -> BOARD MANAGER -> ESP32 by Espressif System VERSION *2.0.17*
+####### ANY VERSION ABOVE THAT WILL NOT WORK!!!
 (See the README.md file in the upper level 'zaire_helmets' directory for more information about This whole project.)
 
 The following contains a list of all the responsibilities this firmware has:
