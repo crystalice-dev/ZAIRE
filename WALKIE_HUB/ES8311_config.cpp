@@ -3,6 +3,7 @@
 
 TwoWire es8311_i2c(1);
 
+
 void writeES8311(uint8_t reg, uint8_t value) {
   es8311_i2c.beginTransmission(ES8311_I2C_ADDR);
   es8311_i2c.write(reg);

@@ -21,7 +21,7 @@
   * Blindspot Lighting
   * SdCard Read/Write data ('CONFIG.zh' || 'CONFIG.zhf' depending on version).
 
-  ### ENJOY - YANN KABAMBI !!
+  ### ENJOY - YANN NGOIE KABAMBI !!
   01-19-2025 07:45🕞 
 
 
@@ -30,14 +30,16 @@
 #include "globalVar.h"
 
 
+bool settings_port = 0;
+
 int zaire_system_init(void){
 
-  // WiFi.disconnect();
-  // WiFi.mode(WIFI_STA);
-  // esp_wifi_set_promiscuous(true);
-  // esp_wifi_set_channel((wifi_second_chan_t)3, WIFI_SECOND_CHAN_NONE);
-  // esp_wifi_set_promiscuous(false);
-
+  WiFi.disconnect();
+  WiFi.mode(WIFI_STA);
+  esp_wifi_set_promiscuous(true);
+  esp_wifi_set_channel((wifi_second_chan_t)3, WIFI_SECOND_CHAN_NONE);
+  esp_wifi_set_promiscuous(false);
+  esp_wifi_get_mac(WIFI_IF_STA, walkie_mac_addr);
   if(start_EEPROM()){
     return ESP_FAIL;
   }
@@ -66,13 +68,13 @@ void setup() {
   Serial.begin(9600);
   Wire.begin(I2C_0_DATA_PIN, I2C_0_SCL_PIN);
   zaire_system_init();
-  esp_wifi_get_mac(WIFI_IF_STA, walkie_mac_addr);
+
   xTaskCreate(uart_run_task, "uart_run_task", 2048, NULL, 3, NULL);
   
 
   for (int i = 0; i < 6; i++) {
     if (i > 0) Serial.print(":");
-    Serial.printf("%02X", walkie_mac_addr[i]);
+    Serial.printf("0x%02X", walkie_mac_addr[i]);
   }
   
 

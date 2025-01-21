@@ -26,6 +26,18 @@ void central_uart_rec(const int data){
       central_uart_snd(OPEN_ADDR_INSERT);
       vTaskDelay(pdMS_TO_TICKS(500));
       
+      for (int i = 0; i < 6; i++) {
+        central_uart_snd(walkie_mac_addr[i]);
+      }
+      vTaskDelay(pdMS_TO_TICKS(500));
+      central_uart_snd(SET_WALKIE_ADDR);
+      break;
+
+    case OPEN_SETTING_PORT:
+      settings_port = 1; // open settings port
+      if(settings_port){
+        central_uart_snd(OPENED_SETTING_PORT);
+      }
       break;
 
     default:

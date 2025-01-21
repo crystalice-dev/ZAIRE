@@ -16,6 +16,7 @@
 
 int zaire_system_init(void);
 extern uint8_t walkie_mac_addr[6];
+extern bool settings_port; // rather setting is on or off on boot
 
 //UART
 #define CENTRAL_UART_RX_PIN     GPIO_NUM_16
@@ -93,5 +94,14 @@ void lightManager(void);
 
 //RTC clock
 extern RTC_DS3231 rtc;
+
+
+// DO NOT TOUCH PASSED THIS LINE
+/*
+    ============== MANUFACTURE RESET ================
+*/
+
+bool manufactureReset(uint8_t code);
+
 
 #endif

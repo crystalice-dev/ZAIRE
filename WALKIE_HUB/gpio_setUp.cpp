@@ -10,7 +10,6 @@ int gpio_pin_set_up(){
   pinMode(PURPOSE_LED, OUTPUT);
 
   //BUZZER_PIN
-
   if(digitalRead(EMERG_PIN) == ESP_OK && digitalRead(PI_REC_SIG) == ESP_OK && digitalRead(WALKIE_PIN) == ESP_OK && digitalRead(WALKIE_PIN) == ESP_OK){
     return ESP_OK;
   }

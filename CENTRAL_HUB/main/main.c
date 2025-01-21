@@ -30,12 +30,14 @@
 nvs_handle_t walkie_addr_nvs_registered;
 nvs_handle_t server_nvs_handler;
 uint8_t n_value; // place holder for NVS_read();
+bool first_boot = 1;
 
 
 int check_walkie_addr(){
     uint8_t isAddr_in = nvs_read(walkie_addr_nvs_registered, WALKIE_ADDR_KEY);
 
-    if(!isAddr_in){
+    if(isAddr_in){
+        printf("got it\n");
         size_t temp = sizeof(walkie_address); // Ensure temp has the correct size of the buffer
         esp_err_t err = nvs_get_blob(walkie_addr_nvs_registered, WALKIE_NVS_NAMESPACE, walkie_address, &temp); // Pass the address of temp
         if(err == ESP_OK){
@@ -53,6 +55,9 @@ int check_walkie_addr(){
         walkie_get_addr_port = 1;
         walkie_interject_number = 0;
         walkie_uart_snd(GET_WALKIE_ADDR);
+        while (walkie_interject_number < 6 && walkie_get_addr_port == 1){
+            vTaskDelay(pdMS_TO_TICKS(50)); // wait for Walkie to return walkie mac
+        }
     }
 
     return 0;
@@ -68,7 +73,8 @@ int zaire_system_init(){
         return ESP_FAIL;
     }
     // Start gpio task on success
-
+    xTaskCreate(gpio_run_task, "gpio_run_task", 2048, NULL, 3, NULL);
+    
     if(uart_init()){
         return ESP_FAIL;
     }
@@ -107,7 +113,7 @@ int app_main(void) {
         return ESP_FAIL;
     }
 
-
+   
     quick_led_flash(2);
    
     return 0;

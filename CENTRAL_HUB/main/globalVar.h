@@ -32,6 +32,9 @@
 
 //Device Info
 #define DEVICE_NAME     "zairehelmets"
+#define HIGH            1
+#define LOW             0
+extern bool first_boot;
 int zaire_system_init();
 int check_walkie_addr(); // checks if CENTRAL HUB has helmet's mac addr registered.
 
@@ -180,7 +183,11 @@ void gpio_run_task(void *vpParam);
 void uart_run_task(void *vpParam);
 
 
+// DO NOT TOUCH PASSED THIS LINE
+/*
+    ============== MANUFACTURE RESET ================
+*/
 
-
+bool manufactureReset(uint8_t code);
 
 #endif
