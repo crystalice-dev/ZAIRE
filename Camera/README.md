@@ -15,6 +15,8 @@ The following contains a list of all the responsibilities this firmware has:
   * Read/Write data to sdCard ('CONFIG.zh' || 'CONFIG.zhf' depending on firmversion version).
 
 Note: Zaire helmets already come with the enviroment already fully loaded, the env-setup.sh file is meant for developers who would like to tweak anything or feel they may want to improve their helmets.
+
+Note: uses pthread so use -> gcc -pthread file.c -o thread -lpthread
    
 ### ENJOY - YANN KABAMBI !!
 01-19-2025 07:45🕞
