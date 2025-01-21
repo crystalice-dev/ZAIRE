@@ -32,6 +32,12 @@
 
 int zaire_system_init(void){
 
+  // WiFi.disconnect();
+  // WiFi.mode(WIFI_STA);
+  // esp_wifi_set_promiscuous(true);
+  // esp_wifi_set_channel((wifi_second_chan_t)3, WIFI_SECOND_CHAN_NONE);
+  // esp_wifi_set_promiscuous(false);
+
   if(start_EEPROM()){
     return ESP_FAIL;
   }
@@ -44,24 +50,34 @@ int zaire_system_init(void){
     return ESP_FAIL;
   }
 
-  if(accessories_init()){
-    return ESP_FAIL;
-  }
+  // if(accessories_init()){
+  //   return ESP_FAIL;
+  // }
 
   // if(ES8311_init()){ // to be tested with the board
   //   Serial.println("es");
   //   return ESP_FAIL;
   // }
-  //uart_init();
+  uart_init();
   return ESP_OK;
 }
 
 void setup() {
-  Serial.begin(115200);
-  Serial.println(zaire_system_init());
+  Serial.begin(9600);
+  Wire.begin(I2C_0_DATA_PIN, I2C_0_SCL_PIN);
+  zaire_system_init();
+  esp_wifi_get_mac(WIFI_IF_STA, walkie_mac_addr);
+  xTaskCreate(uart_run_task, "uart_run_task", 2048, NULL, 3, NULL);
+  
+
+  for (int i = 0; i < 6; i++) {
+    if (i > 0) Serial.print(":");
+    Serial.printf("%02X", walkie_mac_addr[i]);
+  }
+  
+
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-
+  //chill
 }

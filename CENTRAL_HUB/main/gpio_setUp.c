@@ -55,10 +55,19 @@ int gpio_pin_set_up(void){
     };
     esp_err_t bs_r = gpio_config(&bs_rt_led_conf);
 
+    gpio_config_t emerg_pin_conf = { // Init at 0
+        .pin_bit_mask = (1ULL << EMERG_PIN), // Select GPIO pin
+        .mode = GPIO_MODE_OUTPUT,
+        .pull_up_en = GPIO_PULLUP_DISABLE,
+        .pull_down_en = GPIO_PULLDOWN_ENABLE,  // Enable pull-down resistor
+        .intr_type = GPIO_INTR_DISABLE
+    };
+    esp_err_t emerg_pin_r = gpio_config(&emerg_pin_conf);
+
     //Buzzer
 
 
-    if(btn_l == ESP_OK && btn_r == ESP_OK && walkie_pin == ESP_OK && led_pin == ESP_OK && bs_l == ESP_OK && bs_r == ESP_OK){
+    if(btn_l == ESP_OK && btn_r == ESP_OK && walkie_pin == ESP_OK && led_pin == ESP_OK && bs_l == ESP_OK && bs_r == ESP_OK && emerg_pin_r == ESP_OK){
             
             return ESP_OK;
     }

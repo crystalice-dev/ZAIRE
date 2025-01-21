@@ -32,6 +32,8 @@
 
 //Device Info
 #define DEVICE_NAME     "zairehelmets"
+int zaire_system_init();
+int check_walkie_addr(); // checks if CENTRAL HUB has helmet's mac addr registered.
 
 //NVS -- Non-Volatile Storage
 #define WALKIE_NVS_NAMESPACE        "walkie"
@@ -84,11 +86,11 @@ extern bool bt_read_data_raw;
 extern bool walkie_read_data_raw;
 extern bool pi_read_data_raw;
 int uart_init(void);
-void bm83_uart_snd(const char *data);
-void bm83_uart_rec(const char *data);
-void walkie_uart_snd(const char *data);
-void walkie_uart_rec(const char *data);
-
+void bm83_uart_snd(const char *str);
+void bm83_uart_rec(const char *str);
+void walkie_uart_snd(const int data);
+void walkie_uart_rec(const char *str);
+void walkie_uart_handler_int(uint8_t data);
 
 
 //GPS

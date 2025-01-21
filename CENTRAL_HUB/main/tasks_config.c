@@ -9,13 +9,12 @@ void gpio_run_task(void *vpParam){ // Watches for GPIO changes - btn pressed - c
         vTaskDelay(pdMS_TO_TICKS(50));
     }
     
-
 }
-
 
 void uart_run_task(void *vpParam){
 
     uint8_t walkie_data[BUF_SIZE];
+    uint8_t bm83_data[BUF_SIZE];
 
     while (1)
     {
@@ -26,8 +25,7 @@ void uart_run_task(void *vpParam){
             memset(walkie_data, 0, sizeof(walkie_data));  // Clears the buffer
         }
 
-        vTaskDelay(pdMS_TO_TICKS(10));
+        vTaskDelay(pdMS_TO_TICKS(50));
     }
     
-
 }

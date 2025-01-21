@@ -37,12 +37,12 @@ int uart_init(void){
     }
 
     // Install WALKIE UART driver and set UART pins
-    err0 = uart_driver_install(BM83_UART_NUM, BUF_SIZE * 2, 0, 0, NULL, 0);
-    err1 = uart_param_config(BM83_UART_NUM, &walkie_uart_config);
-    err2 = uart_set_pin(BM83_UART_NUM, BM83_UART_TX, BM83_UART_RX, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE);
-    if( err0 == ESP_FAIL || err1 == ESP_FAIL || err2 == ESP_FAIL){
-        return ESP_FAIL; 
-    }
+    // err0 = uart_driver_install(BM83_UART_NUM, BUF_SIZE * 2, 0, 0, NULL, 0);
+    // err1 = uart_param_config(BM83_UART_NUM, &bm83_uart_config);
+    // err2 = uart_set_pin(BM83_UART_NUM, BM83_UART_TX, BM83_UART_RX, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE);
+    // if( err0 == ESP_FAIL || err1 == ESP_FAIL || err2 == ESP_FAIL){
+    //     return ESP_FAIL; 
+    // }
 
     return ESP_OK;
 
@@ -56,36 +56,51 @@ void bm83_uart_rec(const char *data){
 
 }
 
-void walkie_uart_snd(const char *data){
-    uart_write_bytes(WALKIE_UART_NUM, data, strlen(data));
+
+void walkie_uart_handler_int(uint8_t data){
+    if(walkie_get_addr_port == 1 && walkie_interject_number < 6){
+        walkie_address[walkie_interject_number] = data;
+        walkie_interject_number +=1;
+    }else if(walkie_interject_number > 5){
+        
+    }
+}
+
+
+void walkie_uart_snd(const int data){
+    char str[6];
+    sprintf(str, "%d\n", data); // Convert data from int to str
+    uart_write_bytes(WALKIE_UART_NUM, str, strlen(str)); // Send data
     vTaskDelay(pdMS_TO_TICKS(10));// Watchdog
 
 }
 
-void walkie_uart_rec(const char *data){
+void walkie_uart_rec(const char *str){
 
-    if(walkie_read_data_raw == 1){
+    int data = atoi(str); // Convert data from str to int
 
-   }else{
-    uint8_t value = (uint8_t)strtol(data, NULL, 16);
-    switch (value)
-    {
-    case OPEN_ADDR_INSERT:
-        walkie_get_addr_port = 1;
-        break;
-    case CLOSE_ADDR_INSERT:
-        walkie_get_addr_port = 0;
-    case SET_WALKIE_ADDR:
-        esp_err_t err = nvs_set_blob(walkie_addr_nvs_registered, WALKIE_NVS_NAMESPACE, walkie_address, 6); // Store 6 bytes
-        if(err == ESP_OK){
-            nvs_write(walkie_addr_nvs_registered, WALKIE_ADDR_KEY, 1);
-        }
-    default:
-        //walkie_uart_handler_int(value);
+    switch (data){
+
+        case OPEN_ADDR_INSERT: // Will run only once during helmet's lifetime
+            walkie_get_addr_port = 1;
+            printf("PORT OPENED\n");
+            break;
+
+        case CLOSE_ADDR_INSERT: // Will run only once during helmet's lifetime
+            walkie_get_addr_port = 0;
+            break;
+
+        case SET_WALKIE_ADDR: // Will run only once during helmet's lifetime
+            esp_err_t err = nvs_set_blob(walkie_addr_nvs_registered, WALKIE_NVS_NAMESPACE, walkie_address, 6); // Store 6 bytes
+            if(err == ESP_OK){
+                nvs_write(walkie_addr_nvs_registered, WALKIE_ADDR_KEY, 1);
+            }
+            break;
+
+        default:
+        walkie_uart_handler_int(data);
         break;
     }
     
-   }
-
 
 }

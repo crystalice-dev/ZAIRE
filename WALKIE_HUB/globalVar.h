@@ -4,16 +4,18 @@
 #include <freertos/FreeRTOS.h>
 #include <freertos/task.h>
 #include <freertos/timers.h>
+#include <WiFi.h>
 #include <driver/i2s.h>
-#include <Wire.h>
+#include <esp_wifi.h>
 #include <NewPing.h>
 #include <BH1750.h>
 #include <RTClib.h>
 #include <TinyGPS++.h>
 #include <EEPROM.h>
-
+#include "peerGlobalCodeAddr.h"
 
 int zaire_system_init(void);
+extern uint8_t walkie_mac_addr[6];
 
 //UART
 #define CENTRAL_UART_RX_PIN     GPIO_NUM_16
@@ -26,9 +28,9 @@ extern HardwareSerial serialCentral; //uart_num_1
 extern HardwareSerial serialGPS;    //uart_num_0
 extern bool central_read_data_raw;
 void uart_init(void);
-void central_uart_snd(const char *data);
-void central_uart_rec(const char *data);
-void uart_task(void *vpParam);
+void central_uart_snd(const int data);
+void central_uart_rec(const int data);
+void uart_run_task(void *vpParam);
 
 //EEPROM
 #define EEPROM_SIZE      (512)
