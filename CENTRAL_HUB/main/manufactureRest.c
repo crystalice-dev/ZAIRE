@@ -4,7 +4,7 @@
 
 bool manufactureReset(uint8_t code){
 
-    printf("HELMET RESET TO MANUFUCTURE SETTINGS");
+    nvs_write(walkie_addr_nvs_registered, WALKIE_ADDR_KEY, 0); // Rest walkie addr
 
     return 0;
 

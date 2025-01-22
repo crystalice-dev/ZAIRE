@@ -74,7 +74,7 @@ void walkie_uart_snd(const int data){
     char str[6];
     sprintf(str, "%d\n", data); // Convert data from int to str
     uart_write_bytes(WALKIE_UART_NUM, str, strlen(str)); // Send data
-    vTaskDelay(pdMS_TO_TICKS(10));// Watchdog
+    vTaskDelay(pdMS_TO_TICKS(50));// Watchdog
 
 }
 
@@ -84,6 +84,9 @@ void walkie_uart_rec(const char *str){
 
     switch (data){
 
+        case RESTARTING_DEVICE: // System restarting -- system check failed
+                esp_restart();
+                break;
         case OPEN_ADDR_INSERT: // Will run only once during helmet's lifetime
             walkie_get_addr_port = 1;
             printf("PORT OPENED\n");

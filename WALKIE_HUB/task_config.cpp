@@ -2,6 +2,8 @@
 #include "globalVar.h"
 
 
+TaskHandle_t uartTask_handle = NULL;
+TaskHandle_t gpioTask_handle = NULL;
 
 
 void uart_run_task(void *vpParam){
@@ -17,6 +19,21 @@ void uart_run_task(void *vpParam){
 
     vTaskDelay(pdMS_TO_TICKS(10));
 
+  }
+
+}
+
+void gpio_run_task(void *vpParam){
+
+  while(1){
+
+    int walkie_pin = digitalRead(WALKIE_PIN);
+    int pi_rec_sig = digitalRead(PI_REC_SIG);
+    int emerg_pin  = digitalRead(EMERG_PIN);
+
+    
+
+    vTaskDelay(pdMS_TO_TICKS(50));
   }
 
 }

@@ -34,17 +34,20 @@ bool settings_port = 0;
 
 int zaire_system_init(void){
 
-  WiFi.disconnect();
-  WiFi.mode(WIFI_STA);
-  esp_wifi_set_promiscuous(true);
-  esp_wifi_set_channel((wifi_second_chan_t)3, WIFI_SECOND_CHAN_NONE);
-  esp_wifi_set_promiscuous(false);
-  esp_wifi_get_mac(WIFI_IF_STA, walkie_mac_addr);
+  uart_init();
+  xTaskCreate(uart_run_task, "uart_run_task", 2048, NULL, 3, &uartTask_handle);
+
+  delay(1000); // Delay for info to coming incase we are paring
+
   if(start_EEPROM()){
     return ESP_FAIL;
   }
   
   if(gpio_pin_set_up()){
+    return ESP_FAIL;
+  }
+
+  if(walkie_setUp()){
     return ESP_FAIL;
   }
 
@@ -57,10 +60,9 @@ int zaire_system_init(void){
   // }
 
   // if(ES8311_init()){ // to be tested with the board
-  //   Serial.println("es");
   //   return ESP_FAIL;
   // }
-  uart_init();
+
   return ESP_OK;
 }
 
@@ -69,15 +71,7 @@ void setup() {
   Wire.begin(I2C_0_DATA_PIN, I2C_0_SCL_PIN);
   zaire_system_init();
 
-  xTaskCreate(uart_run_task, "uart_run_task", 2048, NULL, 3, NULL);
-  
-
-  for (int i = 0; i < 6; i++) {
-    if (i > 0) Serial.print(":");
-    Serial.printf("0x%02X", walkie_mac_addr[i]);
-  }
-  
-
+  xTaskCreate(gpio_run_task, "gpio_run_task", 2048, NULL, 3, &gpioTask_handle);
 }
 
 void loop() {

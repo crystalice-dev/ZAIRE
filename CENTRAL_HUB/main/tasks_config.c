@@ -8,12 +8,21 @@ void gpio_run_task(void *vpParam){ // Watches for GPIO changes - btn pressed - c
     {   
       
         if(first_boot && gpio_get_level(PURPOSE_BTN_L) && gpio_get_level(PURPOSE_BTN_R)){
+        
             gpio_set_level(PURPOSE_LED, HIGH);
-            vTaskDelay(pdMS_TO_TICKS(1500)); // wait 1.5 sec to launch settings
+            vTaskDelay(pdMS_TO_TICKS(50)); // wait 0.05 sec to launch settings
             walkie_uart_snd(OPEN_SETTING_PORT);
-        }else{
             first_boot = 0;
+        }else if(first_boot && gpio_get_level(PURPOSE_BTN_L) && !gpio_get_level(PURPOSE_BTN_R)){
+            
+            gpio_set_level(PURPOSE_LED, HIGH);
+            vTaskDelay(pdMS_TO_TICKS(50)); // wait 0.05 sec to launch settings
+            walkie_uart_snd(ENTERING_PAIRING_MODE);
+            first_boot = 0;
+        }else if(first_boot && !gpio_get_level(PURPOSE_BTN_L) && gpio_get_level(PURPOSE_BTN_R)){
+
         }
+        
         
         vTaskDelay(pdMS_TO_TICKS(50));
     }

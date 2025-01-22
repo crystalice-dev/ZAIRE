@@ -37,20 +37,14 @@ int check_walkie_addr(){
     uint8_t isAddr_in = nvs_read(walkie_addr_nvs_registered, WALKIE_ADDR_KEY);
 
     if(isAddr_in){
-        printf("got it\n");
+
         size_t temp = sizeof(walkie_address); // Ensure temp has the correct size of the buffer
         esp_err_t err = nvs_get_blob(walkie_addr_nvs_registered, WALKIE_NVS_NAMESPACE, walkie_address, &temp); // Pass the address of temp
         if(err == ESP_OK){
             walkie_interject_number = 6; // Ensure walkie mac addr never changes
-            for(int i = 0; i < 6; i++){
-                printf("0x%02X", walkie_address[i]);
-                if(i < 5){
-                    printf(":");
-                }
-            }
-            printf("\n");
         }
     }else{
+     
         vTaskDelay(pdMS_TO_TICKS(1000));
         walkie_get_addr_port = 1;
         walkie_interject_number = 0;
@@ -112,9 +106,7 @@ int app_main(void) {
         quick_led_flash(4);
         return ESP_FAIL;
     }
-
    
     quick_led_flash(2);
-   
     return 0;
 }
