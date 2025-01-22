@@ -13,6 +13,9 @@ git clone https://github.com/WiringPi/wiringPi.git
 cd wiringPi
 ./build
 
+echo '--ZAIRE HELMETS UARTS --'
+sudo apt-get install -y minicom
+
 echo '--ZAIRE HELMETS CAMERA AND GPIOs REQ COMPLETED--'
 
 ##use
