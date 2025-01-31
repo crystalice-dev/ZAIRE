@@ -21,11 +21,6 @@ void central_uart_rec(const int data){
   
   switch(data){
 
-    case ENTERING_PAIRING_MODE:
-      Serial.println("Entering Pairing Mode");
-      vTaskDelay(pdMS_TO_TICKS(500));
-      break;
-    
     case GET_WALKIE_ADDR:
       Serial.println("SERVE ADDR");
       central_uart_snd(OPEN_ADDR_INSERT);

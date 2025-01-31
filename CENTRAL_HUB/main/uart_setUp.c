@@ -9,9 +9,10 @@ int uart_init(void){
     esp_err_t err0;
     esp_err_t err1;
     esp_err_t err2;
-    //WALKIE UART CONFIG
-    uart_config_t walkie_uart_config = {
-        .baud_rate = WALKIE_BAUD_RATE,
+
+    //PI UART CONFIG
+    uart_config_t pi_uart_config = {
+        .baud_rate = 9600,
         .data_bits = UART_DATA_8_BITS,
         .parity = UART_PARITY_DISABLE,
         .stop_bits = UART_STOP_BITS_1,
@@ -19,8 +20,18 @@ int uart_init(void){
         .source_clk = UART_SCLK_APB,
     };
 
-    uart_config_t bm83_uart_config = {
-        .baud_rate = BM83_BAUD_RATE,
+    // Install WALKIE UART driver and set UART pins
+    err0 = uart_driver_install(UART_NUM_0, 1024 * 2, 0, 0, NULL, 0);
+    err1 = uart_param_config(UART_NUM_0, &pi_uart_config);
+    err2 = uart_set_pin(UART_NUM_0, 1, 3, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE);
+    if( err0 == ESP_FAIL || err1 == ESP_FAIL || err2 == ESP_FAIL){
+        return ESP_FAIL;
+    }
+
+
+    //WALKIE UART CONFIG
+    uart_config_t walkie_uart_config = {
+        .baud_rate = WALKIE_BAUD_RATE,
         .data_bits = UART_DATA_8_BITS,
         .parity = UART_PARITY_DISABLE,
         .stop_bits = UART_STOP_BITS_1,
@@ -36,24 +47,15 @@ int uart_init(void){
         return ESP_FAIL;
     }
 
-    // Install WALKIE UART driver and set UART pins
-    // err0 = uart_driver_install(BM83_UART_NUM, BUF_SIZE * 2, 0, 0, NULL, 0);
-    // err1 = uart_param_config(BM83_UART_NUM, &bm83_uart_config);
-    // err2 = uart_set_pin(BM83_UART_NUM, BM83_UART_TX, BM83_UART_RX, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE);
-    // if( err0 == ESP_FAIL || err1 == ESP_FAIL || err2 == ESP_FAIL){
-    //     return ESP_FAIL; 
-    // }
-
     return ESP_OK;
 
 }
 
-void bm83_uart_snd(const char *data){
-
-}
-
-void bm83_uart_rec(const char *data){
-
+void pi_uart_snd(const int data){
+    char str[6];
+    sprintf(str, "%d\n", data); // Convert data from int to str
+    uart_write_bytes(UART_NUM_0, str, strlen(str)); // Send data
+    
 }
 
 
@@ -74,7 +76,7 @@ void walkie_uart_snd(const int data){
     char str[6];
     sprintf(str, "%d\n", data); // Convert data from int to str
     uart_write_bytes(WALKIE_UART_NUM, str, strlen(str)); // Send data
-    vTaskDelay(pdMS_TO_TICKS(50));// Watchdog
+    vTaskDelay(pdMS_TO_TICKS(10));// Watchdog
 
 }
 
@@ -84,9 +86,6 @@ void walkie_uart_rec(const char *str){
 
     switch (data){
 
-        case RESTARTING_DEVICE: // System restarting -- system check failed
-                esp_restart();
-                break;
         case OPEN_ADDR_INSERT: // Will run only once during helmet's lifetime
             walkie_get_addr_port = 1;
             printf("PORT OPENED\n");

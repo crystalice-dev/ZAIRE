@@ -4,9 +4,7 @@
 #include <freertos/FreeRTOS.h>
 #include <freertos/task.h>
 #include <freertos/timers.h>
-#include <esp_now.h>
 #include <WiFi.h>
-#include <esp_wifi.h>
 #include <driver/i2s.h>
 #include <esp_wifi.h>
 #include <NewPing.h>
@@ -17,17 +15,8 @@
 #include "peerGlobalCodeAddr.h"
 
 int zaire_system_init(void);
-extern bool settings_port; // rather setting is on or off on boot
-
-//Walkie
 extern uint8_t walkie_mac_addr[6];
-extern uint8_t peerBroadcastAddress[120][6];
-extern uint8_t pairedPeer;
-void InitESPNow(void);
-int getPeerAddr(void);
-void espNow_on_data_recv_cb(const uint8_t *mac_addr, const uint8_t *data, int data_len);
-void espNow_on_data_send_cb(const uint8_t *mac_addr, esp_now_send_status_t status);
-int walkie_setUp();
+extern bool settings_port; // rather setting is on or off on boot
 
 //UART
 #define CENTRAL_UART_RX_PIN     GPIO_NUM_16
@@ -42,6 +31,7 @@ extern bool central_read_data_raw;
 void uart_init(void);
 void central_uart_snd(const int data);
 void central_uart_rec(const int data);
+void uart_run_task(void *vpParam);
 
 //EEPROM
 #define EEPROM_SIZE      (512)
@@ -54,9 +44,6 @@ int start_EEPROM(void);
 #define WALKIE_PIN       GPIO_NUM_23
 #define BUZZER_PIN       GPIO_NUM_5
 #define PURPOSE_LED      GPIO_NUM_2
-extern int walkie_pin;
-extern int pi_rec_sig;
-extern int emerg_pin;
 int gpio_pin_set_up(void);
 
 //I2C
@@ -107,13 +94,6 @@ void lightManager(void);
 
 //RTC clock
 extern RTC_DS3231 rtc;
-
-
-//freeRTOS tasks
-extern TaskHandle_t uartTask_handle;
-extern TaskHandle_t gpioTask_handle;
-void uart_run_task(void *vpParam);
-void gpio_run_task(void *vpParam);
 
 
 // DO NOT TOUCH PASSED THIS LINE

@@ -2,31 +2,22 @@
 
 int gpio_pin_set_up(void){
     gpio_config_t purpose_btn_l_conf = { // Init at 0
-        .pin_bit_mask = (1ULL << PURPOSE_BTN_L), // Select GPIO pin
+        .pin_bit_mask = (1ULL << WALKIE_BTN), // Select GPIO pin
         .mode = GPIO_MODE_INPUT,
         .pull_up_en = GPIO_PULLUP_DISABLE,
         .pull_down_en = GPIO_PULLDOWN_ENABLE,  // Enable pull-down resistor
         .intr_type = GPIO_INTR_DISABLE
     };
-    esp_err_t btn_l =  gpio_config(&purpose_btn_l_conf);
+    esp_err_t walkie_btn =  gpio_config(&purpose_btn_l_conf);
 
     gpio_config_t purpose_btn_r_conf = { // Init at 0
-        .pin_bit_mask = (1ULL << PURPOSE_BTN_R), // Select GPIO pin
+        .pin_bit_mask = (1ULL << PURPOSE_BTN), // Select GPIO pin
         .mode = GPIO_MODE_INPUT,
         .pull_up_en = GPIO_PULLUP_DISABLE,
         .pull_down_en = GPIO_PULLDOWN_ENABLE,  // Enable pull-down resistor
         .intr_type = GPIO_INTR_DISABLE
     };
-    esp_err_t btn_r = gpio_config(&purpose_btn_r_conf);
-    
-    gpio_config_t walkie_pin_conf = { // Init at 0
-        .pin_bit_mask = (1ULL << WALKIE_PIN), // Select GPIO pin
-        .mode = GPIO_MODE_OUTPUT,
-        .pull_up_en = GPIO_PULLUP_DISABLE,
-        .pull_down_en = GPIO_PULLDOWN_ENABLE,  // Enable pull-down resistor
-        .intr_type = GPIO_INTR_DISABLE
-    };
-    esp_err_t walkie_pin = gpio_config(&walkie_pin_conf);
+    esp_err_t purpose_btn = gpio_config(&purpose_btn_r_conf);
 
     gpio_config_t purpose_led_pin_conf = { // Init at 0
         .pin_bit_mask = (1ULL << PURPOSE_LED), // Select GPIO pin
@@ -67,7 +58,7 @@ int gpio_pin_set_up(void){
     //Buzzer
 
 
-    if(btn_l == ESP_OK && btn_r == ESP_OK && walkie_pin == ESP_OK && led_pin == ESP_OK && bs_l == ESP_OK && bs_r == ESP_OK && emerg_pin_r == ESP_OK){
+    if(walkie_btn == ESP_OK && purpose_btn == ESP_OK && led_pin == ESP_OK && bs_l == ESP_OK && bs_r == ESP_OK && emerg_pin_r == ESP_OK){
             
             return ESP_OK;
     }
