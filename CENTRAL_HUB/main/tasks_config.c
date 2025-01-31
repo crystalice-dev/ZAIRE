@@ -7,19 +7,19 @@ void gpio_run_task(void *vpParam){ // Watches for GPIO changes - btn pressed - c
     while (1)
     {   
       
-        if(first_boot && gpio_get_level(PURPOSE_BTN_L) && gpio_get_level(PURPOSE_BTN_R)){
+        if(first_boot && gpio_get_level(WALKIE_BTN) && gpio_get_level(PURPOSE_BTN)){
         
             gpio_set_level(PURPOSE_LED, HIGH);
             vTaskDelay(pdMS_TO_TICKS(50)); // wait 0.05 sec to launch settings
             walkie_uart_snd(OPEN_SETTING_PORT);
             first_boot = 0;
-        }else if(first_boot && gpio_get_level(PURPOSE_BTN_L) && !gpio_get_level(PURPOSE_BTN_R)){
+        }else if(first_boot && gpio_get_level(WALKIE_BTN) && !gpio_get_level(PURPOSE_BTN)){
             
             gpio_set_level(PURPOSE_LED, HIGH);
             vTaskDelay(pdMS_TO_TICKS(50)); // wait 0.05 sec to launch settings
             walkie_uart_snd(ENTERING_PAIRING_MODE);
             first_boot = 0;
-        }else if(first_boot && !gpio_get_level(PURPOSE_BTN_L) && gpio_get_level(PURPOSE_BTN_R)){
+        }else if(first_boot && !gpio_get_level(WALKIE_BTN) && gpio_get_level(PURPOSE_BTN)){
 
         }
         
@@ -32,7 +32,6 @@ void gpio_run_task(void *vpParam){ // Watches for GPIO changes - btn pressed - c
 void uart_run_task(void *vpParam){
 
     uint8_t walkie_data[BUF_SIZE];
-    uint8_t bm83_data[BUF_SIZE];
 
     while (1)
     {

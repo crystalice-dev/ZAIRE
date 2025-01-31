@@ -2,6 +2,8 @@
 #define PEER_GLOBAL_CODE_ADD
 
 
+#define ENTERING_PAIRING_MODE       0XF9
+
 #define BREAK_WIFI_BROADCAST        0xFE // On esp_now connect -- slave close wifi signal and add master's mac addr to its peer
 
 #define OPEN_ADDR_INSERT            0xE1 // Alert for incoming peer's walkie mac addr

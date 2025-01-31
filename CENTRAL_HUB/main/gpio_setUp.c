@@ -1,6 +1,7 @@
 #include "globalVar.h"
 
 int gpio_pin_set_up(void){
+    esp_err_t err;
     gpio_config_t purpose_btn_l_conf = { // Init at 0
         .pin_bit_mask = (1ULL << WALKIE_BTN), // Select GPIO pin
         .mode = GPIO_MODE_INPUT,
@@ -8,7 +9,12 @@ int gpio_pin_set_up(void){
         .pull_down_en = GPIO_PULLDOWN_ENABLE,  // Enable pull-down resistor
         .intr_type = GPIO_INTR_DISABLE
     };
-    esp_err_t walkie_btn =  gpio_config(&purpose_btn_l_conf);
+    err =  gpio_config(&purpose_btn_l_conf);
+
+    if(err){
+        printf("BTN L\n");
+        return ESP_FAIL;
+    }
 
     gpio_config_t purpose_btn_r_conf = { // Init at 0
         .pin_bit_mask = (1ULL << PURPOSE_BTN), // Select GPIO pin
@@ -17,7 +23,11 @@ int gpio_pin_set_up(void){
         .pull_down_en = GPIO_PULLDOWN_ENABLE,  // Enable pull-down resistor
         .intr_type = GPIO_INTR_DISABLE
     };
-    esp_err_t purpose_btn = gpio_config(&purpose_btn_r_conf);
+    err = gpio_config(&purpose_btn_r_conf);
+    if(err){
+        printf("BTN R\n");
+        return ESP_FAIL;
+    }
 
     gpio_config_t purpose_led_pin_conf = { // Init at 0
         .pin_bit_mask = (1ULL << PURPOSE_LED), // Select GPIO pin
@@ -26,7 +36,11 @@ int gpio_pin_set_up(void){
         .pull_down_en = GPIO_PULLDOWN_ENABLE,  // Enable pull-down resistor
         .intr_type = GPIO_INTR_DISABLE
     };
-    esp_err_t led_pin = gpio_config(&purpose_led_pin_conf);
+    err = gpio_config(&purpose_led_pin_conf);
+    if(err){
+        printf("LED\n");
+        return ESP_FAIL;
+    }
 
     gpio_config_t bs_lt_led_conf = { // Init at 0
         .pin_bit_mask = (1ULL << BS_LT_LED_PIN), // Select GPIO pin
@@ -35,7 +49,11 @@ int gpio_pin_set_up(void){
         .pull_down_en = GPIO_PULLDOWN_ENABLE,  // Enable pull-down resistor
         .intr_type = GPIO_INTR_DISABLE
     };
-    esp_err_t bs_l = gpio_config(&bs_lt_led_conf);
+    err = gpio_config(&bs_lt_led_conf);
+    if(err){
+        printf("LED L\n");
+        return ESP_FAIL;
+    }
 
     gpio_config_t bs_rt_led_conf = { // Init at 0
         .pin_bit_mask = (1ULL << BS_RT_LED_PIN), // Select GPIO pin
@@ -44,7 +62,11 @@ int gpio_pin_set_up(void){
         .pull_down_en = GPIO_PULLDOWN_ENABLE,  // Enable pull-down resistor
         .intr_type = GPIO_INTR_DISABLE
     };
-    esp_err_t bs_r = gpio_config(&bs_rt_led_conf);
+    err = gpio_config(&bs_rt_led_conf);
+    if(err){
+        printf("LED R\n");
+        return ESP_FAIL;
+    }
 
     gpio_config_t emerg_pin_conf = { // Init at 0
         .pin_bit_mask = (1ULL << EMERG_PIN), // Select GPIO pin
@@ -53,16 +75,17 @@ int gpio_pin_set_up(void){
         .pull_down_en = GPIO_PULLDOWN_ENABLE,  // Enable pull-down resistor
         .intr_type = GPIO_INTR_DISABLE
     };
-    esp_err_t emerg_pin_r = gpio_config(&emerg_pin_conf);
+    err = gpio_config(&emerg_pin_conf);
+    if(err){
+        printf("EM\n");
+        return ESP_FAIL;
+    }
 
     //Buzzer
 
 
-    if(walkie_btn == ESP_OK && purpose_btn == ESP_OK && led_pin == ESP_OK && bs_l == ESP_OK && bs_r == ESP_OK && emerg_pin_r == ESP_OK){
-            
-            return ESP_OK;
-    }
-    return ESP_FAIL;
+    
+    return ESP_OK;
 }  
 
 void quick_led_flash(uint8_t n){

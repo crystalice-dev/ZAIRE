@@ -27,34 +27,68 @@
 #include "globalVar.h"
 
 
+bool first_boot = 0;
+
+
+int check_walkie_addr(){
+    uint8_t isAddr_in = nvs_read(walkie_addr_nvs_registered, WALKIE_ADDR_KEY);
+
+    if(isAddr_in){
+    
+        size_t temp = sizeof(walkie_address); // Ensure temp has the correct size of the buffer
+        esp_err_t err = nvs_get_blob(walkie_addr_nvs_registered, WALKIE_NVS_NAMESPACE, walkie_address, &temp); // Pass the address of temp
+        if(err == ESP_OK){
+            walkie_interject_number = 6; // Ensure walkie mac addr never changes
+            for(int i = 0; i < 6; i++){
+                printf("0x%02X", walkie_address[i]);
+                if(i < 5){
+                    printf(":");
+                }
+            }
+            printf("\n");
+        }
+    }else{
+        vTaskDelay(pdMS_TO_TICKS(1000));
+        walkie_get_addr_port = 1;
+        walkie_interject_number = 0;
+        walkie_uart_snd(GET_WALKIE_ADDR);
+        printf("Getting Walkie Addr\n");
+        while (walkie_interject_number < 6 && walkie_get_addr_port == 1){
+            vTaskDelay(pdMS_TO_TICKS(50)); // wait for Walkie to return walkie mac
+        }
+    }
+
+    return 0;
+}
+
 int zaire_system_init(){
 
-    // if(nvs_start(WALKIE_NVS_NAMESPACE, &walkie_addr_nvs_registered)){
-    //     return ESP_FAIL;
-    // }
+    if(nvs_start(WALKIE_NVS_NAMESPACE, &walkie_addr_nvs_registered)){
+        return ESP_FAIL;
+    }
 
-    // if(gpio_pin_set_up()){ 
-    //     return ESP_FAIL;
-    // }
+    if(gpio_pin_set_up()){ 
+        return ESP_FAIL;
+    }
     // Start gpio task on success
-    // xTaskCreate(gpio_run_task, "gpio_run_task", 2048, NULL, 3, NULL);
+    xTaskCreate(gpio_run_task, "gpio_run_task", 2048, NULL, 3, NULL);
     
     if(uart_init()){
         return ESP_FAIL;
     }
     // Start uart task on success
-    // xTaskCreate(uart_run_task, "uart_run_task", 5000, NULL, 3, NULL );
+    xTaskCreate(uart_run_task, "uart_run_task", 5000, NULL, 3, NULL );
 
-    // if(init_i2c()){
-    //     return ESP_FAIL;
-    // }
+    if(init_i2c()){
+        return ESP_FAIL;
+    }
     
-    // if(bs_monitor_init()){
-    //     return ESP_FAIL;
-    // }
+    if(bs_monitor_init()){
+        return ESP_FAIL;
+    }
     // // Start BS task on success
 
-    // check_walkie_addr();
+    check_walkie_addr();
 
     return ESP_OK;
 }
@@ -75,15 +109,12 @@ int app_main(void)
     }
     
 
-     zaire_system_init();
-
-    while (1)
-    {
-        pi_uart_snd(0x5B);
+    if(zaire_system_init()){
         vTaskDelay(pdMS_TO_TICKS(1000));
-    }
-    
+        esp_restart();
+    }    
 
-  
+    printf("Passed\n");
+    
     return 0;
 }

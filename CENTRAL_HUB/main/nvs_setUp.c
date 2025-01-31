@@ -1,6 +1,9 @@
 #include "globalVar.h"
 
 
+nvs_handle_t walkie_addr_nvs_registered;
+nvs_handle_t server_nvs_handler;
+
 bool nvs_start(const char *namespace, const nvs_handle_t *handler) {
     
     esp_err_t err = nvs_open(namespace, NVS_READWRITE, handler);

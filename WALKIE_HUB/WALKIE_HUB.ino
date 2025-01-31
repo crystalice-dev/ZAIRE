@@ -34,12 +34,14 @@ bool settings_port = 0;
 
 int zaire_system_init(void){
 
-  // WiFi.disconnect();
-  // WiFi.mode(WIFI_STA);
-  // esp_wifi_set_promiscuous(true);
-  // esp_wifi_set_channel((wifi_second_chan_t)3, WIFI_SECOND_CHAN_NONE);
-  // esp_wifi_set_promiscuous(false);
-  // esp_wifi_get_mac(WIFI_IF_STA, walkie_mac_addr);
+  WiFi.disconnect();
+  WiFi.mode(WIFI_STA);
+  esp_wifi_set_promiscuous(true);
+  esp_wifi_set_channel((wifi_second_chan_t)3, WIFI_SECOND_CHAN_NONE);
+  esp_wifi_set_promiscuous(false);
+  esp_wifi_get_mac(WIFI_IF_STA, walkie_mac_addr);
+
+  Serial.println("\n");
   if(start_EEPROM()){
     return ESP_FAIL;
   }

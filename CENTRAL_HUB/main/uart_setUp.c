@@ -11,22 +11,22 @@ int uart_init(void){
     esp_err_t err2;
 
     //PI UART CONFIG
-    uart_config_t pi_uart_config = {
-        .baud_rate = 9600,
-        .data_bits = UART_DATA_8_BITS,
-        .parity = UART_PARITY_DISABLE,
-        .stop_bits = UART_STOP_BITS_1,
-        .flow_ctrl = UART_HW_FLOWCTRL_DISABLE,
-        .source_clk = UART_SCLK_APB,
-    };
+    // uart_config_t pi_uart_config = {
+    //     .baud_rate = 9600,
+    //     .data_bits = UART_DATA_8_BITS,
+    //     .parity = UART_PARITY_DISABLE,
+    //     .stop_bits = UART_STOP_BITS_1,
+    //     .flow_ctrl = UART_HW_FLOWCTRL_DISABLE,
+    //     .source_clk = UART_SCLK_APB,
+    // };
 
-    // Install WALKIE UART driver and set UART pins
-    err0 = uart_driver_install(UART_NUM_0, 1024 * 2, 0, 0, NULL, 0);
-    err1 = uart_param_config(UART_NUM_0, &pi_uart_config);
-    err2 = uart_set_pin(UART_NUM_0, 1, 3, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE);
-    if( err0 == ESP_FAIL || err1 == ESP_FAIL || err2 == ESP_FAIL){
-        return ESP_FAIL;
-    }
+    // // Install WALKIE UART driver and set UART pins
+    // err0 = uart_driver_install(UART_NUM_0, 1024 * 2, 0, 0, NULL, 0);
+    // err1 = uart_param_config(UART_NUM_0, &pi_uart_config);
+    // err2 = uart_set_pin(UART_NUM_0, 1, 3, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE);
+    // if( err0 == ESP_FAIL || err1 == ESP_FAIL || err2 == ESP_FAIL){
+    //     return ESP_FAIL;
+    // }
 
 
     //WALKIE UART CONFIG
@@ -83,7 +83,7 @@ void walkie_uart_snd(const int data){
 void walkie_uart_rec(const char *str){
 
     int data = atoi(str); // Convert data from str to int
-
+    printf("%d\n", data);
     switch (data){
 
         case OPEN_ADDR_INSERT: // Will run only once during helmet's lifetime
