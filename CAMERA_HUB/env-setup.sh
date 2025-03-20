@@ -2,16 +2,16 @@
 
 echo '--ZAIRE HELMETS CAMERA REQ--'
 sudo apt update
-sudo apt install build-essential
-sudo atp-get install -y gcc
-sudo apt-get install -y libraspberrypi-bin
-sudo apt install libc6-dev
-sudo apt-get install -y ffmpeg
+
+# Install build tools and dependencies
+sudo apt install -y build-essential gcc libc6-dev ffmpeg v4l-utils
+
 echo '--ZAIRE HELMETS GPIOs REQ--'
 sudo apt-get install -y git
-git clone https://github.com/WiringPi/wiringPi.git
-cd wiringPi
-./build
+git clone https://github.com/BPI-SINOVOIP/BPI-WiringPi.git -b BPI_M2P
+cd BPI-WiringPi
+chmod +x ./build
+sudo ./build
 
 echo '--ZAIRE HELMETS CAMERA AND GPIOs REQ COMPLETED--'
 
