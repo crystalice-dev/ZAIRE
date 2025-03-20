@@ -5,7 +5,7 @@ sudo apt update
 
 # Install build tools and dependencies
 sudo apt install -y build-essential gcc libc6-dev ffmpeg v4l-utils
-
+ 
 echo '--ZAIRE HELMETS GPIOs REQ--'
 sudo apt-get install -y git
 git clone https://github.com/BPI-SINOVOIP/BPI-WiringPi.git -b BPI_M2P
