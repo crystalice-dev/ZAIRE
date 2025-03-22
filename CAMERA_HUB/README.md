@@ -1,5 +1,5 @@
 | Target: ALLWINNER H3| </br>
-| Envmnt: RASPBIAN OS | </br>
+| Envmnt: armbian | </br>
 | vrsion: 2.0 | </br>
 | Author: Yann Kabambi | </br>
 
