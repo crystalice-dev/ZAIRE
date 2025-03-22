@@ -1,4 +1,4 @@
-| Target: RPi_0| </br>
+| Target: ALLWINNER H3| </br>
 | Envmnt: RASPBIAN OS | </br>
 | vrsion: 2.0 | </br>
 | Author: Yann Kabambi | </br>
