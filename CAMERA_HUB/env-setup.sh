@@ -22,6 +22,6 @@ echo '--ZAIRE HELMETS CAMERA AND GPIOs REQ COMPLETED--'
 ## ADD line above before exit 0
 #ffmpeg -f v4l2 -framerate 25 -video_size 640x480  -i /dev/video0 -c:v libx264 -preset veryfast -f mp4 ~/video.mp4
 ## <------------- RESERVED --------------->
-##gcc -pthread centralHandler.c main.c -o main -lwiringPi
+##gcc -o main main.c -lwiringPi -lm -lpthread -lrt -lcrypt
 #to be test
 #fast
