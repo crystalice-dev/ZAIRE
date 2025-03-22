@@ -25,6 +25,7 @@ echo '--ZAIRE HELMETS CAMERA AND GPIOs REQ COMPLETED--'
 ##gcc -o main main.c -lwiringPi -lm -lpthread -lrt -lcrypt
 #to be test
 #fast
+## enable UART2 & UART3 --> sudo armbian-config
 : <<'END_COMMENT'
 +-----+-----+---------+------+---+---Pi ---+---+------+---------+-----+-----+
 | CPU | wPi |    Name   | Mode | V | Physical | V | Mode |   Name    | wPi | CPU |
