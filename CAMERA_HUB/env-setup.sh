@@ -1,10 +1,10 @@
 #! /bin/bash
 
 echo '--ZAIRE HELMETS CAMERA REQ--'
-sudo apt update
-
+sudo apt-apt update
+sudo apt-get -y upgrade
 # Install build tools and dependencies
-sudo apt install -y build-essential gcc libc6-dev ffmpeg v4l-utils
+sudo apt install -y build-essential gcc libc6-dev ffmpeg fswebcam v4l-utils 
  
 echo '--ZAIRE HELMETS GPIOs REQ--'
 sudo apt-get install -y git
