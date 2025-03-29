@@ -1,8 +1,7 @@
 #! /bin/bash
 
 echo '--ZAIRE HELMETS CAMERA REQ--'
-sudo apt-apt update
-sudo apt-get -y upgrade
+
 # Install build tools and dependencies
 sudo apt install -y build-essential gcc libopencv-dev libc6-dev ffmpeg fswebcam v4l-utils 
  
