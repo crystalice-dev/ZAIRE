@@ -13,7 +13,7 @@ sudo apt-get install -y build-essential gcc git libopencv-dev libc6-dev ffmpeg f
     g++ wget unzip
 
 # Instal OpenCV
-sudo apt-get install libopencv-dev
+sudo apt-get -y install libopencv-dev
 
 echo '--ZAIRE HELMETS GPIOs REQ--'
 sudo apt-get install -y git
