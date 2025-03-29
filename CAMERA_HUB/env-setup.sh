@@ -1,10 +1,23 @@
 #! /bin/bash
 
 echo '--ZAIRE HELMETS CAMERA REQ--'
-
+sudo apt update
 # Install build tools and dependencies
-sudo apt install -y build-essential gcc libopencv-dev libc6-dev ffmpeg fswebcam v4l-utils 
- 
+sudo apt-get install -y build-essential gcc git libopencv-dev libc6-dev ffmpeg fswebcam v4l-utils \
+    cmake pkg-config \
+    libjpeg-dev libtiff-dev libpng-dev \
+    libavcodec-dev libavformat-dev libswscale-dev \
+    libv4l-dev libxvidcore-dev libx264-dev \
+    libgtk-3-dev libcanberra-gtk* \
+    libatlas-base-dev gfortran python3-dev\
+    g++ wget unzip
+
+# Instal OpenCV
+wget -O opencv.zip https://github.com/opencv/opencv/archive/4.x.zip
+unzip opencv.zip
+mkdir -p build && cd build
+cmake  ../opencv-4.x
+cmake --build .
 echo '--ZAIRE HELMETS GPIOs REQ--'
 sudo apt-get install -y git
 git clone https://github.com/BPI-SINOVOIP/BPI-WiringPi.git -b BPI_M2P
