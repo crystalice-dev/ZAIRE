@@ -16,3 +16,7 @@ The following contains a list of all the responsibilities this firmware has:
 
     ### ENJOY - YANN KABAMBI !!
     01-19-2025 07:45🕞
+
+
+    idf.py add-dependency "espressif/esp32-camera"
+    idf.py add-dependency esp_tinyusb
