@@ -19,4 +19,4 @@ The following contains a list of all the responsibilities this firmware has:
 
 
     idf.py add-dependency "espressif/esp32-camera"
-    idf.py add-dependency esp_tinyusb
+   idf.py add-dependency "espressif/usb_device_uvc=*"
