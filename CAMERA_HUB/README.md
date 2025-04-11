@@ -18,5 +18,8 @@ The following contains a list of all the responsibilities this firmware has:
     01-19-2025 07:45🕞
 
 
-    idf.py add-dependency "espressif/esp32-camera"
-   idf.py add-dependency "espressif/usb_device_uvc=*"
+#### CAMERA: 
+* idf.py add-dependency "espressif/esp32-camera"
+* idf.py add-dependency "espressif/usb_device_uvc=*"
+#### AUDIO:
+* idf.py add-dependency "espressif/usb_device_uac=*"
