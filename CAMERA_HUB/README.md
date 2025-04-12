@@ -23,3 +23,4 @@ The following contains a list of all the responsibilities this firmware has:
 * idf.py add-dependency "espressif/usb_device_uvc=*"
 #### AUDIO:
 * idf.py add-dependency "espressif/usb_device_uac=*"
+* test: arecord -v -D hw:1,0 -f S16_LE -c 1 -r 16000 output5.wav
