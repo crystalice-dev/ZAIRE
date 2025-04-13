@@ -29,7 +29,7 @@ echo '--ZAIRE HELMETS CAMERA AND GPIOs REQ COMPLETED--'
 ##sudo nano /etc/rc.local
 ##/usr/local/bin/my_program &
 ## ADD line above before exit 0
-#ffmpeg -f v4l2 -framerate 25 -video_size 640x480  -i /dev/video0 -c:v libx264 -preset veryfast -f mp4 ~/video.mp4
+#ffmpeg -f v4l2 -input_format mjpeg -framerate 11.5 -video_size 128x128 -i /dev/video0 -c:v copy output.mp4
 ## <------------- RESERVED --------------->
 ##gcc -o main main.c -lwiringPi -lm -lpthread -lrt -lcrypt
 #to be test
