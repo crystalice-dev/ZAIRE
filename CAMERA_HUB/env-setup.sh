@@ -30,6 +30,7 @@ echo '--ZAIRE HELMETS CAMERA AND GPIOs REQ COMPLETED--'
 ##/usr/local/bin/my_program &
 ## ADD line above before exit 0
 #ffmpeg -f v4l2 -input_format mjpeg -framerate 11.5 -video_size 320x240 -i /dev/video0 -c:v copy zaire_microvision_11_5_face2.mp4
+#check camera fps  v4l2-ctl --device=/dev/video0 --list-formats-ext
 ## <------------- RESERVED --------------->
 ##gcc -o main main.c -lwiringPi -lm -lpthread -lrt -lcrypt
 #to be test
