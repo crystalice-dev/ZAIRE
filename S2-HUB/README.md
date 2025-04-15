@@ -1,4 +1,4 @@
-| Target: ESP32-S3 N16R8| </br>
+| Target: ESP32-S2 N4R2| </br>
 | Envmnt: ESP-IDF 5.3 | </br>
 | vrsion: 3.0 | </br>
 | Author: Yann Kabambi | </br>
