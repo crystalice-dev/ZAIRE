@@ -1,6 +1,6 @@
-| Target: ALLWINNER H3| </br>
-| Envmnt: armbian | </br>
-| vrsion: 2.0 | </br>
+| Target: ESP32-S3 N16R8| </br>
+| Envmnt: ESP-IDF 5.3 | </br>
+| vrsion: 3.0 | </br>
 | Author: Yann Kabambi | </br>
 
 # Zaire SYSTEM - S2 HUB
