@@ -10,7 +10,7 @@
 
 The following contains a list of all the responsibilities this firmware has:
 
-#### AUDIO:
-* idf.py add-dependency "espressif/usb_device_uac=*"
-* test: arecord -v -D hw:2,0 -f S16_LE -c 1 -r 16000 output3.wav
+#### CAMERA: 
+* idf.py add-dependency "espressif/esp32-camera"
+* idf.py add-dependency "espressif/usb_device_uvc=*"
 
