@@ -3,7 +3,7 @@
 | vrsion: 3.0 | </br>
 | Author: Yann Kabambi | </br>
 
-# Zaire SYSTEM - S2 HUB
+# Zaire SYSTEM - WALKIE - S3
 
 (See the README.md file in the upper level 'zaire-system' directory for more information about This whole project.)
 
