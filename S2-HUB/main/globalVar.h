@@ -34,11 +34,17 @@ extern bool WALKIE_STATUS;
 //GPS
 #define GPS_TX  GPIO_NUM_16
 #define GPS_RX  GPIO_NUM_17
-
+extern char* gps_latitude;
+extern char* gps_longitude;
+extern char* gps_elevation;
 
 
 //BMS -- BATTERY
 extern uint8_t BATTERY_STATUS;
+
+//TEMP
+extern uint8_t TEMP_STATUS;
+
 
 //DISPLAY
 #ifdef DISPLAY_INCLUDED
@@ -71,7 +77,6 @@ extern uint8_t BATTERY_STATUS;
         void display_low_battery_warning(void);
         void display_dns_IP(void);
 #endif
-
 //NETWORK
 #define EXAMPLE_MAX_STA_CONN 4
 extern char *WIFI_SSID;
