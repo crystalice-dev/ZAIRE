@@ -3,6 +3,11 @@
 
 #include <globalVar.h>
 
+
+//POWER
+#define HIGH        1
+#define LOW         0
+
 //DEVICE TYPES
 #define DEVICE_TYPE_BICYCLE_HELMET  (0)
 #define DEVICE_TYPE_SKI_GOGGLES     (1)
@@ -32,5 +37,8 @@
 //From EEPROM
 uint8_t get_device_type(void);
 esp_err_t set_device_type(uint8_t device_n);
+
+//File Management
+void init_spiffs(void);
 
 #endif // ZAIRE_SYSTEM_H

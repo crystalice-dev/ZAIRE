@@ -125,10 +125,9 @@ esp_err_t stop_dns_server(void) {
     ESP_LOGW(DNS_TAG, "DNS server wasn't running");
     return ESP_FAIL;
 }
-char *html =
-"<!DOCTYPE html><html><head><title>Zaire Settings</title>";
+
 esp_err_t portal_handler(httpd_req_t *req) {
-    return hello_get_handler(req);
+    return main_page_get_handler(req);
 }
 
 void register_dns_catch_all(httpd_handle_t server) {

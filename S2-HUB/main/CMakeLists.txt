@@ -1,5 +1,9 @@
 idf_component_register(
     SRCS 
+        "gps_config.c"
+        "i2c_device_config.c"
+        "rtc_config.c"
+        "tasks_config.c"
         "display_config.c"
         "html_config.c"
         "nvs_config.c" 
