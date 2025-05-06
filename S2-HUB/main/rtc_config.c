@@ -27,27 +27,38 @@ char* _get_RTC_time() {
 }
 
 char* _get_RTC_date() {
-    static char date_str[10]; // "MMM DD"
+    static char date_str[12]; // "MMM-DD" or "ERR-DD"
     uint8_t data[4];
 
     i2c_cmd_handle_t cmd = i2c_cmd_link_create();
     i2c_master_start(cmd);
     i2c_master_write_byte(cmd, (DS3231_ADDR << 1) | I2C_MASTER_WRITE, true);
-    i2c_master_write_byte(cmd, 0x03, true); // Start at day register
+    i2c_master_write_byte(cmd, 0x03, true); // Start at day register (0x03 = day, date, month, year)
     i2c_master_start(cmd);
     i2c_master_write_byte(cmd, (DS3231_ADDR << 1) | I2C_MASTER_READ, true);
-    i2c_master_read(cmd, data, 4, I2C_MASTER_LAST_NACK);
+    i2c_master_read(cmd, data, 4, I2C_MASTER_LAST_NACK); // day, date, month, year
     i2c_master_stop(cmd);
-    i2c_master_cmd_begin(WORKING_I2C_NUM, cmd, pdMS_TO_TICKS(100));
+    esp_err_t ret = i2c_master_cmd_begin(WORKING_I2C_NUM, cmd, pdMS_TO_TICKS(100));
     i2c_cmd_link_delete(cmd);
+
+    if (ret != ESP_OK) {
+        snprintf(date_str, sizeof(date_str), "ERR");
+        return date_str;
+    }
 
     const char* months[] = {
         "ERR", "JAN", "FEB", "MAR", "APR", "MAY", "JUN",
         "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"
     };
-    snprintf(date_str, sizeof(date_str), "%s-%02d", months[bcd_to_dec(data[2])], bcd_to_dec(data[1]));
+
+    uint8_t day = bcd_to_dec(data[1]);    // Date (01–31)
+    uint8_t month = bcd_to_dec(data[2]);  // Month (01–12)
+
+    const char* month_str = (month >= 1 && month <= 12) ? months[month] : "ERR";
+    snprintf(date_str, sizeof(date_str), "%s-%02d", month_str, day);
     return date_str;
 }
+
 
 
  //set_RTC(13, 44, 0, 1, 4, 5, 25); // Set to May 3, 2024 12:34:56 -- example

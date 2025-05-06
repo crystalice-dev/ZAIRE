@@ -50,11 +50,13 @@ extern uint8_t TEMP_STATUS;
     #include <u8g2.h>
     #include <u8g2_esp32_hal.h>
     #define DISPLAY_EN_PIN     GPIO_NUM_18
+    #define DISPLAY_EN_BTN     GPIO_NUM_8
 
     typedef enum {
-        DISPLAY_MAIN_UI = 0,
-        DISPLAY_SHOW_LOW_BAT = 1,
-        DISPLAY_SHOW_DNS_IP = 2,
+        DISPLAY_EN_OFF = 0,
+        DISPLAY_MAIN_UI = 1,
+        DISPLAY_SHOW_LOW_BAT = 2,
+        DISPLAY_SHOW_DNS_IP = 3,
     }display_target_t;
     extern display_target_t display_target;
 
@@ -71,11 +73,15 @@ extern uint8_t TEMP_STATUS;
         void display_datetime();
         void display_battery(uint8_t percent);
         void display_camera_icon(void);
-    
+
+        //PASSS
+        void display_quick_show(void);
         //FULL SCREEN DISPLAY 
         void display_low_battery_warning(void);
         void display_dns_IP(void);
+#elif // ADD I2C TO I2C_NUM_1
 #endif
+
 //NETWORK
 #define EXAMPLE_MAX_STA_CONN 4
 extern char *WIFI_SSID;
@@ -129,8 +135,8 @@ int uac_device_input_cb(uint8_t *buf, size_t len, size_t *bytes_read, void *arg)
 //I2C
 #define DS3231_ADDR         0x68
 #define WORKING_I2C_NUM     I2C_NUM_1
-#define I2C_0_SDA           GPIO_NUM_6
-#define I2C_0_SCL           GPIO_NUM_7
+#define I2C_1_SDA           GPIO_NUM_6
+#define I2C_1_SCL           GPIO_NUM_7
 
 // GLOBAL GPIOs
 #define CAMERA_ON_PIN   GPIO_NUM_14

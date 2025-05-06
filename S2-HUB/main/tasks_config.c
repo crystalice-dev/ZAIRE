@@ -10,6 +10,11 @@ void gpio_run_task(void *vpParam){
 
     while (1)
     {
+        if(gpio_get_level(DISPLAY_EN_BTN)){
+            vTaskDelay(pdMS_TO_TICKS(250));
+            display_quick_show();
+        }
+
         vTaskDelay(pdMS_TO_TICKS(TASK_HOLD_DELAY));
     }
     
@@ -30,6 +35,9 @@ void display_run_task(void *vpParam){
         if(display_en){
 
             switch (display_target) {
+                case DISPLAY_EN_OFF:
+                    vTaskDelay(pdMS_TO_TICKS(TASK_HOLD_DELAY));
+                    break;
                 case DISPLAY_MAIN_UI:
                     display_main_UI();
                     break;
@@ -45,7 +53,7 @@ void display_run_task(void *vpParam){
 
         }
 
-        vTaskDelay(pdMS_TO_TICKS(50));
+        vTaskDelay(pdMS_TO_TICKS(TASK_HOLD_DELAY));
     }  
 
 }

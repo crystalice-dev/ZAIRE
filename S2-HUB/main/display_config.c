@@ -11,8 +11,8 @@ display_target_t display_target = DISPLAY_MAIN_UI;
 esp_err_t display_init(void){
     init_display_gpio();
     u8g2_esp32_hal_t u8g2_esp32_hal = U8G2_ESP32_HAL_DEFAULT;
-    u8g2_esp32_hal.bus.i2c.sda = I2C_0_SDA;
-    u8g2_esp32_hal.bus.i2c.scl = I2C_0_SCL;
+    u8g2_esp32_hal.bus.i2c.sda = I2C_1_SDA;
+    u8g2_esp32_hal.bus.i2c.scl = I2C_1_SCL;
     u8g2_esp32_hal_init(u8g2_esp32_hal);
 
     u8g2_Setup_ssd1306_i2c_128x32_univision_f(
@@ -28,7 +28,7 @@ esp_err_t display_init(void){
     
     display_welcome_animation();
     vTaskDelay(pdMS_TO_TICKS(500));
-    
+    display_target = DISPLAY_MAIN_UI;
     return ESP_OK;
 }
 
@@ -82,7 +82,7 @@ void display_main_UI(void){
 }
 
 
-void init_display_gpio(void){
+void init_display_gpio(void){ 
     gpio_config_t camera_on_config = { // Init at 0
         .pin_bit_mask = (1ULL << CAMERA_ON_PIN), // Select GPIO pin
         .mode = GPIO_MODE_INPUT,
@@ -91,6 +91,15 @@ void init_display_gpio(void){
         .intr_type = GPIO_INTR_DISABLE
     };
     gpio_config(&camera_on_config);
+
+    gpio_config_t dispaly_btn_config = { // Init at 0
+        .pin_bit_mask = (1ULL << DISPLAY_EN_BTN), // Select GPIO pin
+        .mode = GPIO_MODE_INPUT,
+        .pull_up_en = GPIO_PULLUP_DISABLE,
+        .pull_down_en = GPIO_PULLDOWN_ENABLE,  // Enable pull-down resistor
+        .intr_type = GPIO_INTR_DISABLE
+    };
+    gpio_config(&dispaly_btn_config);
 
     gpio_config_t display_pin_config = { // 
         .pin_bit_mask = (1ULL << DISPLAY_EN_PIN), // Select GPIO pin
@@ -150,8 +159,17 @@ void display_camera_icon(void){
     u8g2_DrawBox(&display, 42, 2, 7, 3);
 }
 
-//FULLSCREEN DISPLAY
+void display_quick_show(void){
+    display_target = DISPLAY_MAIN_UI;
+    gpio_set_level(DISPLAY_EN_PIN, HIGH);
+    vTaskDelay(pdMS_TO_TICKS(5000));
+    display_target = DISPLAY_EN_OFF;
+    vTaskDelay(pdMS_TO_TICKS(1000));
+    gpio_set_level(DISPLAY_EN_PIN, LOW);
 
+}
+
+//FULLSCREEN DISPLAY
 void display_low_battery_warning(void){
 
 }
