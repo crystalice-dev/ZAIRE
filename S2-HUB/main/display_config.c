@@ -109,8 +109,6 @@ void init_display_gpio(void){
         .intr_type = GPIO_INTR_DISABLE
     };
     gpio_config(&display_pin_config);
-    
-    printf("CAM: %d, DIS: %d\n", gpio_get_level(CAMERA_ON_PIN), gpio_get_level(DISPLAY_EN_PIN));
 
     display_power_on(); // Start with it on
 }

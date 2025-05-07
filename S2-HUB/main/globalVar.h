@@ -39,7 +39,14 @@ extern char* gps_elevation;
 
 
 //BMS -- BATTERY
-extern uint8_t BATTERY_STATUS;
+#define MAX17043_ADDR  0x36
+extern float BATTERY_STATUS; // %
+extern float BATTERY_VOLTAGE;
+esp_err_t battery_init();
+esp_err_t battery_read16(uint8_t reg, uint16_t *out_val);
+esp_err_t battery_quick_start();
+float battery_get_voltage();
+float battery_get_soc();
 
 //TEMP
 extern uint8_t TEMP_STATUS;
@@ -79,7 +86,7 @@ extern uint8_t TEMP_STATUS;
         //FULL SCREEN DISPLAY 
         void display_low_battery_warning(void);
         void display_dns_IP(void);
-#elif // ADD I2C TO I2C_NUM_1
+
 #endif
 
 //NETWORK
@@ -134,9 +141,14 @@ int uac_device_input_cb(uint8_t *buf, size_t len, size_t *bytes_read, void *arg)
 
 //I2C
 #define DS3231_ADDR         0x68
+#define PARSE_I2C_NUM       I2C_NUM_0
 #define WORKING_I2C_NUM     I2C_NUM_1
+#define I2C_0_SDA           GPIO_NUM_10
+#define I2C_0_SCL           GPIO_NUM_11
 #define I2C_1_SDA           GPIO_NUM_6
 #define I2C_1_SCL           GPIO_NUM_7
+esp_err_t i2c_init(void);
+
 
 // GLOBAL GPIOs
 #define CAMERA_ON_PIN   GPIO_NUM_14
@@ -153,9 +165,11 @@ uint8_t bcd_to_dec(uint8_t val);
 #define TASK_HOLD_DELAY             (10)
 extern TaskHandle_t gpio_task_handler;
 extern TaskHandle_t uart_task_handler;
+extern TaskHandle_t i2c_task_handler;
 extern TaskHandle_t display_task_handler;
 void gpio_run_task(void *vpParam);
 void uart_run_task(void *vpParam);
+void i2c_run_task(void *vpParam);
 void display_run_task(void *vpParam);
 
 #endif

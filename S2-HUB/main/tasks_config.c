@@ -3,6 +3,7 @@
 
 TaskHandle_t gpio_task_handler = NULL;
 TaskHandle_t uart_task_handler = NULL;
+TaskHandle_t i2c_task_handler = NULL;
 TaskHandle_t display_task_handler = NULL;
 
 
@@ -27,6 +28,20 @@ void uart_run_task(void *vpParam){
         vTaskDelay(pdMS_TO_TICKS(TASK_HOLD_DELAY));
     }
 }
+
+void i2c_run_task(void *vpParam){
+    while (1)
+    {
+        //battery_init();
+        float v = battery_get_voltage();
+        float soc = battery_get_soc();
+        printf("Battery: %.2f V | %.0f%%\n", v, soc);
+        vTaskDelay(pdMS_TO_TICKS(5000));
+    }
+    
+}
+
+
 
 void display_run_task(void *vpParam){
 

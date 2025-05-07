@@ -33,7 +33,7 @@ esp_err_t device_info_handler(httpd_req_t *req){
     
     static char info[1040]; // DEVICE_TYPE-DEVCE_NAME
 
-    snprintf(info,sizeof(info), "%d-%s-%s-%d-%d-{%s %s}-%s-%d", DEVICE_TYPE, DEVICE_NAME, WIFI_SSID, WALKIE_STATUS, BATTERY_STATUS, gps_latitude, gps_longitude, gps_elevation, TEMP_STATUS);
+    snprintf(info,sizeof(info), "%d-%s-%s-%d-%.0f%%-{%s %s}-%s-%d%%", DEVICE_TYPE, DEVICE_NAME, WIFI_SSID, WALKIE_STATUS, BATTERY_STATUS, gps_latitude, gps_longitude, gps_elevation, TEMP_STATUS);
     printf("%s\n", info);
 
     httpd_resp_set_type(req, "text/plain");

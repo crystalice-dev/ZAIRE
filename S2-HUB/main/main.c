@@ -26,20 +26,32 @@ void app_main(void){
     #ifdef DISPLAY_INCLUDED
          ESP_ERROR_CHECK(display_init());
     #endif   
-//     // ESP_ERROR_CHECK(init_i2s());
-//     // ESP_ERROR_CHECK(init_usb_mic());
+    ESP_ERROR_CHECK(i2c_init());
+    // ESP_ERROR_CHECK(init_i2s());
+    // ESP_ERROR_CHECK(init_usb_mic());
 
     xTaskCreate(gpio_run_task, "GPIO TASK", 2048, NULL, 4, &gpio_task_handler);
     xTaskCreate(display_run_task, "DISPLAY TASK", 2048, NULL, 2, &display_task_handler);
-    
+    battery_quick_start();
+    xTaskCreate(i2c_run_task, "I2C TASK", 5000,NULL, 1, &i2c_task_handler);
    
-//    start_dns_server();
+    start_dns_server();
 
-    printf("%d\n", gpio_get_level(DISPLAY_EN_BTN));
+    // if(battery_init() == ESP_OK){
+    //     float v = battery_get_voltage();
+    //     float soc = battery_get_soc();
+    //     printf("Battery: %.2f V | %.0f%%\n", v, soc);
+    // }else{
+    //     printf("Could not init bat\n");
+    // }
 
-    vTaskDelay(pdMS_TO_TICKS(3000));
-    display_target = DISPLAY_EN_OFF;
-    vTaskDelay(pdMS_TO_TICKS(2000));
-    gpio_set_level(DISPLAY_EN_PIN, LOW);
+
+    //Last roll out
+    #ifdef DISPLAY_INCLUDED
+        vTaskDelay(pdMS_TO_TICKS(3000));
+        display_target = DISPLAY_EN_OFF;
+        vTaskDelay(pdMS_TO_TICKS(2000));
+        gpio_set_level(DISPLAY_EN_PIN, LOW);
+    #endif
 }
 
