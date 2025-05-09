@@ -27,6 +27,7 @@ void app_main(void){
          ESP_ERROR_CHECK(display_init());
     #endif   
     ESP_ERROR_CHECK(i2c_init());
+    ESP_ERROR_CHECK(bh1750_init());
     ESP_ERROR_CHECK(uart_init());
     // ESP_ERROR_CHECK(init_i2s());
     // ESP_ERROR_CHECK(init_usb_mic());

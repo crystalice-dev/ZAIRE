@@ -44,7 +44,7 @@ void uart_run_task(void *vpParam){
             }
         }
 
-        vTaskDelay(pdMS_TO_TICKS(5000));
+        vTaskDelay(pdMS_TO_TICKS(TASK_HOLD_DELAY_FIVE_SEC));
     }
 }
 
@@ -54,10 +54,13 @@ void i2c_run_task(void *vpParam){
 
     while (1)
     {
-        BATTERY_VOLTAGE = battery_get_voltage();
-        BATTERY_STATUS = battery_get_soc();
+        // BATTERY_VOLTAGE = battery_get_voltage();
+        // BATTERY_STATUS = battery_get_soc();
         
-        vTaskDelay(pdMS_TO_TICKS(TASK_HOLD_DELAY_MINUTE));
+        lux = bh1750_read_lux();
+        //printf("lux: %.2f\n", bh1750_read_lux()); 
+
+        vTaskDelay(pdMS_TO_TICKS(TASK_HOLD_DELAY_FIVE_SEC));
     }
     
 }

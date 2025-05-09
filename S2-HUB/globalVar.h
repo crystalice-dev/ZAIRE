@@ -41,12 +41,14 @@ esp_err_t uart_init(void);
 //GPS
 #define GPS_LAT_LON_SPEED_CODE "$GPRMC"
 #define GPS_ALT_CODE           "$GPGGA"
-extern char* gps_latitude;
-extern char* gps_longitude;
-extern char* gps_elevation;
+extern char gps_latitude[1024];
+extern char gps_longitude[1024];
+extern uint8_t gps_speed;
+extern float gps_elevation;
 void gps_get_lat_lon_speed(const char* line);
 void gps_get_alt(const char* line);
-
+long gps_convert_M_2_FT(long elevation);
+uint8_t gps_convert_KMH_2_MPH(uint8_t speed);
 //BMS -- BATTERY
 #define MAX17043_ADDR  0x36
 extern float BATTERY_STATUS; // %
@@ -60,6 +62,11 @@ float battery_get_soc();
 //TEMP
 extern uint8_t TEMP_STATUS;
 
+//LIGHT
+#define BH1750_ADDR 0x23 // or 0x5C depending on ADDR pin
+extern float lux;
+esp_err_t bh1750_init();
+float bh1750_read_lux();
 
 //DISPLAY
 #ifdef DISPLAY_INCLUDED
@@ -172,6 +179,7 @@ uint8_t bcd_to_dec(uint8_t val);
 
 //TASKS
 #define TASK_HOLD_DELAY             (10)
+#define TASK_HOLD_DELAY_FIVE_SEC    (1000 * 5)
 #define TASK_HOLD_DELAY_MINUTE      (1000 * 60)
 extern TaskHandle_t gpio_task_handler;
 extern TaskHandle_t uart_task_handler;

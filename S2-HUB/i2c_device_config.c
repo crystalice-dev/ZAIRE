@@ -119,3 +119,39 @@ float battery_get_soc() {
 
     return (float)soc;
 }
+
+
+//LIGHTS
+float lux = 0;
+esp_err_t bh1750_init() {
+    i2c_cmd_handle_t cmd = i2c_cmd_link_create();
+    i2c_master_start(cmd);
+    i2c_master_write_byte(cmd, (BH1750_ADDR << 1) | I2C_MASTER_WRITE, true);
+    i2c_master_write_byte(cmd, 0x10, true); // Continuously H-Resolution Mode
+    i2c_master_stop(cmd);
+    esp_err_t ret = i2c_master_cmd_begin(PARSE_I2C_NUM, cmd, pdMS_TO_TICKS(100));
+    i2c_cmd_link_delete(cmd);
+    
+    if(ret == ESP_FAIL){
+        printf("I2C FAILED\n");
+
+    }
+
+    return ret;
+}
+
+float bh1750_read_lux() {
+    uint8_t data[2];
+    i2c_cmd_handle_t cmd = i2c_cmd_link_create();
+    i2c_master_start(cmd);
+    i2c_master_write_byte(cmd, (BH1750_ADDR << 1) | I2C_MASTER_READ, true);
+    i2c_master_read(cmd, data, 2, I2C_MASTER_LAST_NACK);
+    i2c_master_stop(cmd);
+    esp_err_t ret = i2c_master_cmd_begin(PARSE_I2C_NUM, cmd, pdMS_TO_TICKS(100));
+    i2c_cmd_link_delete(cmd);
+
+    if (ret != ESP_OK) return -1.0;
+
+    uint16_t raw = (data[0] << 8) | data[1];
+    return raw / 1.2; // Convert to lux
+}
