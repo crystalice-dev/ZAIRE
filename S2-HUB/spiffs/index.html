@@ -62,7 +62,7 @@
                 </div>
             </div>
             <div style="flex-direction: column; display: flex; justify-content: center; align-items: center; width: 100vw;">
-                <button>Auto-set Date and Time</button>
+                <button onclick="_setDeviceTimeDate();" >Auto-set Date and Time</button>
                 <br/>
                 <table>
                     <tr>
@@ -72,47 +72,52 @@
                     </tr>
                     <tr>
                         <td class="first-row">WIFI SSID</td>
-                        <td>ZAIRE_SETTINGS</td>
+                        <td id="device-wifi-ssid-label" >ZAIRE_SETTINGS</td>
                         <td><button onclick="_change_wifi_ssid()" >Change</button></td>
                     </tr>
                     <tr>
                         <td class="first-row">WALKIE STATUS</td>
-                        <td>WALKIE ON</td>
+                        <td id="device-walkie-status-label" >WALKIE ON</td>
                         <td><button onclick="_change_walkie_status()" >Change</button></td>
                     </tr>
                     <tr>
                         <td class="first-row">BATTERY</td>
-                        <td>60 %</td>
+                        <td id="device-battery-status-label" >60 %</td>
                         <td>--</td>
                     </tr>
                     <tr>
                         <td class="first-row">GPS</td>
-                        <td>N 37.4452° W 12.4423°</td>
+                        <td>
+                            <p id="device-gps-latitude-label" ></p>  
+                            <p id="device-gps-longitude-label" ></p>
+                        </td>
                         <td>--</td>
                     </tr>
-                    <tr id="elevation-row" >
+                    <tr>
                         <td class="first-row">ELEVATION</td>
-                        <td>1,609 FT</td>
+                        <td id="device-gps-elevation-label" ></td>
                         <td>--</td>
                     </tr>
                     <tr>
                         <td class="first-row">TEMP</td>
-                        <td>32°F</td>
+                        <td id="device_temperature_label" >32°F</td>
                         <td>--</td>
                     </tr>
                     <tr id="light-sensor-row">
                         <td class="first-row">Light</td>
-                        <td>720 Lux</td>
+                        <td id="device_lux_label" >720 Lux</td>
                         <td>--</td>
                     </tr>
                     <tr id="auto-dash-row">
                         <td class="first-row">Auto Dashcam</td>
-                        <td>OFF</td>
-                        <td><button>Change</button></td>
+                        <td id="camera-auto-dashcam-label" >OFF</td>
+                        <td id="camera-auto-dashcam-switch" >
+                            <span class="slider"></span>
+                        </td>
                     </tr>
                     <tr id="blindspot-monitoring-row">
                         <td class="first-row">BlindSpot Monitoring</td>
-                        <td>ON</td>
+                        <td id="device-blindspot-monitoring-label" >ON</td>
                         <td><button>Change</button></td>
                     </tr>
                     <tr id="auto-stop-light-row">
@@ -128,7 +133,7 @@
 
                     <tr>
                         <td class="first-row">FILES</td>
-                        <td>VIDEO: 0, PHOTO: 0</td>
+                        <td>VIDEO: 0<br/>PHOTO: 0</td>
                         <td><button>View Files</button></td>
                     </tr>
                 </table>
