@@ -10,7 +10,7 @@ uint8_t TEMP_STATUS = 0;
 
 //INIT
 esp_err_t i2c_init(void){
-    esp_err_t err;
+    esp_err_t ret_0, ret_1;
     //I2C_NUM_0
     i2c_config_t i2c_0_conf = {
         .mode = I2C_MODE_MASTER,
@@ -21,8 +21,8 @@ esp_err_t i2c_init(void){
         .master.clk_speed = 100000
     };
     
-    ESP_ERROR_CHECK(i2c_param_config(PARSE_I2C_NUM, &i2c_0_conf));
-    ESP_ERROR_CHECK(i2c_driver_install(PARSE_I2C_NUM, I2C_MODE_MASTER, 0, 0, 0));
+    ret_0 = i2c_param_config(PARSE_I2C_NUM, &i2c_0_conf);
+    ret_1 = i2c_driver_install(PARSE_I2C_NUM, I2C_MODE_MASTER, 0, 0, 0);
 
     #ifndef DISPLAY_INCLUDED //only if display is not included -- help RTC
         i2c_config_t i2c_1_conf = {
@@ -37,6 +37,11 @@ esp_err_t i2c_init(void){
         ESP_ERROR_CHECK(i2c_param_config(WORKING_I2C_NUM, &i2c_1_conf));
         ESP_ERROR_CHECK(i2c_driver_install(WORKING_I2C_NUM, I2C_MODE_MASTER, 0, 0, 0));
     #endif
+
+    if(ret_0 != ESP_OK || ret_1 != ESP_OK){
+        vTaskDelay(pdMS_TO_TICKS(2000));
+        return ESP_FAIL;
+    }
 
     return ESP_OK;
 }
@@ -118,4 +123,40 @@ float battery_get_soc() {
     if (soc < 0) soc = 0;
 
     return (float)soc;
+}
+
+
+//LIGHTS
+float lux = 0;
+esp_err_t bh1750_init() {
+    i2c_cmd_handle_t cmd = i2c_cmd_link_create();
+    i2c_master_start(cmd);
+    i2c_master_write_byte(cmd, (BH1750_ADDR << 1) | I2C_MASTER_WRITE, true);
+    i2c_master_write_byte(cmd, 0x10, true); // Continuously H-Resolution Mode
+    i2c_master_stop(cmd);
+    esp_err_t ret = i2c_master_cmd_begin(PARSE_I2C_NUM, cmd, pdMS_TO_TICKS(100));
+    i2c_cmd_link_delete(cmd);
+    
+    if(ret == ESP_FAIL){
+        
+        vTaskDelay(pdMS_TO_TICKS(5000));
+    }
+
+    return ret;
+}
+
+float bh1750_read_lux() {
+    uint8_t data[2];
+    i2c_cmd_handle_t cmd = i2c_cmd_link_create();
+    i2c_master_start(cmd);
+    i2c_master_write_byte(cmd, (BH1750_ADDR << 1) | I2C_MASTER_READ, true);
+    i2c_master_read(cmd, data, 2, I2C_MASTER_LAST_NACK);
+    i2c_master_stop(cmd);
+    esp_err_t ret = i2c_master_cmd_begin(PARSE_I2C_NUM, cmd, pdMS_TO_TICKS(100));
+    i2c_cmd_link_delete(cmd);
+
+    if (ret != ESP_OK) return -1.0;
+
+    uint16_t raw = (data[0] << 8) | data[1];
+    return raw / 1.2; // Convert to lux
 }
