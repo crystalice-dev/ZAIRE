@@ -27,7 +27,7 @@
 
 
 //DEVICE
-#define DEVICE_TYPE         1  // Must come before zaire_system.h -- avoid loop defination
+#define DEVICE_TYPE         0  // Must come before zaire_system.h -- avoid loop defination
 #include <zaire_system.h>
 extern bool WALKIE_STATUS;
 
@@ -41,10 +41,13 @@ esp_err_t uart_init(void);
 //GPS
 #define GPS_LAT_LON_SPEED_CODE "$GPRMC"
 #define GPS_ALT_CODE           "$GPGGA"
-extern char gps_latitude[1024];
-extern char gps_longitude[1024];
+extern char gps_latitude[260];
+extern char gps_longitude[260];
 extern uint8_t gps_speed;
-extern float gps_elevation;
+extern uint16_t gps_elevation;
+extern bool gps_speed_type; // 0 - MPH 1 - KMH
+extern bool gps_elevation_type; // 0 - Feet 1 - Meter
+
 void gps_get_lat_lon_speed(const char* line);
 void gps_get_alt(const char* line);
 long gps_convert_M_2_FT(long elevation);
@@ -94,6 +97,8 @@ float bh1750_read_lux();
     void display_power_off(void);
         //DISPLAY ELEMENTS
         void display_datetime();
+        void display_location();
+        void display_elevation();
         void display_battery(uint8_t percent);
         void display_camera_icon(void);
 
@@ -159,8 +164,8 @@ int uac_device_input_cb(uint8_t *buf, size_t len, size_t *bytes_read, void *arg)
 #define DS3231_ADDR         0x68
 #define PARSE_I2C_NUM       I2C_NUM_0
 #define WORKING_I2C_NUM     I2C_NUM_1
-#define I2C_0_SDA           GPIO_NUM_10
-#define I2C_0_SCL           GPIO_NUM_11
+#define I2C_0_SDA           GPIO_NUM_13
+#define I2C_0_SCL           GPIO_NUM_12
 #define I2C_1_SDA           GPIO_NUM_6
 #define I2C_1_SCL           GPIO_NUM_7
 esp_err_t i2c_init(void);
@@ -173,9 +178,10 @@ esp_err_t gpio_pin_init(void);
 //RTC
 char* _get_RTC_time();
 char* _get_RTC_date();
-esp_err_t set_RTC(uint8_t hour, uint8_t min, uint8_t sec, uint8_t day, uint8_t date, uint8_t month, uint8_t year);
+esp_err_t set_RTC(uint8_t hour, uint8_t min, uint8_t sec, uint8_t day, uint8_t date, char* month, uint8_t year);
 uint8_t dec_to_bcd(uint8_t val);
 uint8_t bcd_to_dec(uint8_t val);
+uint8_t _get_real_month(const char* month);
 
 //TASKS
 #define TASK_HOLD_DELAY             (10)

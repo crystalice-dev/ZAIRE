@@ -62,7 +62,10 @@ char* _get_RTC_date() {
 
 
  //set_RTC(13, 44, 0, 1, 4, 5, 25); // Set to May 3, 2024 12:34:56 -- example
-esp_err_t set_RTC(uint8_t hour, uint8_t min, uint8_t sec, uint8_t day, uint8_t date, uint8_t month, uint8_t year) {
+esp_err_t set_RTC(uint8_t hour, uint8_t min, uint8_t sec, uint8_t day, uint8_t date, char* _month, uint8_t year) {
+
+    uint8_t month = _get_real_month(_month);
+
     uint8_t data[8];
     data[0] = 0x00; // Start at register 0
     data[1] = dec_to_bcd(sec);
@@ -99,4 +102,20 @@ uint8_t dec_to_bcd(uint8_t val) {
 
 uint8_t bcd_to_dec(uint8_t val) {
     return ((val >> 4) * 10) + (val & 0x0F);
+}
+
+// === GET REAL MONTH ===
+uint8_t _get_real_month(const char* month) {
+    const char* months[] = {
+        "ERR", "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+    };
+
+    for (int i = 1; i <= 12; i++) {
+        if (strcmp(month, months[i]) == 0) {
+            return i;
+        }
+    }
+
+    return 0; // return as error
 }

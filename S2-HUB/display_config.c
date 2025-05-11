@@ -69,10 +69,13 @@ void display_welcome_animation(void){
 void display_main_UI(void){
     
     u8g2_ClearBuffer(&display);
-    u8g2_SetFont(&display, u8g2_font_6x12_tr);
+    u8g2_SetFont(&display, u8g2_font_6x10_tr);
 
     display_datetime();
-    display_battery(66); // percent
+    display_location();
+    display_elevation();
+    u8g2_SetFont(&display, u8g2_font_6x12_tr);
+    display_battery(BATTERY_STATUS); // percent
 
     if (gpio_get_level(CAMERA_ON_PIN) == HIGH) {
         display_camera_icon();
@@ -128,9 +131,25 @@ void display_datetime() {
     const char *time = _get_RTC_time();
     const char *date = _get_RTC_date();
     u8g2_DrawStr(&display, 1, 8, time);
-    u8g2_DrawStr(&display, 1, 18, date);
+    u8g2_DrawStr(&display, 35, 8, date);
     
 }
+
+void display_location(){
+    u8g2_DrawStr(&display, 1, 18, gps_latitude);
+    u8g2_DrawStr(&display, 1, 28, gps_longitude);
+}
+
+void display_elevation(){
+    char el[260];
+    if(gps_elevation_type == 1){
+        snprintf(el, sizeof(el), "%dM", gps_elevation);
+    }else{
+        snprintf(el, sizeof(el), "%dFT", gps_elevation);
+    }
+    u8g2_DrawStr(&display, 88, 28, el);
+}
+    
 
 void display_battery(uint8_t percent) {
     u8g2_DrawFrame(&display, 108, 2, 18, 10);   // Battery body
@@ -143,24 +162,24 @@ void display_battery(uint8_t percent) {
 void display_camera_icon(void){
         // 3. Center: Camera icon (outline)
     // Filled camera body
-    u8g2_DrawBox(&display, 40, 4, 20, 12);
+    u8g2_DrawBox(&display, 80, 4, 20, 12);
 
     // Lens cutout (simulated by drawing black disc to "punch" through the fill)
     u8g2_SetDrawColor(&display, 0); // 0 = draw black
-    u8g2_DrawDisc(&display, 50, 9, 5, U8G2_DRAW_ALL);
+    u8g2_DrawDisc(&display, 90, 9, 5, U8G2_DRAW_ALL);
 
     // Restore drawing color to white
     u8g2_SetDrawColor(&display, 1);
-    u8g2_DrawCircle(&display, 50, 9, 4, U8G2_DRAW_ALL); // Outline to make lens pop
+    u8g2_DrawCircle(&display, 90, 9, 4, U8G2_DRAW_ALL); // Outline to make lens pop
 
     // Viewfinder bump
-    u8g2_DrawBox(&display, 42, 2, 7, 3);
+    u8g2_DrawBox(&display, 82, 2, 7, 3);
 }
 
 void display_quick_show(void){
     display_target = DISPLAY_MAIN_UI;
     gpio_set_level(DISPLAY_EN_PIN, HIGH);
-    vTaskDelay(pdMS_TO_TICKS(5000));
+    vTaskDelay(pdMS_TO_TICKS(7000));
     display_target = DISPLAY_EN_OFF;
     vTaskDelay(pdMS_TO_TICKS(1000));
     gpio_set_level(DISPLAY_EN_PIN, LOW);

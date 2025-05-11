@@ -18,8 +18,8 @@
 #if DEVICE_TYPE == DEVICE_TYPE_BICYCLE_HELMET
     // Bicycle Helmet specific logic
     #define DEVICE_NAME "ZAIRE BIKE VISION"
+    #define DISPLAY_INCLUDED
     
-
 #elif DEVICE_TYPE == DEVICE_TYPE_SKI_GOGGLES
     // SKI Goggles-specific logic
     #define DEVICE_NAME "ZAIRE SKI VISION"

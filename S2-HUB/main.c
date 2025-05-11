@@ -48,12 +48,13 @@ void app_main(void){
     //     printf("Could not init bat\n");
     // }
 
+    
 
     //Last roll out
     #ifdef DISPLAY_INCLUDED
         vTaskDelay(pdMS_TO_TICKS(3000));
         display_target = DISPLAY_EN_OFF;
-        vTaskDelay(pdMS_TO_TICKS(2000));
+        vTaskDelay(pdMS_TO_TICKS(500));
         gpio_set_level(DISPLAY_EN_PIN, LOW);
     #endif
 }

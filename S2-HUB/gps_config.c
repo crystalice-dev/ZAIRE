@@ -1,9 +1,11 @@
 #include <globalVar.h> 
 
-char gps_latitude[1024];
-char gps_longitude[1024];
-float gps_elevation = 0;
+char gps_latitude[260] = "0";
+char gps_longitude[260] = "0";
+uint16_t gps_elevation = 0;
 uint8_t gps_speed = 0;
+bool gps_elevation_type = 0;
+bool gps_speed_type = 0;
 
 void gps_get_lat_lon_speed(const char* line) {
     char gps[13][20]; // 13 fields, each max 20 characters
@@ -23,10 +25,13 @@ void gps_get_lat_lon_speed(const char* line) {
 
     snprintf(gps_latitude, sizeof(gps_latitude),"%s° %s", gps[3], gps[4]);
     snprintf(gps_longitude, sizeof(gps_longitude),"%s° %s", gps[5], gps[6]);
-    // Example use
-    printf("Location: %s ",gps_latitude);
-    printf("%s\n",gps_longitude);
-    // printf("Speed (knots): %s\n", gps[7]);
+    int data = atoi(gps[7]);
+    if(gps_speed_type == 1){
+        gps_speed = data * 1.852;
+    }else{
+        gps_speed = data * 1.15078;
+    }
+    
 }
 
 void gps_get_alt(const char* line){
@@ -48,8 +53,10 @@ void gps_get_alt(const char* line){
         return;
     }
 
-
-    printf("Altitude: %s %s\n", fields[9], fields[10]);
-    float data = atof(fields[9]);
-    printf("data: %.2f\n", data);
+    float data = atoi(fields[9]);
+    if(gps_elevation_type == 1){
+        gps_elevation = data;
+    }else{
+        gps_elevation = data*3.28084;
+    }
 }

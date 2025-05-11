@@ -6,44 +6,62 @@ httpd_handle_t web_server = NULL;
 
 /* === MAIN HTML PAGE === */
 
-esp_err_t update_post_handler(httpd_req_t *req)
+esp_err_t update_time_date_post_handler(httpd_req_t *req)
 {
-    char buf[256];
-    int ret, remaining = req->content_len;
-
-    ESP_LOGI("POST", "Handling settings POST...");
-    memset(buf, 0, sizeof(buf));
+    
+    char now[7][4]; // 13 fields, each max 10 characters
+    int index = 0;
+    int subIndex = 0;
+    char buf[128];
+    int remaining = req->content_len;
 
     while (remaining > 0) {
-        if ((ret = httpd_req_recv(req, buf, MIN(remaining, sizeof(buf) - 1))) <= 0) {
-            return ESP_FAIL;
-        }
-        remaining -= ret;
+        int received = httpd_req_recv(req, buf, MIN(remaining, sizeof(buf)));
+        if (received <= 0) break;
+        remaining -= received;
     }
+    buf[req->content_len] = '\0';
+    ESP_LOGI("POST", "Got: %s", buf);
 
-    buf[sizeof(buf) - 1] = '\0';
-    ESP_LOGI("POST", "Received form data: %s", buf);
+    for (int i = 0; buf[i] != '\0' && index < 7; i++) {
+        if (buf[i] == ',') {
+            now[index][subIndex] = '\0';  // Null-terminate current token
+            index++;
+            subIndex = 0;
+        } else {
+            now[index][subIndex++] = buf[i];
+        }
+    }
+    now[index][subIndex] = '\0'; // DO NOT DELETE -- HELPS MEMORY
 
-    httpd_resp_set_type(req, "text/plain");
-    httpd_resp_sendstr(req, "Settings received successfully!");
+    //ex: 2025 -> 25
+    char short_year[3];
+    strncpy(short_year, now[6] + 2, 2);
+    short_year[2] = '\0';
+    printf("%s\n", short_year);
+    
+    //Set RTC
+    set_RTC(atoi(now[0]),atoi(now[1]),atoi(now[2]),atoi(now[3]),atoi(now[4]),now[5],atoi(short_year));
+    
     return ESP_OK;
 }
 
 esp_err_t device_info_handler(httpd_req_t *req){
     
-    static char info[1040]; // DEVICE_TYPE-DEVCE_NAME
+    static char info[3120]; // DEVICE_TYPE-DEVCE_NAME
 
-   // snprintf(info,sizeof(info), "%d-%s-%s-%d-%.0f%%-{%s %s}-%s-%d%%", DEVICE_TYPE, DEVICE_NAME, WIFI_SSID, WALKIE_STATUS, BATTERY_STATUS, gps_latitude, gps_longitude, gps_elevation, TEMP_STATUS);
-    printf("%s\n", info);
+    snprintf(info,sizeof(info), "%d,%s,%s,%d,%.2f%%,%s,%s,%d,%d,%d,%.2f,%s,%s", DEVICE_TYPE, DEVICE_NAME, WIFI_SSID, WALKIE_STATUS, BATTERY_STATUS, 
+        gps_latitude, gps_longitude, gps_elevation, gps_elevation_type, 
+        TEMP_STATUS, lux, _get_RTC_date(), _get_RTC_time());
 
     httpd_resp_set_type(req, "text/plain");
-    httpd_resp_sendstr(req, "pong!");
+    httpd_resp_sendstr(req, info);
     return ESP_OK;
 }
 
 //PAGEs
 
-httpd_uri_t update = { .uri = "/update", .method = HTTP_POST, .handler = update_post_handler, .user_ctx = NULL };
+httpd_uri_t update_time_date = { .uri = "/update_time_date", .method = HTTP_POST, .handler = update_time_date_post_handler, .user_ctx = NULL };
 httpd_uri_t device_info = { .uri = "/device_info", .method = HTTP_GET, .handler = device_info_handler, .user_ctx = NULL };
 
 //FILEs
@@ -114,7 +132,7 @@ httpd_handle_t start_webserver(void)
 
     if (httpd_start(&web_server, &config) == ESP_OK) {
         httpd_register_uri_handler(web_server, &main_page);
-        httpd_register_uri_handler(web_server, &update);
+        httpd_register_uri_handler(web_server, &update_time_date);
         httpd_register_uri_handler(web_server, &device_info);
         httpd_register_uri_handler(web_server, &script_handler);
         ESP_LOGI(TAG_DNS, "Web server started");
