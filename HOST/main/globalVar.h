@@ -121,12 +121,6 @@ extern httpd_handle_t web_server;
 
 httpd_handle_t start_webserver(void);
 esp_err_t main_page_get_handler(httpd_req_t *req);
-esp_err_t js_handler(httpd_req_t *req);
-esp_err_t css_handler(httpd_req_t *req);
-esp_err_t ping_handler(httpd_req_t *req);
-esp_err_t update_post_handler(httpd_req_t *req);
-
-
 
 //NVS -- Non-Volatile Storage
 #define WALKIE_NVS_NAMESPACE        "walkie"

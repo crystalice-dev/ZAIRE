@@ -21,7 +21,6 @@ esp_err_t update_time_date_post_handler(httpd_req_t *req)
         remaining -= received;
     }
     buf[req->content_len] = '\0';
-    ESP_LOGI("POST", "Got: %s", buf);
 
     for (int i = 0; buf[i] != '\0' && index < 7; i++) {
         if (buf[i] == ',') {
@@ -46,6 +45,40 @@ esp_err_t update_time_date_post_handler(httpd_req_t *req)
     return ESP_OK;
 }
 
+esp_err_t update_accessory_post_handler(httpd_req_t *req){
+
+    char buf[128];
+    int remaining = req->content_len;
+
+    while (remaining > 0) {
+        int received = httpd_req_recv(req, buf, MIN(remaining, sizeof(buf)));
+        if (received <= 0) break;
+        remaining -= received;
+    }
+    buf[req->content_len] = '\0';
+
+    printf("%c\n", buf[0]);
+
+    return ESP_OK;
+}
+
+esp_err_t update_device_name_post_handler(httpd_req_t *req){
+
+    char buf[128];
+    int remaining = req->content_len;
+
+    while (remaining > 0) {
+        int received = httpd_req_recv(req, buf, MIN(remaining, sizeof(buf)));
+        if (received <= 0) break;
+        remaining -= received;
+    }
+    buf[req->content_len] = '\0';
+
+    printf("%s\n", buf);
+
+    return ESP_OK;
+}
+
 esp_err_t device_info_handler(httpd_req_t *req){
     
     static char info[3120]; // DEVICE_TYPE-DEVCE_NAME
@@ -62,6 +95,8 @@ esp_err_t device_info_handler(httpd_req_t *req){
 //PAGEs
 
 httpd_uri_t update_time_date = { .uri = "/update_time_date", .method = HTTP_POST, .handler = update_time_date_post_handler, .user_ctx = NULL };
+httpd_uri_t update_accessory = { .uri = "/update_accessory", .method = HTTP_POST, .handler = update_accessory_post_handler, .user_ctx = NULL };
+httpd_uri_t update_device_name = { .uri = "/update_device_name", .method = HTTP_POST, .handler = update_device_name_post_handler, .user_ctx = NULL };
 httpd_uri_t device_info = { .uri = "/device_info", .method = HTTP_GET, .handler = device_info_handler, .user_ctx = NULL };
 
 //FILEs
@@ -133,6 +168,8 @@ httpd_handle_t start_webserver(void)
     if (httpd_start(&web_server, &config) == ESP_OK) {
         httpd_register_uri_handler(web_server, &main_page);
         httpd_register_uri_handler(web_server, &update_time_date);
+        httpd_register_uri_handler(web_server, &update_accessory);
+        httpd_register_uri_handler(web_server, &update_device_name);
         httpd_register_uri_handler(web_server, &device_info);
         httpd_register_uri_handler(web_server, &script_handler);
         ESP_LOGI(TAG_DNS, "Web server started");
