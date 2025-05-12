@@ -33,6 +33,7 @@ echo '--ZAIRE HELMETS CAMERA AND GPIOs REQ COMPLETED--'
 #check camera fps  v4l2-ctl --device=/dev/video0 --list-formats-ext
 ## <------------- RESERVED --------------->
 ##gcc -o main main.c -lwiringPi -lm -lpthread -lrt -lcrypt
+##g++ just_vid_main.cpp -o zaire_vision `pkg-config --cflags --libs opencv4`
 #to be test
 #fast
 ## enable UART2 & UART3 --> sudo armbian-config
