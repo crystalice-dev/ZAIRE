@@ -12,9 +12,13 @@ var gps_elevation_type;
 var TEMP_STATUS;
 var lux;
 
-var loginBox = document.getElementById("login-box");
-var logoutBox = document.getElementById("logout-box");
-var homeBox  = document.getElementById("home-box");
+
+//Views
+const loginBox = document.getElementById("login-box");
+const logoutBox = document.getElementById("logout-box");
+const homeBox = document.getElementById("home-box");
+const newNameChangeBox = document.getElementById("device-name-change-box");
+const newWifiNameBox = document.getElementById("device-wifi-change-box"); 
 
 //Log-in
 var loginBtn = document.getElementById("login-btn");
@@ -26,6 +30,7 @@ let device_time_label = document.getElementById("device-time-label");
 let device_name_label = document.getElementById("device-name-label");
 let device_wifi_ssid_label = document.getElementById("device-wifi-ssid-label");
 let device_walkie_status_label = document.getElementById("device-walkie-status-label");
+let device_walkie_status_checkbox = document.getElementById("device-walkie-status-checkbox");
 let device_battery_status_label = document.getElementById("device-battery-status-label");
 let device_gps_latitude_label = document.getElementById("device-gps-latitude-label");
 let device_gps_londitude_label = document.getElementById("device-gps-longitude-label");
@@ -80,7 +85,8 @@ const _getDeviceInfo = () => {
             DEVICE_TYPE = deviceInfo[0];
             device_name_label.innerHTML = deviceInfo[1];
             device_wifi_ssid_label.innerHTML   = deviceInfo[2];
-            device_walkie_status_label.innerHTML = deviceInfo[3];
+            device_walkie_status_label.innerHTML =`${ deviceInfo[3] == '1'? 'ON':'OFF'}`;
+            device_walkie_status_checkbox.value = deviceInfo[3] == '1'? true : false;
             device_battery_status_label.innerHTML = deviceInfo[4];
             device_gps_latitude_label.innerHTML  = deviceInfo[5];
             device_gps_londitude_label.innerHTML = deviceInfo[6];
@@ -138,14 +144,69 @@ const _setDeviceTimeDate=()=>{
 
 }
 
-const _change_device_name=(txt)=>{
-    alert("device name changed");
+const _goBack=()=>{
+    homeBox.hidden = false;
+    newNameChangeBox.hidden = true;
+    newWifiNameBox.hidden = true;
 }
 
-const _change_wifi_ssid=(txt)=>{
-    alert("SSID changed");
+const _change_device_name_present=()=>{
+    homeBox.hidden = true;
+    newNameChangeBox.hidden = false;
 }
 
-const _change_walkie_status=()=>{
-    alert("WALKIE STATUS CHANGED");
+const _change_wifi_ssid_present=()=>{
+    homeBox.hidden = true;
+    newWifiNameBox.hidden = false;
 }
+
+const _change_device_name = () => {
+    const input = document.getElementById("device-new-name-input");
+    const current = document.getElementById("device-name-label");
+    const name = input.value;
+
+   if (name !== '' && !name.includes(' ')) {
+        fetch("/update_device_name", {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: name
+        });
+
+        current.innerHTML = name;
+    }
+    
+    input.value = '';  // Clear the input box
+    
+    _goBack();
+};
+
+
+const _change_wifi_ssid=()=>{
+
+}
+
+const _change_walkie_status = () => {
+    const checkbox = document.getElementById("device-walkie-status-checkbox");
+    const label = document.getElementById("device-walkie-status-label");
+
+    var value;
+
+    if (checkbox.checked) {
+        label.innerText = "ON";
+        value = "W1";
+    } else {
+        label.innerText = "OFF";
+        value = "W0";
+    }
+
+    fetch("/update_accessory",{
+        method:"POST",
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: value
+    })
+
+};

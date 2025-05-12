@@ -40,7 +40,7 @@
         </style>
     </head>
     <body>
-        <div id="login-box">
+        <div id="login-box" >
             <h1>ZAIRE SYSTEM</h1>
             <input id="login-input" type="tel" maxlength="6" placeholder="Enter Code" />
             <button id="login-btn">LOG IN</button>
@@ -68,17 +68,17 @@
                     <tr>
                         <td class="first-row">DEVICE NAME</td>
                         <td id="device-name-label" >ZAIRE_SETTINGS</td>
-                        <td><button onclick="_change_device_name()" >Change</button></td>
+                        <td><button onclick="_change_device_name_present()" >Change</button></td>
                     </tr>
                     <tr>
                         <td class="first-row">WIFI SSID</td>
                         <td id="device-wifi-ssid-label" >ZAIRE_SETTINGS</td>
-                        <td><button onclick="_change_wifi_ssid()" >Change</button></td>
+                        <td><button onclick="_change_wifi_ssid_present()" >Change</button></td>
                     </tr>
                     <tr>
                         <td class="first-row">WALKIE STATUS</td>
                         <td id="device-walkie-status-label" >WALKIE ON</td>
-                        <td><button onclick="_change_walkie_status()" >Change</button></td>
+                        <td><input type="checkbox" id="device-walkie-status-checkbox"  onchange="_change_walkie_status()" /></td>
                     </tr>
                     <tr>
                         <td class="first-row">BATTERY</td>
@@ -139,7 +139,20 @@
                 </table>
             </div>
         </div>
-       
+        <div id="device-name-change-box" hidden >
+            <h1>Change Device Name</h1>
+            <input id="device-new-name-input" type="text" maxlength="15" placeholder="Enter New Device Name" /><br/>
+            <button  onclick="_goBack()" >GO BACK</button>
+            <button  onclick="_change_device_name()">CHANGE</button>
+            
+        </div>
+        <div id="device-wifi-change-box" hidden >
+            <h1>Change Settings ID</h1>
+            <input id="device-wifi-ssid-input" type="text" maxlength="15" placeholder="Enter New Settings Name" /><br/>
+            <button onclick="_goBack()" >GO BACK</button>
+            <button onclick="_change_wifi_ssid()">CHANGE</button>
+            
+        </div>
     
         <script src="script.js"></script>
     </body>
