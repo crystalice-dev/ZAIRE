@@ -1,69 +1,25 @@
-| Supported Targets | ESP32 | ESP32-C2 | ESP32-C3 | ESP32-C6 | ESP32-H2 | ESP32-P4 | ESP32-S2 | ESP32-S3 |
-| ----------------- | ----- | -------- | -------- | -------- | -------- | -------- | -------- | -------- |
+| Target: ESP32-S2 N4R2| </br>
+| Envmnt: ESP-IDF 5.3 | </br>
+| vrsion: 3.0 | </br>
+| Author: Yann Kabambi | </br>
 
-# Blink Example
+# Zaire SYSTEM - S2 HUB
 
-(See the README.md file in the upper level 'examples' directory for more information about examples.)
+(See the README.md file in the upper level 'zaire-system' directory for more information about This whole project.)
 
-This example demonstrates how to blink a LED by using the GPIO driver or using the [led_strip](https://components.espressif.com/component/espressif/led_strip) library if the LED is addressable e.g. [WS2812](https://cdn-shop.adafruit.com/datasheets/WS2812B.pdf). The `led_strip` library is installed via [component manager](main/idf_component.yml).
 
-## How to Use Example
+The following contains a list of all the responsibilities this firmware has:
 
-Before project configuration and build, be sure to set the correct chip target using `idf.py set-target <chip_name>`.
+#### AUDIO:
+* idf.py add-dependency "espressif/usb_device_uac=*"
+* test: arecord -v -D hw:2,0 -f S16_LE -c 1 -r 16000 output3.wav
 
-### Hardware Required
+### DISPLAY:
 
-* A development board with normal LED or addressable LED on-board (e.g., ESP32-S3-DevKitC, ESP32-C6-DevKitC etc.)
-* A USB cable for Power supply and programming
+* Create a directory called components in your main project directory.
+* Change into the components directory.
+* Run git clone https://github.com/mkfrey/u8g2-hal-esp-idf.git to bring in the latest copy of this library.
+* Run git clone https://github.com/olikraus/u8g2.git to bring in a the latest copy of u8g2 library.
+* for u8g2 cMakeLists.txt copy from -> https://github.com/olikraus/u8g2/blob/e52b1b52e6a8fbff193109bd4e9c72d9a1d32e4f/CMakeLists.txt
 
-See [Development Boards](https://www.espressif.com/en/products/devkits) for more information about it.
 
-### Configure the Project
-
-Open the project configuration menu (`idf.py menuconfig`).
-
-In the `Example Configuration` menu:
-
-* Select the LED type in the `Blink LED type` option.
-  * Use `GPIO` for regular LED
-  * Use `LED strip` for addressable LED
-* If the LED type is `LED strip`, select the backend peripheral
-  * `RMT` is only available for ESP targets with RMT peripheral supported
-  * `SPI` is available for all ESP targets
-* Set the GPIO number used for the signal in the `Blink GPIO number` option.
-* Set the blinking period in the `Blink period in ms` option.
-
-### Build and Flash
-
-Run `idf.py -p PORT flash monitor` to build, flash and monitor the project.
-
-(To exit the serial monitor, type ``Ctrl-]``.)
-
-See the [Getting Started Guide](https://docs.espressif.com/projects/esp-idf/en/latest/get-started/index.html) for full steps to configure and use ESP-IDF to build projects.
-
-## Example Output
-
-As you run the example, you will see the LED blinking, according to the previously defined period. For the addressable LED, you can also change the LED color by setting the `led_strip_set_pixel(led_strip, 0, 16, 16, 16);` (LED Strip, Pixel Number, Red, Green, Blue) with values from 0 to 255 in the [source file](main/blink_example_main.c).
-
-```text
-I (315) example: Example configured to blink addressable LED!
-I (325) example: Turning the LED OFF!
-I (1325) example: Turning the LED ON!
-I (2325) example: Turning the LED OFF!
-I (3325) example: Turning the LED ON!
-I (4325) example: Turning the LED OFF!
-I (5325) example: Turning the LED ON!
-I (6325) example: Turning the LED OFF!
-I (7325) example: Turning the LED ON!
-I (8325) example: Turning the LED OFF!
-```
-
-Note: The color order could be different according to the LED model.
-
-The pixel number indicates the pixel position in the LED strip. For a single LED, use 0.
-
-## Troubleshooting
-
-* If the LED isn't blinking, check the GPIO or the LED type selection in the `Example Configuration` menu.
-
-For any technical queries, please open an [issue](https://github.com/espressif/esp-idf/issues) on GitHub. We will get back to you soon.
