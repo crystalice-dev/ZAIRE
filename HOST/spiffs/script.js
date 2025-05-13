@@ -1,4 +1,9 @@
 
+//DEVICE
+const DEVICE_TYPE_SKI_GOGGLES = '0';
+const DEVICE_TYPE_BICYCLE_HELMET = '1';
+const DEVICE_TYPE_MOTOR_HELMET = '2';
+
 //Infos
 let DEVICE_TYPE;
 let DEVICE_NAME;
@@ -38,7 +43,14 @@ let device_gps_elevation_label = document.getElementById("device-gps-elevation-l
 let device_temperature_label = document.getElementById("device_temperature_label");
 let device_lux_label = document.getElementById("device_lux_label");
 let camera_auto_dashcam_label = document.getElementById("camera-auto-dashcam-label");
-let camera_auto_dashcam_switch = document.getElementById("camera-auto-dashcam-switch");
+let camera_auto_dashcam_check = document.getElementById("device-auto-dashcam-status-checkbox");
+let device_blindspot_monitoring_label = document.getElementById("device-blindspot-monitoring-label");
+let device_blindspot_monitoring_check = document.getElementById("device-blindspot-monitoring-status-checkbox");
+let device_auto_back_light_label = document.getElementById("device-auto-back-light-label");
+let device_auto_back_light_check = document.getElementById("device-auto-back-light-checkbox");
+let device_turn_signal_duration_label = document.getElementById("turn-signal-duration-label");
+let device_video_label = document.getElementById("device-video-label");
+let device_photo_label = document.getElementById("device-photo-label");
 
 // Modular elemets
 var elevation_row = document.getElementById("elevation-row");
@@ -69,9 +81,6 @@ loginBtn.onclick=()=>{
 
 const onBoard=()=>{
     _getDeviceInfo(); // Get all device info's
-
-    // device_date_label.innerText = _getDate();
-    // device_time_label.innerText = _getTime();
 }
 
 
@@ -95,21 +104,30 @@ const _getDeviceInfo = () => {
             device_lux_label.innerHTML = deviceInfo[10];
             device_date_label.innerText = deviceInfo[11];
             device_time_label.innerText = deviceInfo[12];
+            camera_auto_dashcam_label.innerHTML = deviceInfo[13] == '1'? 'ON' : 'OFF';
+            camera_auto_dashcam_check.checked = deviceInfo[13] == '1'? true : false;
+            device_blindspot_monitoring_label.innerHTML = deviceInfo[14] == '1'? 'ON' : 'OFF';
+            device_blindspot_monitoring_check.checked = deviceInfo[14] == '1'? true : false;
+            device_auto_back_light_label.innerHTML = deviceInfo[15] == '1'? 'ON' : 'OFF';
+            device_auto_back_light_check.checked = deviceInfo[15] == '1'? true : false;
+            device_turn_signal_duration_label.innerHTML = `${deviceInfo[16]} sec`;
+            const radios = document.getElementsByName("delay");
+            for(let i = 0; i < radios.length; i ++){
+                if(radios[i].value == deviceInfo[16]){
+                    radios[i].checked = true;
+                    break;
+                }
+            }
 
-            deviceInfo[0] == '0'? hide_helmet_elements(): null;
-            deviceInfo[0] == '2'? hide_bicycle_elemtents(): null;
+            device_video_label.innerHTML = `Videos: ${deviceInfo[17]}`;
+            device_photo_label.innerHTML = `Photos: ${deviceInfo[18]}`;
+
+            deviceInfo[0] == DEVICE_TYPE_SKI_GOGGLES? hide_helmet_elements(): null;
+            deviceInfo[0] == DEVICE_TYPE_MOTOR_HELMET? hide_bicycle_elemtents(): null;
 
         });
         
 };
-
-
-// function pingESP() {
-//   fetch('/ping')
-//     .then(res => res.text())
-//     .then(txt => home_welcome_label.innerText = txt);
-// }
-
 
 // CHANGES
 
@@ -184,7 +202,25 @@ const _change_device_name = () => {
 
 
 const _change_wifi_ssid=()=>{
+    const input = document.getElementById("device-wifi-ssid-input");
+    const current = document.getElementById("device-wifi-ssid-label");
+    const name = input.value;
 
+    if (name !== '' && !name.includes(' ')) {
+            fetch("/update_wifi_ssid", {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: name
+            });
+
+            current.innerHTML = name;
+        }
+        
+        input.value = '';  // Clear the input box
+        
+        _goBack();
 }
 
 const _change_walkie_status = () => {
@@ -210,3 +246,99 @@ const _change_walkie_status = () => {
     })
 
 };
+
+const _change_auto_dashcam_status = () => {
+    const checkbox = document.getElementById("device-auto-dashcam-status-checkbox");
+    const label = document.getElementById("camera-auto-dashcam-label");
+
+    var value;
+
+    if (checkbox.checked) {
+        label.innerText = "ON";
+        value = "D1";
+    } else {
+        label.innerText = "OFF";
+        value = "D0";
+    }
+
+    fetch("/update_accessory",{
+        method:"POST",
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: value
+    })
+
+};
+
+const _change_blindspot_monitoring_status = () => {
+    const checkbox = document.getElementById("device-blindspot-monitoring-status-checkbox");
+    const label = document.getElementById("device-blindspot-monitoring-label");
+
+    var value;
+
+    if (checkbox.checked) {
+        label.innerText = "ON";
+        value = "B1";
+    } else {
+        label.innerText = "OFF";
+        value = "B0";
+    }
+
+    fetch("/update_accessory",{
+        method:"POST",
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: value
+    })
+
+};
+
+const _change_auto_back_light_status = () => {
+    const checkbox = document.getElementById("device-auto-back-light-checkbox");
+    const label = document.getElementById("device-auto-back-light-label");
+
+    var value;
+
+    if (checkbox.checked) {
+        label.innerText = "ON";
+        value = "L1";
+    } else {
+        label.innerText = "OFF";
+        value = "L0";
+    }
+
+    fetch("/update_accessory",{
+        method:"POST",
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: value
+    })
+
+};
+
+const _change_turn_signal_duration = () => {
+    const radios = document.getElementsByName("delay");
+    var value;
+    for (let i = 0; i < radios.length; i++) {
+        if (radios[i].checked) {
+            document.getElementById("turn-signal-duration-label").innerHTML = radios[i].value + " sec";
+            
+            value = `S${radios[i].value}`;
+
+            fetch("/update_accessory",{
+                method:"POST",
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: value
+            })
+
+            break;
+        }
+    }
+
+};
+

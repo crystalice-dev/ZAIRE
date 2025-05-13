@@ -111,29 +111,35 @@
                     <tr id="auto-dash-row">
                         <td class="first-row">Auto Dashcam</td>
                         <td id="camera-auto-dashcam-label" >OFF</td>
-                        <td id="camera-auto-dashcam-switch" >
-                            <span class="slider"></span>
-                        </td>
+                        <td> <input type="checkbox" id="device-auto-dashcam-status-checkbox"  onchange="_change_auto_dashcam_status()" /></td>
                     </tr>
                     <tr id="blindspot-monitoring-row">
                         <td class="first-row">BlindSpot Monitoring</td>
                         <td id="device-blindspot-monitoring-label" >ON</td>
-                        <td><button>Change</button></td>
+                        <td><input type="checkbox" id="device-blindspot-monitoring-status-checkbox"  onchange="_change_blindspot_monitoring_status()" /></td>
                     </tr>
                     <tr id="auto-stop-light-row">
-                        <td class="first-row">Auto Stop Light</td>
-                        <td>ON</td>
-                        <td><button>Change</button></td>
+                        <td class="first-row">Auto Back Light</td>
+                        <td id="device-auto-back-light-label" >ON</td>
+                        <td><input type="checkbox" id="device-auto-back-light-checkbox"  onchange="_change_auto_back_light_status()" /></td>
                     </tr>
                     <tr id="turn-signal-duration-row">
                         <td class="first-row">Turn Signal Duration</td>
-                        <td>5 Ticks</td> 
-                        <td><button>Change</button></td>
+                        <td id="turn-signal-duration-label" >5 Ticks</td> 
+                        <td>
+                            <input type="radio" name="delay" value="3" onchange="_change_turn_signal_duration()"> 3 sec<br/>
+                            <input type="radio" name="delay" value="5" onchange="_change_turn_signal_duration()"> 5 sec<br/>
+                            <input type="radio" name="delay" value="7" onchange="_change_turn_signal_duration()"> 7 sec
+                        </td>
+                        
                     </tr>
 
                     <tr>
                         <td class="first-row">FILES</td>
-                        <td>VIDEO: 0<br/>PHOTO: 0</td>
+                        <td>
+                            <p id="device-video-label" ></p>  
+                            <p id="device-photo-label" ></p>
+                        </td>
                         <td><button>View Files</button></td>
                     </tr>
                 </table>
