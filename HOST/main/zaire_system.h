@@ -8,37 +8,34 @@
 #define HIGH        1
 #define LOW         0
 
-//DEVICE TYPES
-#define DEVICE_TYPE_BICYCLE_HELMET  (0)
-#define DEVICE_TYPE_SKI_GOGGLES     (1)
-#define DEVICE_TYPE_MOTOR_HELMET    (2)
-
 
 
 #if DEVICE_TYPE == DEVICE_TYPE_BICYCLE_HELMET
     // Bicycle Helmet specific logic
-    #define DEVICE_NAME "ZAIRE BIKE VISION"
+   
     #define DISPLAY_INCLUDED
     
 #elif DEVICE_TYPE == DEVICE_TYPE_SKI_GOGGLES
     // SKI Goggles-specific logic
-    #define DEVICE_NAME "ZAIRE SKI VISION"
+    
     #define DISPLAY_INCLUDED
 
 #elif DEVICE_TYPE == DEVICE_TYPE_MOTOR_HELMET
     // Motor Helmet specific logic
-    #define DEVICE_NAME "ZAIRE MOTOR VISION"
+    
+    #define DISPLAY_INCLUDED
 
 #else
     #error "Unknown DEVICE_TYPE defined" // Defaults at 0
 #endif
 
 
-//From EEPROM
-uint8_t get_device_type(void);
-esp_err_t set_device_type(uint8_t device_n);
-
 //File Management
-void init_spiffs(void);
+esp_err_t init_spiffs(void);
+
+
+//System
+esp_err_t zaire_system_check();
+esp_err_t zaire_load_nvs_data();
 
 #endif // ZAIRE_SYSTEM_H

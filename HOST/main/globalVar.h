@@ -27,9 +27,13 @@
 
 
 //DEVICE
-#define DEVICE_TYPE         0  // Must come before zaire_system.h -- avoid loop defination
+//DEVICE TYPES
+#define DEVICE_TYPE_SKI_GOGGLES     (0)
+#define DEVICE_TYPE_BICYCLE_HELMET  (1)
+#define DEVICE_TYPE_MOTOR_HELMET    (2)
+
+#define DEVICE_TYPE        DEVICE_TYPE_BICYCLE_HELMET// Must come before zaire_system.h -- avoid loop defination
 #include <zaire_system.h>
-extern bool WALKIE_STATUS;
 
 //UART
 #define GPS_UART_NUM    UART_NUM_2
@@ -112,7 +116,6 @@ float bh1750_read_lux();
 
 //NETWORK
 #define EXAMPLE_MAX_STA_CONN 4
-extern char *WIFI_SSID;
 esp_err_t wifi_init();
 
 //DNS-CAPTIVE-PORTAL
@@ -134,6 +137,10 @@ extern nvs_handle_t walkie_addr_nvs_registered;
 extern nvs_handle_t remote_addr_nvs_registered;
 extern nvs_handle_t server_nvs_handler;
 extern uint8_t n_value; // place holder for NVS_read();
+extern char DEVICE_NAME[124];
+extern char WIFI_SSID[124];
+extern uint8_t WALKIE_STATUS, AUTO_DASHCAM, BLINDSPOT_MONITORING, AUTO_BACK_LIGHT;
+extern uint8_t TURN_SIGNAL_DURATION;
 esp_err_t NVS_init(void);
 esp_err_t NVS_start(const char *namespace, const nvs_handle_t *handler); // Open NVS
 esp_err_t NVS_write(nvs_handle_t handler, const char *key, uint8_t value);

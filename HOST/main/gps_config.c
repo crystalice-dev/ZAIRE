@@ -49,7 +49,6 @@ void gps_get_alt(const char* line){
     }
 
     if (i < 10) {
-        printf("Invalid GPGGA sentence\n");
         return;
     }
 

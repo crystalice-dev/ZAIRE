@@ -1,20 +1,67 @@
 #include <globalVar.h>
 
 
-uint8_t get_device_type(void){
+esp_err_t zaire_system_check(){
 
+    if(init_spiffs() != ESP_OK){
+        return ESP_FAIL;
+    }
 
-    return 0;
+    if(NVS_init() != ESP_OK){
+        return ESP_FAIL;
+    }
 
+    if(wifi_init() != ESP_OK){
+        return ESP_FAIL;
+    }
+
+    if(gpio_pin_init() != ESP_OK){
+        return ESP_FAIL;
+    }
+
+    #ifdef DISPLAY_INCLUDED
+        if(display_init() != ESP_OK){
+            return ESP_FAIL;
+        }
+    #endif   
+    
+    if(i2c_init() != ESP_OK){
+        return ESP_FAIL;
+    }
+
+    if(bh1750_init() != ESP_OK){
+        return ESP_FAIL;
+    }
+
+    if(uart_init() != ESP_OK){
+        return ESP_FAIL;
+    }
+    
+    if(init_i2s() != ESP_OK){
+        return ESP_FAIL;
+    }
+
+    if(init_usb_mic() != ESP_OK){
+        return ESP_FAIL;
+    }
+
+    return ESP_OK;
 }
-esp_err_t set_device_type(uint8_t device_n){
 
+esp_err_t zaire_load_nvs_data(){
+
+    WALKIE_STATUS = NVS_read(server_nvs_handler, "WALKIE_STATUS");
+    AUTO_DASHCAM = NVS_read(server_nvs_handler, "AUTO_DASHCAM");
+    BLINDSPOT_MONITORING = NVS_read(server_nvs_handler, "BLINDSPOT_MONITORING");
+    AUTO_BACK_LIGHT = NVS_read(server_nvs_handler, "AUTO_BACK_LIGHT");
+    TURN_SIGNAL_DURATION = NVS_read(server_nvs_handler, "TURN_SIGNAL_DURATION");
+    
 
     return ESP_OK;
 }
 
 
-void init_spiffs(void) {
+esp_err_t init_spiffs(void) {
     esp_vfs_spiffs_conf_t conf = {
         .base_path = "/spiffs",
         .partition_label = "storage",
@@ -26,9 +73,5 @@ void init_spiffs(void) {
     size_t total = 0, used = 0;
     esp_err_t res = esp_spiffs_info(conf.partition_label, &total, &used);
 
-    if(res == ESP_OK){
-        ESP_LOGI("SPIFF", "Total: %d, Used: %d, Left: %d", total, used, total - used);
-    }else{
-        ESP_LOGI("SPIFF", "No");
-    }
+    return res;
 }

@@ -5,6 +5,11 @@ nvs_handle_t walkie_addr_nvs_registered;
 nvs_handle_t remote_addr_nvs_registered;
 nvs_handle_t server_nvs_handler;
 
+char DEVICE_NAME[124] = "ZAIRE VISION";
+char WIFI_SSID[124] = "ZAIRE_SETTINGS";
+uint8_t WALKIE_STATUS, AUTO_DASHCAM, BLINDSPOT_MONITORING, AUTO_BACK_LIGHT = 0;
+uint8_t TURN_SIGNAL_DURATION = 5;
+
 esp_err_t NVS_init(void){
 
     if(NVS_start(WALKIE_NVS_NAMESPACE, &walkie_addr_nvs_registered)){
@@ -12,6 +17,10 @@ esp_err_t NVS_init(void){
     }
 
     if(NVS_start(REMOTE_NVS_NAMESPACE, &remote_addr_nvs_registered)){
+        return ESP_FAIL;
+    }
+
+    if(NVS_start(SERVER_NVS_NAMESPACE, &server_nvs_handler)){
         return ESP_FAIL;
     }
 
@@ -50,8 +59,7 @@ uint8_t NVS_read(nvs_handle_t handler, const char *key) {
         }
     }
 
-    // Return a default value (e.g., 0) on error or out-of-range value
-    return ESP_FAIL;
+    return 0xFF; // Special code meaning "not found or error"
 }
 
 esp_err_t NVS_erase(nvs_handle_t handler, const char *key){

@@ -57,7 +57,7 @@ esp_err_t update_accessory_post_handler(httpd_req_t *req){
     }
     buf[req->content_len] = '\0';
 
-    printf("%c\n", buf[0]);
+    printf("%s\n", buf);
 
     return ESP_OK;
 }
@@ -79,16 +79,36 @@ esp_err_t update_device_name_post_handler(httpd_req_t *req){
     return ESP_OK;
 }
 
+esp_err_t update_wifi_ssid_post_handler(httpd_req_t *req){
+
+    char buf[128];
+    int remaining = req->content_len;
+
+    while (remaining > 0) {
+        int received = httpd_req_recv(req, buf, MIN(remaining, sizeof(buf)));
+        if (received <= 0) break;
+        remaining -= received;
+    }
+    buf[req->content_len] = '\0';
+
+    printf("%s\n", buf);
+
+    return ESP_OK;
+}
+
 esp_err_t device_info_handler(httpd_req_t *req){
     
-    static char info[3120]; // DEVICE_TYPE-DEVCE_NAME
+    char info[8320]; // DEVICE_TYPE-DEVCE_NAME
 
-    snprintf(info,sizeof(info), "%d,%s,%s,%d,%.2f%%,%s,%s,%d,%d,%d,%.2f,%s,%s", DEVICE_TYPE, DEVICE_NAME, WIFI_SSID, WALKIE_STATUS, BATTERY_STATUS, 
+    zaire_load_nvs_data();
+
+    snprintf(info,sizeof(info), "%d,%s,%s,%d,%.2f%%,%s,%s,%d,%d,%d,%.2f,%s,%s,%d,%d,%d,%d,2,20", DEVICE_TYPE, DEVICE_NAME, WIFI_SSID, WALKIE_STATUS, BATTERY_STATUS, 
         gps_latitude, gps_longitude, gps_elevation, gps_elevation_type, 
-        TEMP_STATUS, lux, _get_RTC_date(), _get_RTC_time());
+        TEMP_STATUS, lux, _get_RTC_date(), _get_RTC_time(),
+        AUTO_DASHCAM, BLINDSPOT_MONITORING, AUTO_BACK_LIGHT, TURN_SIGNAL_DURATION);
 
-    httpd_resp_set_type(req, "text/plain");
-    httpd_resp_sendstr(req, info);
+    // httpd_resp_set_type(req, "text/plain");
+    // httpd_resp_sendstr(req, info);
     return ESP_OK;
 }
 
@@ -97,6 +117,7 @@ esp_err_t device_info_handler(httpd_req_t *req){
 httpd_uri_t update_time_date = { .uri = "/update_time_date", .method = HTTP_POST, .handler = update_time_date_post_handler, .user_ctx = NULL };
 httpd_uri_t update_accessory = { .uri = "/update_accessory", .method = HTTP_POST, .handler = update_accessory_post_handler, .user_ctx = NULL };
 httpd_uri_t update_device_name = { .uri = "/update_device_name", .method = HTTP_POST, .handler = update_device_name_post_handler, .user_ctx = NULL };
+httpd_uri_t update_wifi_ssid = { .uri = "/update_wifi_ssid", .method = HTTP_POST, .handler = update_wifi_ssid_post_handler, .user_ctx = NULL };
 httpd_uri_t device_info = { .uri = "/device_info", .method = HTTP_GET, .handler = device_info_handler, .user_ctx = NULL };
 
 //FILEs
@@ -170,6 +191,7 @@ httpd_handle_t start_webserver(void)
         httpd_register_uri_handler(web_server, &update_time_date);
         httpd_register_uri_handler(web_server, &update_accessory);
         httpd_register_uri_handler(web_server, &update_device_name);
+        httpd_register_uri_handler(web_server, &update_wifi_ssid);
         httpd_register_uri_handler(web_server, &device_info);
         httpd_register_uri_handler(web_server, &script_handler);
         ESP_LOGI(TAG_DNS, "Web server started");

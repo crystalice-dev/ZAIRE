@@ -1,7 +1,5 @@
 #include <globalVar.h>
 
-char *WIFI_SSID = "ZAIRE_SETTINGS";
-
 esp_err_t wifi_init(void) {
     wifi_config_t default_cfg = { 0 };  // Zero out the struct
 

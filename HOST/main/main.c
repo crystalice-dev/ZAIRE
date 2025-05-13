@@ -5,8 +5,6 @@
 
 #include <globalVar.h>
 
-bool WALKIE_STATUS = LOW;
-
 
 
 void app_main(void){
@@ -18,19 +16,11 @@ void app_main(void){
     }
     ESP_ERROR_CHECK(ret);
 
-    init_spiffs();
-
-//     //Global Inits
-    ESP_ERROR_CHECK(wifi_init());
-    ESP_ERROR_CHECK(gpio_pin_init());
-    #ifdef DISPLAY_INCLUDED
-         ESP_ERROR_CHECK(display_init());
-    #endif   
-    ESP_ERROR_CHECK(i2c_init());
-    ESP_ERROR_CHECK(bh1750_init());
-    ESP_ERROR_CHECK(uart_init());
-    // ESP_ERROR_CHECK(init_i2s());
-    // ESP_ERROR_CHECK(init_usb_mic());
+    if(zaire_system_check() == ESP_FAIL){
+        ESP_LOGE("INIT", "Failed to Init Zaire Helmets System");
+        vTaskDelay(pdMS_TO_TICKS(1000));
+        esp_restart();
+    }
 
     xTaskCreate(gpio_run_task, "GPIO TASK", 2048, NULL, 4, &gpio_task_handler);
     xTaskCreate(uart_run_task, "UART TASK", 10000, NULL, 10, &uart_task_handler);
