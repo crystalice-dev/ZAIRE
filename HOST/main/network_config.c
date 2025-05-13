@@ -4,8 +4,8 @@ esp_err_t wifi_init(void) {
     wifi_config_t default_cfg = { 0 };  // Zero out the struct
 
     // Copy SSID string safely
-    strncpy((char *)default_cfg.ap.ssid, WIFI_SSID, sizeof(default_cfg.ap.ssid) - 1);
-    default_cfg.ap.ssid_len = strlen(WIFI_SSID);
+    strncpy((char *)default_cfg.ap.ssid, system_settings.WIFI_SSID, sizeof(default_cfg.ap.ssid) - 1);
+    default_cfg.ap.ssid_len = strlen(system_settings.WIFI_SSID);
     default_cfg.ap.max_connection = 4;
     default_cfg.ap.authmode = WIFI_AUTH_OPEN;
 

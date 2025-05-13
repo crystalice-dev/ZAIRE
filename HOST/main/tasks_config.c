@@ -15,8 +15,8 @@ void gpio_run_task(void *vpParam){
             vTaskDelay(pdMS_TO_TICKS(250));
             display_quick_show();
         }
-
-        vTaskDelay(pdMS_TO_TICKS(TASK_HOLD_DELAY));
+        printf("%s\n", system_settings.WIFI_SSID);
+        vTaskDelay(pdMS_TO_TICKS(1000));
     }
     
 

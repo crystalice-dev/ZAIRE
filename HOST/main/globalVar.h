@@ -133,20 +133,28 @@ esp_err_t main_page_get_handler(httpd_req_t *req);
 #define REMOTE_ADDR_KEY             "isRemoteAddrIn"
 #define REMOTE_AP_ADDR_KEY          "remoteAP"
 #define REMOTE_STA_ADDR_KEY         "remoteSTA"
+
+typedef struct {
+    uint8_t WALKIE_STATUS, AUTO_DASHCAM, BLINDSPOT_MONITORING, AUTO_BACK_LIGHT, TURN_SIGNAL_DURATION;
+    char DEVICE_NAME[1040];
+    char WIFI_SSID[1040];
+} settings_t;
+
+extern settings_t system_settings;
+
 extern nvs_handle_t walkie_addr_nvs_registered;
 extern nvs_handle_t remote_addr_nvs_registered;
 extern nvs_handle_t server_nvs_handler;
 extern uint8_t n_value; // place holder for NVS_read();
-extern char DEVICE_NAME[124];
-extern char WIFI_SSID[124];
-extern uint8_t WALKIE_STATUS, AUTO_DASHCAM, BLINDSPOT_MONITORING, AUTO_BACK_LIGHT;
-extern uint8_t TURN_SIGNAL_DURATION;
 esp_err_t NVS_init(void);
 esp_err_t NVS_start(const char *namespace, const nvs_handle_t *handler); // Open NVS
 esp_err_t NVS_write(nvs_handle_t handler, const char *key, uint8_t value);
 esp_err_t NVS_erase(nvs_handle_t handler, const char *key);
 esp_err_t NVS_close(nvs_handle_t handler);
 uint8_t NVS_read(nvs_handle_t handler, const char *key);
+esp_err_t NVS_readblob(nvs_handle_t handle, const char *key, void *out_struct, size_t expected_size);
+esp_err_t NVS_writeblob(nvs_handle_t handle, const char *key, const void *in_struct, size_t size);
+esp_err_t NVS_write_settings();
 
 
 // USB-MIC

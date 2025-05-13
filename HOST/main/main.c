@@ -19,8 +19,10 @@ void app_main(void){
     if(zaire_system_check() == ESP_FAIL){
         ESP_LOGE("INIT", "Failed to Init Zaire Helmets System");
         vTaskDelay(pdMS_TO_TICKS(1000));
-        esp_restart();
+        // esp_restart();
     }
+
+    
 
     xTaskCreate(gpio_run_task, "GPIO TASK", 2048, NULL, 4, &gpio_task_handler);
     xTaskCreate(uart_run_task, "UART TASK", 10000, NULL, 10, &uart_task_handler);

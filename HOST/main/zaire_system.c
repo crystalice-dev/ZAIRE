@@ -1,23 +1,14 @@
 #include <globalVar.h>
 
 
+settings_t system_settings;
+
 esp_err_t zaire_system_check(){
-
-    if(init_spiffs() != ESP_OK){
-        return ESP_FAIL;
-    }
-
-    if(NVS_init() != ESP_OK){
-        return ESP_FAIL;
-    }
-
-    if(wifi_init() != ESP_OK){
-        return ESP_FAIL;
-    }
-
-    if(gpio_pin_init() != ESP_OK){
-        return ESP_FAIL;
-    }
+    init_spiffs();
+    NVS_init();
+    zaire_load_nvs_data();
+    wifi_init();
+    gpio_pin_init();
 
     #ifdef DISPLAY_INCLUDED
         if(display_init() != ESP_OK){
@@ -25,41 +16,28 @@ esp_err_t zaire_system_check(){
         }
     #endif   
     
-    if(i2c_init() != ESP_OK){
-        return ESP_FAIL;
-    }
-
-    if(bh1750_init() != ESP_OK){
-        return ESP_FAIL;
-    }
-
-    if(uart_init() != ESP_OK){
-        return ESP_FAIL;
-    }
-    
-    if(init_i2s() != ESP_OK){
-        return ESP_FAIL;
-    }
-
-    if(init_usb_mic() != ESP_OK){
-        return ESP_FAIL;
-    }
+    i2c_init();
+    bh1750_init();
+    uart_init();
+    init_i2s();
+    init_usb_mic();
 
     return ESP_OK;
 }
 
 esp_err_t zaire_load_nvs_data(){
 
-    WALKIE_STATUS = NVS_read(server_nvs_handler, "WALKIE_STATUS");
-    AUTO_DASHCAM = NVS_read(server_nvs_handler, "AUTO_DASHCAM");
-    BLINDSPOT_MONITORING = NVS_read(server_nvs_handler, "BLINDSPOT_MONITORING");
-    AUTO_BACK_LIGHT = NVS_read(server_nvs_handler, "AUTO_BACK_LIGHT");
-    TURN_SIGNAL_DURATION = NVS_read(server_nvs_handler, "TURN_SIGNAL_DURATION");
-    
+    memset(&system_settings, 0, sizeof(system_settings)); // Always a good idea before filling
+
+    if(NVS_readblob(server_nvs_handler, SERVER_NVS_NAMESPACE, &system_settings, sizeof(system_settings)) != ESP_OK ){
+        ESP_LOGE("NVS", "ZAIRE SETTINGS NOT LOADED");
+        return ESP_FAIL;
+    }
+
+    printf("%s\n", system_settings.WIFI_SSID);
 
     return ESP_OK;
 }
-
 
 esp_err_t init_spiffs(void) {
     esp_vfs_spiffs_conf_t conf = {

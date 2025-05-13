@@ -5,7 +5,6 @@ httpd_handle_t web_server = NULL;
 
 
 /* === MAIN HTML PAGE === */
-
 esp_err_t update_time_date_post_handler(httpd_req_t *req)
 {
     
@@ -92,28 +91,28 @@ esp_err_t update_wifi_ssid_post_handler(httpd_req_t *req){
     buf[req->content_len] = '\0';
 
     printf("%s\n", buf);
-
+    strncpy(system_settings.WIFI_SSID, buf, sizeof(system_settings.WIFI_SSID));
+    printf("new => %s\n", system_settings.WIFI_SSID);
     return ESP_OK;
 }
 
 esp_err_t device_info_handler(httpd_req_t *req){
     
-    char info[8320]; // DEVICE_TYPE-DEVCE_NAME
+    char info[10400]; // DEVICE_TYPE-DEVCE_NAME
 
     zaire_load_nvs_data();
 
-    snprintf(info,sizeof(info), "%d,%s,%s,%d,%.2f%%,%s,%s,%d,%d,%d,%.2f,%s,%s,%d,%d,%d,%d,2,20", DEVICE_TYPE, DEVICE_NAME, WIFI_SSID, WALKIE_STATUS, BATTERY_STATUS, 
+    snprintf(info,sizeof(info), "%d,%s,%s,%d,%.2f%%,%s,%s,%d,%d,%d,%.2f,%s,%s,%d,%d,%d,%d,2,20", DEVICE_TYPE, system_settings.DEVICE_NAME, system_settings.WIFI_SSID, system_settings.WALKIE_STATUS, BATTERY_STATUS, 
         gps_latitude, gps_longitude, gps_elevation, gps_elevation_type, 
         TEMP_STATUS, lux, _get_RTC_date(), _get_RTC_time(),
-        AUTO_DASHCAM, BLINDSPOT_MONITORING, AUTO_BACK_LIGHT, TURN_SIGNAL_DURATION);
+        system_settings.AUTO_DASHCAM, system_settings.BLINDSPOT_MONITORING, system_settings.AUTO_BACK_LIGHT, system_settings.TURN_SIGNAL_DURATION);
 
-    // httpd_resp_set_type(req, "text/plain");
-    // httpd_resp_sendstr(req, info);
+    httpd_resp_set_type(req, "text/plain");
+    httpd_resp_sendstr(req, info);
     return ESP_OK;
 }
 
 //PAGEs
-
 httpd_uri_t update_time_date = { .uri = "/update_time_date", .method = HTTP_POST, .handler = update_time_date_post_handler, .user_ctx = NULL };
 httpd_uri_t update_accessory = { .uri = "/update_accessory", .method = HTTP_POST, .handler = update_accessory_post_handler, .user_ctx = NULL };
 httpd_uri_t update_device_name = { .uri = "/update_device_name", .method = HTTP_POST, .handler = update_device_name_post_handler, .user_ctx = NULL };
