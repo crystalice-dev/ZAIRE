@@ -3,37 +3,43 @@
 
 #include <globalVar.h>
 
+
+//POWER
+#define HIGH        1
+#define LOW         0
+
 //SYSTEM
 #define OPENED                      (1)
 #define CLOSED                      (0)
 #define ESP_NOW_CHANNEL             (3)
 #define mesh_system_max_connection  (10)
 
-//DEVICE TYPES
-#define DEVICE_TYPE_BICYCLE_HELMET  (0)
-#define DEVICE_TYPE_SKI_GOGGLES     (1)
-#define DEVICE_TYPE_MOTOR_HELMET    (2)
-
-
-#ifndef DEVICE_TYPE
-    #define DEVICE_TYPE DEVICE_TYPE_SKI_GOGGLES
-#endif
-
-
 #if DEVICE_TYPE == DEVICE_TYPE_BICYCLE_HELMET
     // Bicycle Helmet specific logic
-    #define DEVICE_NAME "ZAIRE BICYCLE VISION"
-
+   
+    #define DISPLAY_INCLUDED
+    
 #elif DEVICE_TYPE == DEVICE_TYPE_SKI_GOGGLES
-    // Goggles-specific logic
-    #define DEVICE_NAME "ZAIRE SKI VISION"
+    // SKI Goggles-specific logic
+    
+    #define DISPLAY_INCLUDED
 
 #elif DEVICE_TYPE == DEVICE_TYPE_MOTOR_HELMET
     // Motor Helmet specific logic
-    #define DEVICE_NAME "ZAIRE MOTOR HELMET"
+    
+    #define DISPLAY_INCLUDED
 
 #else
-    #error "Unknown DEVICE_TYPE defined"
+    #error "Unknown DEVICE_TYPE defined" // Defaults at 0
 #endif
+
+
+//File Management
+esp_err_t init_spiffs(void);
+
+
+//System
+esp_err_t zaire_system_check();
+esp_err_t zaire_load_nvs_data();
 
 #endif // ZAIRE_SYSTEM_H

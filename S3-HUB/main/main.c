@@ -21,10 +21,19 @@ void app_main(void){
     // ESP_ERROR_CHECK(init_wifi());
     // ESP_ERROR_CHECK(init_esp_now());
 
+    ESP_ERROR_CHECK(uart_init());
+
     //USB CAMERA
     ESP_ERROR_CHECK(camera_init());
     ESP_ERROR_CHECK(usb_init());
 
-    printf("%s\n", DEVICE_NAME);
+    xTaskCreate(host_run_task, "UART TASK", 10000, NULL, 10, &host_task_handler);
+    xTaskCreate(h3_run_task, "H3 TASK", 10000, NULL, 10, &h3_task_handler);
+
+    while (1)
+    {
+       
+    }
+    
 
 }

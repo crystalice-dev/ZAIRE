@@ -12,6 +12,7 @@
 #include <nvs_flash.h>
 #include <driver/gpio.h>
 #include <driver/i2s.h>
+#include <driver/uart.h>
 #include <esp_log.h>
 #include <esp_err.h>
 #include <string.h>
@@ -23,8 +24,11 @@
 #include <zaire_system.h>
 #define DEVICE_TYPE DEVICE_TYPE_SKI_GOGGLES
 
-//WALKIE
+//BUZZER
+#define BUZZER GPIO_NUM_42
 
+//WALKIE
+#define WALKIE_BTN      GPIO_NUM_46
 extern bool mesh_system_active;
 extern uint8_t walkie_address[6];
 extern uint8_t peer_addresses[10][6];
@@ -45,6 +49,26 @@ void esp_now_sent_cb(const uint8_t *mac_addr, esp_now_send_status_t status);
 void esp_now_recv_cb(const uint8_t *mac_addr,  const uint8_t *data, int data_len);
 esp_err_t add_peer_to_mesh(uint8_t *addr);
 esp_err_t remove_peer_from_mesh(uint8_t *addr);
+
+//UART
+#define H3_UART_NUM      UART_NUM_0
+#define H3_TX            GPIO_NUM_43
+#define H3_RX            GPIO_NUM_44
+#define H3_BAUD          1200
+#define HOST_UART_NUM    UART_NUM_1
+#define HOST_TX          GPIO_NUM_48
+#define HOST_RX          GPIO_NUM_47
+#define HOST_BAUD        4800
+#define BK_UART_NUM      UART_NUM_2
+#define BK_TX            GPIO_NUM_39
+#define BK_RX            GPIO_NUM_45
+#define BK_BAUD          9600
+#define BUF_SIZE         1024
+esp_err_t uart_init(void);
+void host_uart_received(const char* str);
+void host_uart_write_str(const char* str);
+void host_uart_write_int(int data);
+
 //USB-CAM
 #define PWDN_GPIO_NUM               (-1)
 #define RESET_GPIO_NUM              (-1)
@@ -72,5 +96,20 @@ void camera_fb_return_cb(uvc_fb_t *fb, void *cb_ctx);
 void camera_stop_cb(void *cb_ctx);
 esp_err_t camera_start_cb(uvc_format_t format, int width, int height, int rate, void *cb_ctx);
 
+
+//Task
+#define TASK_HOLD_DELAY             (10)
+#define TASK_HOLD_DELAY_FIVE_SEC    (1000 * 5)
+#define TASK_HOLD_DELAY_MINUTE      (1000 * 60)
+extern TaskHandle_t gpio_task_handler;
+extern TaskHandle_t host_task_handler;
+extern TaskHandle_t bk_task_handler;
+extern TaskHandle_t h3_task_handler;
+extern TaskHandle_t i2c_task_handler;
+void gpio_run_task(void *vpParam);
+void host_run_task(void *vpParam);
+void bk_run_task(void *vpParam);
+void h3_run_task(void *vpParam);
+void i2c_run_task(void *vpParam);
 
 #endif
