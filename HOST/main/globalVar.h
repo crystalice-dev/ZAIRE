@@ -27,20 +27,42 @@
 
 
 //DEVICE
+#define WALKIE_EN       GPIO_NUM_21
+#define WALKIE_PIN      
+#define PURPOSE_BTN     GPIO_NUM_15
+
 //DEVICE TYPES
 #define DEVICE_TYPE_SKI_GOGGLES     (0)
 #define DEVICE_TYPE_BICYCLE_HELMET  (1)
 #define DEVICE_TYPE_MOTOR_HELMET    (2)
 
+
 #define DEVICE_TYPE        DEVICE_TYPE_BICYCLE_HELMET// Must come before zaire_system.h -- avoid loop defination
 #include <zaire_system.h>
 
+//BUZZER
+#define BUZZER GPIO_NUM_40
+
 //UART
 #define GPS_UART_NUM    UART_NUM_2
-#define GPS_TX          GPIO_NUM_16
-#define GPS_RX          GPIO_NUM_17
+#define GPS_TX          GPIO_NUM_17
+#define GPS_RX          GPIO_NUM_16
+#define GPS_BAUD        9600
+#define WALKIE_UART_NUM UART_NUM_1
+#define WALKIE_TX       GPIO_NUM_9
+#define WALKIE_RX       GPIO_NUM_10
+#define WALKIE_BAUD     4800
+#define H3_UART_NUM     UART_NUM_0
+#define H3_TX           GPIO_NUM_43
+#define H3_RX           GPIO_NUM_44
+#define H3_BAUD         115200
 #define BUF_SIZE        1024
 esp_err_t uart_init(void);
+void walkie_uart_received(const char* str);
+void walkie_uart_write_str(const char* str);
+void walkie_uart_write(int data);
+
+
 
 //GPS
 #define GPS_LAT_LON_SPEED_CODE "$GPRMC"
@@ -81,7 +103,7 @@ float bh1750_read_lux();
     #include <u8g2_esp32_hal.h>
     #define DISPLAY_EN_PIN     GPIO_NUM_18
     #define DISPLAY_EN_BTN     GPIO_NUM_8
-
+    #define CAMERA_ON_PIN      GPIO_NUM_14
     typedef enum {
         DISPLAY_EN_OFF = 0,
         DISPLAY_MAIN_UI = 1,
@@ -181,7 +203,6 @@ esp_err_t i2c_init(void);
 
 
 // GLOBAL GPIOs
-#define CAMERA_ON_PIN   GPIO_NUM_14
 esp_err_t gpio_pin_init(void);
 
 //RTC

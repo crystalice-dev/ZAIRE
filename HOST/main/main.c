@@ -49,5 +49,17 @@ void app_main(void){
         vTaskDelay(pdMS_TO_TICKS(500));
         gpio_set_level(DISPLAY_EN_PIN, LOW);
     #endif
+
+    while(1){
+        uart_write_bytes(WALKIE_UART_NUM, "HELLO WALKIE\n\r", strlen("HELLO WALKIE\n\r"));
+        vTaskDelay(pdMS_TO_TICKS(100));
+        uart_write_bytes(H3_UART_NUM, "HELLO H3\n\r", strlen("HELLO H3\n\r"));
+        vTaskDelay(pdMS_TO_TICKS(2000));
+        uart_flush(WALKIE_UART_NUM);
+        uart_flush(H3_UART_NUM);
+        vTaskDelay(pdMS_TO_TICKS(100));
+
+    }
+
 }
 

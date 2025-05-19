@@ -15,8 +15,8 @@ void gpio_run_task(void *vpParam){
             vTaskDelay(pdMS_TO_TICKS(250));
             display_quick_show();
         }
-        printf("%s\n", system_settings.WIFI_SSID);
-        vTaskDelay(pdMS_TO_TICKS(1000));
+
+        vTaskDelay(pdMS_TO_TICKS(TASK_HOLD_DELAY));
     }
     
 
@@ -24,14 +24,15 @@ void gpio_run_task(void *vpParam){
 
 void uart_run_task(void *vpParam){
     
-    uint8_t gps_data[BUF_SIZE];
     while (1){
         
         char gps_data[BUF_SIZE];
+        char walkie_data[BUF_SIZE];
+        char h3_data[BUF_SIZE];
 
-        int len = uart_read_bytes(GPS_UART_NUM, gps_data, BUF_SIZE - 1, pdMS_TO_TICKS(100));
-        if (len > 0) {
-            gps_data[len] = '\0';  // Null-terminate
+        int gps_len = uart_read_bytes(GPS_UART_NUM, gps_data, BUF_SIZE - 1, pdMS_TO_TICKS(100));
+        if (gps_len > 0) {
+            gps_data[gps_len] = '\0';  // Null-terminate
 
             char *line = strtok(gps_data, "\n\r");
             while (line != NULL) {
@@ -44,7 +45,16 @@ void uart_run_task(void *vpParam){
             }
         }
 
-        vTaskDelay(pdMS_TO_TICKS(TASK_HOLD_DELAY_FIVE_SEC));
+
+         // Read and process Walkie UART data
+        int walkie_len = uart_read_bytes(WALKIE_UART_NUM, walkie_data, BUF_SIZE, pdMS_TO_TICKS(100));
+        if (walkie_len > 0) {
+            printf("%s\n", (const char *)walkie_data);
+            memset(walkie_data, 0, sizeof(walkie_data));  // Clears the buffer
+        }
+
+
+        vTaskDelay(pdMS_TO_TICKS(TASK_HOLD_DELAY));
     }
 }
 
