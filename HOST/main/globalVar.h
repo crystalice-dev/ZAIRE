@@ -27,8 +27,7 @@
 
 
 //DEVICE
-#define WALKIE_EN       GPIO_NUM_21
-#define WALKIE_PIN      
+#define WALKIE_BTN      GPIO_NUM_8
 #define PURPOSE_BTN     GPIO_NUM_15
 
 //DEVICE TYPES
@@ -96,45 +95,6 @@ extern uint8_t TEMP_STATUS;
 extern float lux;
 esp_err_t bh1750_init();
 float bh1750_read_lux();
-
-//DISPLAY
-#ifdef DISPLAY_INCLUDED
-    #include <u8g2.h>
-    #include <u8g2_esp32_hal.h>
-    #define DISPLAY_EN_PIN     GPIO_NUM_18
-    #define DISPLAY_EN_BTN     GPIO_NUM_8
-    #define CAMERA_ON_PIN      GPIO_NUM_14
-    typedef enum {
-        DISPLAY_EN_OFF = 0,
-        DISPLAY_MAIN_UI = 1,
-        DISPLAY_SHOW_LOW_BAT = 2,
-        DISPLAY_SHOW_DNS_IP = 3,
-    }display_target_t;
-    extern display_target_t display_target;
-
-    extern bool display_en; // Rather the display is on or not 
-    extern u8g2_t display;
-    esp_err_t display_init(void);
-    void display_clear(void);
-    void display_welcome_animation(void);
-    void display_main_UI(void);
-    void init_display_gpio(void);
-    void display_power_on(void);
-    void display_power_off(void);
-        //DISPLAY ELEMENTS
-        void display_datetime();
-        void display_location();
-        void display_elevation();
-        void display_battery(uint8_t percent);
-        void display_camera_icon(void);
-
-        //PASSS
-        void display_quick_show(void);
-        //FULL SCREEN DISPLAY 
-        void display_low_battery_warning(void);
-        void display_dns_IP(void);
-
-#endif
 
 //NETWORK
 #define EXAMPLE_MAX_STA_CONN 4
@@ -221,9 +181,11 @@ extern TaskHandle_t gpio_task_handler;
 extern TaskHandle_t uart_task_handler;
 extern TaskHandle_t i2c_task_handler;
 extern TaskHandle_t display_task_handler;
+extern TaskHandle_t led_strip_task_handler;
 void gpio_run_task(void *vpParam);
 void uart_run_task(void *vpParam);
 void i2c_run_task(void *vpParam);
 void display_run_task(void *vpParam);
+void led_strip_run_task(void *vpParam);
 
 #endif

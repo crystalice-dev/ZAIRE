@@ -1,5 +1,6 @@
 idf_component_register(
     SRCS 
+        "ledStrip_config.c"
         "gps_config.c"
         "i2c_device_config.c"
         "rtc_config.c"

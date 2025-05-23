@@ -5,7 +5,7 @@ TaskHandle_t gpio_task_handler = NULL;
 TaskHandle_t uart_task_handler = NULL;
 TaskHandle_t i2c_task_handler = NULL;
 TaskHandle_t display_task_handler = NULL;
-
+TaskHandle_t led_strip_task_handler = NULL;
 
 void gpio_run_task(void *vpParam){
 
@@ -103,6 +103,30 @@ void i2c_run_task(void *vpParam){
 
             vTaskDelay(pdMS_TO_TICKS(TASK_HOLD_DELAY));
         }  
+
+    }
+#endif
+
+#ifdef LIGHTS_INCLUDED
+    void led_strip_run_task(void *vpParam){
+
+        led_strip_handle_t led_strip = configure_led_stip();
+
+        while (1)
+        {
+            play_left_turn(led_strip);
+            play_left_turn(led_strip);
+            play_right_turn(led_strip);
+            play_right_turn(led_strip);
+            play_left_turn(led_strip);
+            play_left_turn(led_strip);
+            play_right_turn(led_strip);
+            play_right_turn(led_strip);
+            play_brake_red(led_strip);
+            turn_off_all(led_strip);
+            play_brake_red(led_strip);
+        }
+        
 
     }
 #endif

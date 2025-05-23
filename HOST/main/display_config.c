@@ -50,19 +50,22 @@ void display_welcome_animation(void){
         u8g2_ClearBuffer(&display);     // Clear previous
         u8g2_DrawStr(&display, 20, 25, partial);  // Draw partial word
         u8g2_SendBuffer(&display);      // Send to display
-        vTaskDelay(pdMS_TO_TICKS(50)); // Delay 100ms
+        vTaskDelay(pdMS_TO_TICKS(100)); //100ms
     }
 
-    int bar_x = 3;
-    int bar_y = 30;
-    int bar_width = 120;
-    int bar_height = 3;
+    vTaskDelay(pdMS_TO_TICKS(500)); //
 
-    for (int w = 0; w <= bar_width; w += 5) {
-        u8g2_DrawBox(&display, bar_x, bar_y, w, bar_height);
-        u8g2_SendBuffer(&display);
-        vTaskDelay(pdMS_TO_TICKS(1));
-    }
+
+    // int bar_x = 3;
+    // int bar_y = 30;
+    // int bar_width = 120;
+    // int bar_height = 3;
+
+    // for (int w = 0; w <= bar_width; w += 5) {
+    //     u8g2_DrawBox(&display, bar_x, bar_y, w, bar_height);
+    //     u8g2_SendBuffer(&display);
+    //     vTaskDelay(pdMS_TO_TICKS(0.5));
+    // }
 }
 
 
