@@ -20,9 +20,14 @@
 #include <usb_device_uvc.h>
 #include <uvc_frame_config.h>
 
-//Device
+//DEVICE TYPES
+#define DEVICE_TYPE_SKI_GOGGLES     (0)
+#define DEVICE_TYPE_BICYCLE_HELMET  (1)
+#define DEVICE_TYPE_MOTOR_HELMET    (2)
+#define DEVICE_TYPE_TEST            (100)
+
+#define DEVICE_TYPE     DEVICE_TYPE_BICYCLE_HELMET// Must come before zaire_system.h -- avoid loop defination
 #include <zaire_system.h>
-#define DEVICE_TYPE DEVICE_TYPE_SKI_GOGGLES
 
 //BUZZER
 #define BUZZER GPIO_NUM_42
@@ -61,13 +66,16 @@ esp_err_t remove_peer_from_mesh(uint8_t *addr);
 #define HOST_BAUD        4800
 #define BK_UART_NUM      UART_NUM_2
 #define BK_TX            GPIO_NUM_39
-#define BK_RX            GPIO_NUM_45
+#define BK_RX            GPIO_NUM_42
 #define BK_BAUD          9600
 #define BUF_SIZE         1024
 esp_err_t uart_init(void);
 void host_uart_received(const char* str);
 void host_uart_write_str(const char* str);
 void host_uart_write_int(int data);
+void bk_uart_snd(const char* str);
+void bk_uart_received(const char* str);
+
 
 //USB-CAM
 #define PWDN_GPIO_NUM               (-1)
@@ -95,7 +103,6 @@ uvc_fb_t* camera_fb_get_cb(void *cb_ctx);
 void camera_fb_return_cb(uvc_fb_t *fb, void *cb_ctx);
 void camera_stop_cb(void *cb_ctx);
 esp_err_t camera_start_cb(uvc_format_t format, int width, int height, int rate, void *cb_ctx);
-
 
 //Task
 #define TASK_HOLD_DELAY             (10)

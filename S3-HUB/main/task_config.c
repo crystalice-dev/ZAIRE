@@ -35,11 +35,11 @@ void bk_run_task(void *vpParam) {
     uint8_t bk_data[BUF_SIZE];
 
     while (1) {
-        int bk_len = uart_read_bytes(HOST_UART_NUM, bk_data, BUF_SIZE, pdMS_TO_TICKS(100));
+        int bk_len = uart_read_bytes(BK_UART_NUM, bk_data, BUF_SIZE, pdMS_TO_TICKS(100));
 
         if (bk_len > 0) {
             // Directly write the raw bytes to H3 UART
-            printf("%s\n",(const char *)bk_data);
+            bk_uart_received((const char *)bk_data);
 
             // Optional: log received data as null-terminated string
             if (bk_len < BUF_SIZE) bk_data[bk_len] = '\0';
@@ -71,3 +71,4 @@ void h3_run_task(void *vpParam) {
         vTaskDelay(pdMS_TO_TICKS(5));
     }
 }
+

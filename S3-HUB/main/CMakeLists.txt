@@ -1,5 +1,6 @@
 idf_component_register(
     SRCS 
+    "bk_config.c"
     "task_config.c"
     "walkie_config.c" 
     "gpio_config.c" 

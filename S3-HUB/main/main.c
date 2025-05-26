@@ -27,13 +27,26 @@ void app_main(void){
     ESP_ERROR_CHECK(camera_init());
     ESP_ERROR_CHECK(usb_init());
 
-    xTaskCreate(host_run_task, "UART TASK", 10000, NULL, 10, &host_task_handler);
-    xTaskCreate(h3_run_task, "H3 TASK", 10000, NULL, 10, &h3_task_handler);
+    // xTaskCreate(host_run_task, "UART TASK", 10000, NULL, 10, &host_task_handler);
+    // xTaskCreate(h3_run_task, "H3 TASK", 10000, NULL, 10, &h3_task_handler);
+    xTaskCreate(bk_run_task, "BK TASK", 4096, NULL, 7, &h3_task_handler);
 
-    while (1)
-    {
-       
-    }
+    bk_set_device_volume(bk_volume);
+    bk_phone_en();
+
+    // while (1)
+    // {
+    //     for(int i = 0; i < 10; i++){
+    //         bk_vol_up();
+    //         printf("Volume: %d\n", bk_volume);
+    //         vTaskDelay(pdMS_TO_TICKS(2000));
+    //     }
+    //     for(int i = 0; i < 10; i++){
+    //         bk_vol_down();
+    //         printf("Volume: %d\n", bk_volume);
+    //         vTaskDelay(pdMS_TO_TICKS(2000));
+    //     }
+    // }
     
 
 }
