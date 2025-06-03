@@ -26,36 +26,23 @@
 #define DEVICE_TYPE_MOTOR_HELMET    (2)
 #define DEVICE_TYPE_TEST            (100)
 
+//AUDIO CHIP
+#define AUDIO_CHIP_NONE             0x00
+#define AUDIO_CHIP_BK3266           0x01
+
+
+#define AUDIO_CHIP      AUDIO_CHIP_BK3266
 #define DEVICE_TYPE     DEVICE_TYPE_BICYCLE_HELMET// Must come before zaire_system.h -- avoid loop defination
 #include <zaire_system.h>
 
 //BUZZER
 #define BUZZER GPIO_NUM_42
 
-//WALKIE
-#define WALKIE_BTN      GPIO_NUM_46
-extern bool mesh_system_active;
-extern uint8_t walkie_address[6];
-extern uint8_t peer_addresses[10][6];
-extern uint8_t number_paired_peers;
-extern bool sendOver;
-extern bool recOver;
-extern bool speakOut;
-extern int32_t *samples_32bit;
-extern int16_t *samples_16bit;
-extern uint8_t *samples_8bit ;
-extern int16_t *recive_16bit;
-extern int16_t *output_16bit;
-esp_err_t init_i2s(void);
-int init_i2s_read(int16_t *samples, int count);
-esp_err_t init_wifi(void);
-esp_err_t init_esp_now(void);
-void esp_now_sent_cb(const uint8_t *mac_addr, esp_now_send_status_t status);
-void esp_now_recv_cb(const uint8_t *mac_addr,  const uint8_t *data, int data_len);
-esp_err_t add_peer_to_mesh(uint8_t *addr);
-esp_err_t remove_peer_from_mesh(uint8_t *addr);
+//GPIO
+esp_err_t gpio_pin_init(void);
 
 //UART
+#define UART_TARGET_BK   "B"
 #define H3_UART_NUM      UART_NUM_0
 #define H3_TX            GPIO_NUM_43
 #define H3_RX            GPIO_NUM_44
@@ -64,7 +51,7 @@ esp_err_t remove_peer_from_mesh(uint8_t *addr);
 #define HOST_TX          GPIO_NUM_48
 #define HOST_RX          GPIO_NUM_47
 #define HOST_BAUD        4800
-#define BK_UART_NUM      UART_NUM_2
+#define AUDIO_UART_NUM   UART_NUM_2
 #define BK_TX            GPIO_NUM_39
 #define BK_RX            GPIO_NUM_42
 #define BK_BAUD          9600
@@ -113,10 +100,16 @@ extern TaskHandle_t host_task_handler;
 extern TaskHandle_t bk_task_handler;
 extern TaskHandle_t h3_task_handler;
 extern TaskHandle_t i2c_task_handler;
+extern TaskHandle_t walkie_task_handler;
 void gpio_run_task(void *vpParam);
 void host_run_task(void *vpParam);
 void bk_run_task(void *vpParam);
 void h3_run_task(void *vpParam);
 void i2c_run_task(void *vpParam);
+void walkie_run_task(void *vpParam);
+
+#if DEVICE_TYPE == DEVICE_TYPE_TEST
+    void test_run_task(void *vpParam);
+#endif
 
 #endif

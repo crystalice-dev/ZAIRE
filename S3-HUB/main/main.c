@@ -17,36 +17,35 @@ void app_main(void){
         ret = nvs_flash_init();
     }
 
-    //WALKIE
-    // ESP_ERROR_CHECK(init_wifi());
-    // ESP_ERROR_CHECK(init_esp_now());
+    if(zaire_system_check() == ESP_FAIL){
+        ESP_LOGE("INIT", "Failed to Init Zaire Helmets System");
+        vTaskDelay(pdMS_TO_TICKS(1000));
+        esp_restart();
+    }
 
-    ESP_ERROR_CHECK(uart_init());
 
-    //USB CAMERA
-    ESP_ERROR_CHECK(camera_init());
-    ESP_ERROR_CHECK(usb_init());
+    #if DEVICE_TYPE != DEVICE_TYPE_TEST
+        xTaskCreate(gpio_run_task, "GPIO TASK", 4096, NULL, 4, &gpio_task_handler);
+        xTaskCreate(host_run_task, "UART TASK", 10000, NULL, 6, &host_task_handler);
+        // xTaskCreate(h3_run_task, "H3 TASK", 10000, NULL, 6, &h3_task_handler);
+        xTaskCreate(bk_run_task, "BK TASK", 4096, NULL, 6, &h3_task_handler);
+        xTaskCreate(walkie_run_task, "BK TASK", 4096, NULL, 7, &walkie_task_handler);
 
-    // xTaskCreate(host_run_task, "UART TASK", 10000, NULL, 10, &host_task_handler);
-    // xTaskCreate(h3_run_task, "H3 TASK", 10000, NULL, 10, &h3_task_handler);
-    xTaskCreate(bk_run_task, "BK TASK", 4096, NULL, 7, &h3_task_handler);
+    #else
+        xTaskCreate(test_run_task, "TEST TASK", 4096, NULL, 7, NULL);
+    #endif
 
-    bk_set_device_volume(bk_volume);
-    bk_phone_en();
+    bk_init();
+    vTaskDelay(pdMS_TO_TICKS(1000));
+    bk_init();
+
+    // walkie_discover_peers();
 
     // while (1)
     // {
-    //     for(int i = 0; i < 10; i++){
-    //         bk_vol_up();
-    //         printf("Volume: %d\n", bk_volume);
-    //         vTaskDelay(pdMS_TO_TICKS(2000));
-    //     }
-    //     for(int i = 0; i < 10; i++){
-    //         bk_vol_down();
-    //         printf("Volume: %d\n", bk_volume);
-    //         vTaskDelay(pdMS_TO_TICKS(2000));
-    //     }
+    //     uart_write_bytes(HOST_UART_NUM, "B:CRYSTAL ICE", strlen("B:CRYSTAL ICE"));
+    //     vTaskDelay(pdMS_TO_TICKS(50));
+    //     uart_flush(HOST_UART_NUM);
+    //     vTaskDelay(pdMS_TO_TICKS(2000));
     // }
-    
-
 }

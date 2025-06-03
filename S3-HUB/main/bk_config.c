@@ -1,11 +1,15 @@
 #include <globalVar.h>
 
-#if AUDIO_CHIP == BK3266
+#if AUDIO_CHIP == AUDIO_CHIP_BK3266
 
 bk_target_stage_t bk_target_stage = NORMAL;
 bk_connection_mode_t bk_connection_mode = DISCONNECTED;
 uint8_t bk_volume = 16;
 
+void bk_init(void){
+    bk_set_device_volume(bk_volume);
+    bk_phone_en();
+}
 
 void bk_set_device_name(const char *name){
     char cmd[64];
