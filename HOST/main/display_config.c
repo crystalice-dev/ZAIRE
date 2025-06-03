@@ -50,10 +50,10 @@ void display_welcome_animation(void){
         u8g2_ClearBuffer(&display);     // Clear previous
         u8g2_DrawStr(&display, 20, 25, partial);  // Draw partial word
         u8g2_SendBuffer(&display);      // Send to display
-        vTaskDelay(pdMS_TO_TICKS(100)); //100ms
+        vTaskDelay(pdMS_TO_TICKS(5)); //50ms
     }
 
-    vTaskDelay(pdMS_TO_TICKS(500)); //
+    vTaskDelay(pdMS_TO_TICKS(200)); //
 
 
     // int bar_x = 3;

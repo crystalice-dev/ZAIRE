@@ -2,33 +2,69 @@
 
 
 TaskHandle_t gpio_task_handler = NULL;
-TaskHandle_t uart_task_handler = NULL;
+TaskHandle_t gps_uart_task_handler = NULL;
+TaskHandle_t h3_uart_task_handler = NULL;
+TaskHandle_t walkie_uart_task_handler = NULL;
 TaskHandle_t i2c_task_handler = NULL;
 TaskHandle_t display_task_handler = NULL;
 TaskHandle_t led_strip_task_handler = NULL;
+TaskHandle_t bs_left_monitor_handler = NULL;
+TaskHandle_t bs_right_monitor_handler = NULL;
 
 void gpio_run_task(void *vpParam){
 
     while (1)
     {
-        if(gpio_get_level(DISPLAY_EN_BTN)){
-            vTaskDelay(pdMS_TO_TICKS(250));
-            display_quick_show();
-        }
 
+        #ifdef LIGHTS_INCLUDED
+            if(gpio_get_level(DISPLAY_EN_BTN)){
+                vTaskDelay(pdMS_TO_TICKS(250));
+                display_quick_show();
+            }
+        #endif
         vTaskDelay(pdMS_TO_TICKS(TASK_HOLD_DELAY));
     }
     
 
 }
 
-void uart_run_task(void *vpParam){
+void h3_uart_run_task(void *vpParam){
+    char h3_data[BUF_SIZE];
+
+    while (1)
+    {
+        // Read and process Walkie UART data
+        int h3_len = uart_read_bytes(H3_UART_NUM, h3_data, BUF_SIZE, pdMS_TO_TICKS(100));
+        if (h3_len > 0) {
+            printf("%s\n", (const char *)h3_data);
+            memset(h3_data, 0, sizeof(h3_data));  // Clears the buffer
+        }
+        vTaskDelay(pdMS_TO_TICKS(TASK_HOLD_DELAY));
+    }
+
+}
+
+void walkie_uart_run_task(void *vpParam){
+    char walkie_data[BUF_SIZE];
+
+    while (1)
+    {
+        // Read and process Walkie UART data
+        int walkie_len = uart_read_bytes(WALKIE_UART_NUM, walkie_data, BUF_SIZE, pdMS_TO_TICKS(100));
+        if (walkie_len > 0) {
+            walkie_uart_received((const char *)walkie_data);
+            memset(walkie_data, 0, sizeof(walkie_data));  // Clears the buffer
+        }
+        vTaskDelay(pdMS_TO_TICKS(TASK_HOLD_DELAY));
+    }
+
+}
+
+void gps_uart_run_task(void *vpParam){
     
     while (1){
         
         char gps_data[BUF_SIZE];
-        char walkie_data[BUF_SIZE];
-        char h3_data[BUF_SIZE];
 
         int gps_len = uart_read_bytes(GPS_UART_NUM, gps_data, BUF_SIZE - 1, pdMS_TO_TICKS(100));
         if (gps_len > 0) {
@@ -44,15 +80,6 @@ void uart_run_task(void *vpParam){
                 line = strtok(NULL, "\n\r");
             }
         }
-
-
-         // Read and process Walkie UART data
-        int walkie_len = uart_read_bytes(WALKIE_UART_NUM, walkie_data, BUF_SIZE, pdMS_TO_TICKS(100));
-        if (walkie_len > 0) {
-            printf("%s\n", (const char *)walkie_data);
-            memset(walkie_data, 0, sizeof(walkie_data));  // Clears the buffer
-        }
-
 
         vTaskDelay(pdMS_TO_TICKS(TASK_HOLD_DELAY));
     }
@@ -111,22 +138,84 @@ void i2c_run_task(void *vpParam){
     void led_strip_run_task(void *vpParam){
 
         led_strip_handle_t led_strip = configure_led_stip();
-
+        led_welcome_animation(led_strip);
         while (1)
         {
-            play_left_turn(led_strip);
-            play_left_turn(led_strip);
-            play_right_turn(led_strip);
-            play_right_turn(led_strip);
-            play_left_turn(led_strip);
-            play_left_turn(led_strip);
-            play_right_turn(led_strip);
-            play_right_turn(led_strip);
-            play_brake_red(led_strip);
-            turn_off_all(led_strip);
-            play_brake_red(led_strip);
+            switch (led_target_mode[0]){
+                case LED_OFF:
+                    led_front_white_off();
+                    break;
+                
+                case FRONT_WHITE_ON:
+                    led_front_white_on();
+                    break;
+                default:
+                    break;
+            }
+
+            switch (led_target_stage){
+                case NORMAL:
+                    switch (led_target_mode[1]){
+                        case LED_OFF:
+                            led_off_all(led_strip);
+                            break;
+                        
+                        case BACK_BRAKE_ON:
+                            led_brake_red(led_strip);
+                            break;
+                        
+                        case LEFT_TURN:
+                            led_left_turn(led_strip);
+                            break;
+
+                        case RIGHT_TURN:
+                            led_right_turn(led_strip);
+                            break;
+
+                        default:
+                            break;
+                    }
+                    break;
+                
+                case MASTER_PAIRING:
+                    led_pairing_master_search_blue(led_strip);
+                    break;
+                case SLAVE_PAIRING:
+                    led_pairing_slave_search_blue(led_strip);
+                    break;
+                case SYNC_PAIRING:
+                    led_pairing_sync_blue(led_strip);
+                    break;
+                default:
+                    break;
+            }
+
+            vTaskDelay(pdMS_TO_TICKS(TASK_HOLD_DELAY));
         }
         
 
     }
+#endif
+
+#ifdef BLINDSPOT_INCLUDED
+
+
+    void bs_left_monitor_task(void *vpParam){
+
+        while (1){
+            int32_t distance = bs_lt_get_distance();
+            
+            vTaskDelay(pdMS_TO_TICKS(50));
+        }
+    }
+
+    void bs_right_monitor_task(void *vpParam){
+
+        while (1){
+            int32_t distance = bs_rt_get_distance();
+            
+            vTaskDelay(pdMS_TO_TICKS(50));
+        }
+    }
+
 #endif

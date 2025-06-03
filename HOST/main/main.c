@@ -19,22 +19,37 @@ void app_main(void){
     if(zaire_system_check() == ESP_FAIL){
         ESP_LOGE("INIT", "Failed to Init Zaire Helmets System");
         vTaskDelay(pdMS_TO_TICKS(1000));
-        // esp_restart();
+        esp_restart();
     }
 
     
+    #if DEVICE_TYPE != DEVICE_TYPE_TEST
+        xTaskCreate(gpio_run_task, "GPIO TASK", 2048, NULL, 4, &gpio_task_handler);
+        xTaskCreate(gps_uart_run_task, "UART TASK", 10000, NULL, 10, &gps_uart_task_handler);
+        xTaskCreate(h3_uart_run_task, "UART TASK", 10000, NULL, 10, &h3_uart_task_handler);
+        xTaskCreate(walkie_uart_run_task, "UART TASK", 10000, NULL, 10, &walkie_uart_task_handler);
+        xTaskCreate(i2c_run_task, "I2C TASK", 4096,NULL, 1, &i2c_task_handler);
 
-    xTaskCreate(gpio_run_task, "GPIO TASK", 2048, NULL, 4, &gpio_task_handler);
-    xTaskCreate(uart_run_task, "UART TASK", 10000, NULL, 10, &uart_task_handler);
-    xTaskCreate(i2c_run_task, "I2C TASK", 5000,NULL, 1, &i2c_task_handler);
+    #else
+        xTaskCreate(test_run_task, "TEST TASK", 4096, NULL, 7, NULL);
+
+    #endif
+
+
 
     #ifdef LIGHTS_INCLUDED
-        xTaskCreate(led_strip_run_task, "LED STRIP TASK", 5000, NULL, 2, &led_strip_task_handler);
+        xTaskCreate(led_strip_run_task, "LED STRIP TASK", 4096, NULL, 2, &led_strip_task_handler);
     #endif
 
     #ifdef DISPLAY_INCLUDED
         xTaskCreate(display_run_task, "DISPLAY TASK", 2048, NULL, 2, &display_task_handler);
     #endif
+
+    #ifdef BLINDSPOT_INCLUDED
+        xTaskCreate(bs_right_monitor_task, "BLINDSPOT TASK RIGHT", 2048, NULL, 7, &bs_right_monitor_handler);
+        xTaskCreate(bs_left_monitor_task, "BLINDSPOT TASK LEFT", 2048, NULL,7, &bs_left_monitor_handler);
+    #endif
+
     start_dns_server();
 
     // if(battery_init() == ESP_OK){
@@ -55,13 +70,27 @@ void app_main(void){
         gpio_set_level(DISPLAY_EN_PIN, LOW);
     #endif
 
+
+
     // while(1){
-    //     uart_write_bytes(WALKIE_UART_NUM, "HELLO WALKIE\n\r", strlen("HELLO WALKIE\n\r"));
-    //     vTaskDelay(pdMS_TO_TICKS(100));
-    //     uart_write_bytes(H3_UART_NUM, "HELLO H3\n\r", strlen("HELLO H3\n\r"));
+        uart_write_bytes(WALKIE_UART_NUM, "B:CRYSTAL ICE", strlen("B:CRYSTAL ICE"));
+        vTaskDelay(pdMS_TO_TICKS(50));
+        uart_flush(WALKIE_UART_NUM);
+        vTaskDelay(pdMS_TO_TICKS(5000));
+
+    //     uart_write_bytes(WALKIE_UART_NUM, AUDIO_PLAYER_PREV, strlen(AUDIO_PLAYER_PREV));
     //     vTaskDelay(pdMS_TO_TICKS(2000));
     //     uart_flush(WALKIE_UART_NUM);
-    //     uart_flush(H3_UART_NUM);
+    //     vTaskDelay(pdMS_TO_TICKS(100));
+
+    //     uart_write_bytes(WALKIE_UART_NUM, AUDIO_PLAYER_VOL_UP, strlen(AUDIO_PLAYER_VOL_UP));
+    //     vTaskDelay(pdMS_TO_TICKS(2000));
+    //     uart_flush(WALKIE_UART_NUM);
+    //     vTaskDelay(pdMS_TO_TICKS(100));
+
+    //     uart_write_bytes(WALKIE_UART_NUM, AUDIO_PLAYER_VOL_DWN, strlen(AUDIO_PLAYER_VOL_DWN));
+    //     vTaskDelay(pdMS_TO_TICKS(2000));
+    //     uart_flush(WALKIE_UART_NUM);
     //     vTaskDelay(pdMS_TO_TICKS(100));
 
     // }

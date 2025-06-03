@@ -41,6 +41,8 @@ char* _get_RTC_date() {
     esp_err_t ret = i2c_master_cmd_begin(WORKING_I2C_NUM, cmd, pdMS_TO_TICKS(100));
     i2c_cmd_link_delete(cmd);
 
+
+
     if (ret != ESP_OK) {
         snprintf(date_str, sizeof(date_str), "ERR");
         return date_str;
@@ -63,6 +65,12 @@ char* _get_RTC_date() {
 
  //set_RTC(13, 44, 0, 1, 4, 5, 25); // Set to May 3, 2024 12:34:56 -- example
 esp_err_t set_RTC(uint8_t hour, uint8_t min, uint8_t sec, uint8_t day, uint8_t date, char* _month, uint8_t year) {
+
+    #ifdef DISPLAY_INCLUDED //Activate LCD for I2C communication -- important
+        gpio_set_level(DISPLAY_EN_PIN, HIGH);
+    #endif
+
+    vTaskDelay(pdMS_TO_TICKS(3000));
 
     uint8_t month = _get_real_month(_month);
 
@@ -90,6 +98,10 @@ esp_err_t set_RTC(uint8_t hour, uint8_t min, uint8_t sec, uint8_t day, uint8_t d
         printf("NO RTC\n");
         return ESP_FAIL;
     }
+
+    #ifdef DISPLAY_INCLUDED
+        gpio_set_level(DISPLAY_EN_PIN, LOW);
+    #endif
 
     return ESP_OK;
 }

@@ -34,15 +34,22 @@
 #define DEVICE_TYPE_SKI_GOGGLES     (0)
 #define DEVICE_TYPE_BICYCLE_HELMET  (1)
 #define DEVICE_TYPE_MOTOR_HELMET    (2)
+#define DEVICE_TYPE_TEST            (100)
+
+//AUDIO CHIP
+#define AUDIO_CHIP_NONE             0x00
+#define AUDIO_CHIP_BK3266           0x01
 
 
-#define DEVICE_TYPE        DEVICE_TYPE_BICYCLE_HELMET// Must come before zaire_system.h -- avoid loop defination
+#define AUDIO_CHIP      AUDIO_CHIP_BK3266
+#define DEVICE_TYPE     DEVICE_TYPE_BICYCLE_HELMET// Must come before zaire_system.h -- avoid loop defination
 #include <zaire_system.h>
 
 //BUZZER
 #define BUZZER GPIO_NUM_40
 
 //UART
+#define UART_TARGET_BK  "B"
 #define GPS_UART_NUM    UART_NUM_2
 #define GPS_TX          GPIO_NUM_17
 #define GPS_RX          GPIO_NUM_16
@@ -178,14 +185,27 @@ uint8_t _get_real_month(const char* month);
 #define TASK_HOLD_DELAY_FIVE_SEC    (1000 * 5)
 #define TASK_HOLD_DELAY_MINUTE      (1000 * 60)
 extern TaskHandle_t gpio_task_handler;
-extern TaskHandle_t uart_task_handler;
+extern TaskHandle_t gps_uart_task_handler;
+extern TaskHandle_t h3_uart_task_handler;
+extern TaskHandle_t walkie_uart_task_handler;
 extern TaskHandle_t i2c_task_handler;
 extern TaskHandle_t display_task_handler;
 extern TaskHandle_t led_strip_task_handler;
+extern TaskHandle_t bs_left_monitor_handler;
+extern TaskHandle_t bs_right_monitor_handler;
 void gpio_run_task(void *vpParam);
-void uart_run_task(void *vpParam);
+void gps_uart_run_task(void *vpParam);
+void h3_uart_run_task(void *vpParam);
+void walkie_uart_run_task(void *vpParam);
 void i2c_run_task(void *vpParam);
 void display_run_task(void *vpParam);
 void led_strip_run_task(void *vpParam);
+void bs_left_monitor_task(void *vpParam);
+void bs_right_monitor_task(void *vpParam);
+
+
+#if DEVICE_TYPE == DEVICE_TYPE_TEST
+    void test_run_task(void *vpParam);
+#endif
 
 #endif

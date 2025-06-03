@@ -1,5 +1,6 @@
 idf_component_register(
     SRCS 
+        "blindspot_config.c"
         "led_strip_config.c"
         "gps_config.c"
         "i2c_device_config.c"
@@ -16,6 +17,7 @@ idf_component_register(
         "remote_config.c" 
         "usb_mic_config.c" 
         "zaire_system.c" 
+        "test_config.c"
         "main.c"
     INCLUDE_DIRS "."
 )

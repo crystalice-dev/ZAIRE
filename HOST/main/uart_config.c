@@ -61,8 +61,30 @@ esp_err_t uart_init(void){
 }
 
 void walkie_uart_received(const char* str){
+    char c = str[1];
+    int n = c - '0'; // Only works for '0' to '9'
+    
+    if(str[0] == 'P'){
+        switch (n)
+        {
+            case 0:
+                led_target_stage = MASTER_PAIRING;
+                break;
+            case 1:
+                led_target_stage = SLAVE_PAIRING;
+                break;
+            case 2:
+                led_target_stage = SYNC_PAIRING;
+                break;
+            default:
+                led_target_stage = NORMAL;
+                break;
+        }
+    }
 
 }
+
+
 
 void walkie_uart_write_str(const char* str){
 
