@@ -14,4 +14,10 @@
 ### BUILD:
  * make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- -j$(nproc)
 
+### INSTALL:
+ * sudo sunxi-fel uboot u-boot-sunxi-with-spl.bin
+
+### SCREEN:
+* 
+
 
