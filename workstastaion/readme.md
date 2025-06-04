@@ -2,7 +2,7 @@
 
 ### U-BOOT:
   * sudo apt update
-    sudo apt install build-essential gcc-arm-linux-gnueabihf swig \
+    sudo apt install build-essential gcc-arm-linux-gnueabihf swig libgnutls28-dev\
     u-boot-tools device-tree-compiler git python3
 
   * git clone https://source.denx.de/u-boot/u-boot.git
