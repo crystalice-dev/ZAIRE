@@ -17,6 +17,13 @@
 ### INSTALL:
  * sudo sunxi-fel uboot u-boot-sunxi-with-spl.bin
 
+### ACTIVATE PERMISION:
+ * sudo nano /etc/udev/rules.d/50-sunxi-fel.rules
+ * PAST: SUBSYSTEM=="usb", ATTR{idVendor}=="1f3a", ATTR{idProduct}=="efe8", MODE="0666"
+ * sudo udevadm control --reload-rules
+   sudo udevadm trigger
+ * PLUG IN DEVICE -> RUN -> sunxi-fel version
+
 ### SCREEN:
 * 
 
