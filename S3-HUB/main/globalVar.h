@@ -6,6 +6,7 @@
 #include <stdint.h>
 #include <esp_now.h>
 #include <esp_wifi.h>
+#include <esp_mac.h>
 #include <freertos/FreeRTOS.h>
 #include <freertos/task.h>
 #include <freertos/timers.h>

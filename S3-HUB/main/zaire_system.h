@@ -80,12 +80,23 @@
     #endif
 
     //WALKIE
-    #define DEVICE_PAIRING_NAME      "zairehelmetsPairing_0" 
-    #define ESP_NOW_CHANNEL          1
-    #define DEFAULT_SCAN_LIST_SIZE   10
-    #define WALKIE_BTN      GPIO_NUM_46
+    #define DEVICE_PAIRING_NAME         "zairehelmetsPairing_0" 
+    #define ESP_NOW_CHANNEL             1
+    #define DEFAULT_SCAN_LIST_SIZE      10
+    #define WALKIE_BTN                  GPIO_NUM_46
+    #define WALKIE_NEW_MESH             0xF5
+    #define WALKIE_PAIRING_DONE     0xA2
+    typedef enum{
+        NONE = 0,
+        MASTER = 1,
+        SLAVE = 2,
+        SYNC = 3
+    }walkie_pairing_mode_t;
+    extern walkie_pairing_mode_t walkie_pairing_mode;
     extern bool mesh_system_active;
+    extern uint8_t device_sta_mac[6];
     extern uint8_t peer_addresses[8][6];
+    extern uint8_t temp_peer_addr[6];
     extern uint8_t number_paired_peers;
     extern bool sendOver;
     extern bool recOver;
@@ -98,15 +109,21 @@
     esp_err_t init_i2s(void);
     int init_i2s_read(int16_t *samples, int count);
     esp_err_t init_wifi(void);
+    esp_err_t station_reconfig(void);
+    esp_err_t master_reconfig(void);
+    esp_err_t slave_reconfig(void);
     esp_err_t init_esp_now(void);
     void esp_now_sent_cb(const uint8_t *mac_addr, esp_now_send_status_t status);
     void esp_now_recv_cb(const uint8_t *mac_addr,  const uint8_t *data, int data_len);
     void walkie_discover_peers(void);
+    void walkie_discoverable_peer(void);
     esp_err_t add_peer_to_mesh(uint8_t *addr);
     esp_err_t remove_peer_from_mesh(uint8_t *addr);
     void walkie_pairing_master(void);
     void walkie_pairing_slave(void);
-    void walkie_pairing_sync(void);
+    void walkie_pairing_sync(uint8_t *addr);
+    void walkie_pairing_max(uint8_t *addr);
+    void walkie_pairing_new_mesh(uint8_t *addr);
     
 #elif DEVICE_TYPE == DEVICE_TYPE_SKI_GOGGLES // SKI Goggles-specific logic
     

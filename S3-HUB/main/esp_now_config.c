@@ -2,20 +2,15 @@
 
 
 bool mesh_system_active = CLOSED;
+walkie_pairing_mode_t walkie_pairing_mode = NONE;
+uint8_t device_sta_mac[6];
 uint8_t peer_addresses[8][6];
+uint8_t temp_peer_addr[6];
 uint8_t number_paired_peers = 1; // 1 is us
 
 
 esp_err_t init_wifi(void){
     wifi_config_t default_cfg = {
-        .ap = {
-            .ssid = DEVICE_PAIRING_NAME,
-            .password = "",
-            .channel = ESP_NOW_CHANNEL,
-            .ssid_len = strlen(DEVICE_PAIRING_NAME),
-            .authmode = WIFI_AUTH_OPEN,
-            .max_connection = DEFAULT_SCAN_LIST_SIZE,
-        },
         .sta = {
             .ssid = "",
             .password = "",
@@ -31,9 +26,61 @@ esp_err_t init_wifi(void){
     assert(sta_netif);
     wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
     ESP_ERROR_CHECK(esp_wifi_init(&cfg));
-    ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_APSTA));
-    ESP_ERROR_CHECK(esp_wifi_set_config(WIFI_IF_AP, &default_cfg));
+    ESP_ERROR_CHECK(station_reconfig());
+    esp_read_mac(device_sta_mac, ESP_MAC_WIFI_STA);
+    memcpy(peer_addresses[0], device_sta_mac, ESP_NOW_ETH_ALEN);
+    return ESP_OK;
+}
+
+esp_err_t station_reconfig(void){
+
+    wifi_config_t default_cfg = {
+        .sta = {
+            .ssid = "",
+            .password = "",
+            .channel = ESP_NOW_CHANNEL
+        }
+    };
+
+    ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_STA));
     ESP_ERROR_CHECK(esp_wifi_set_config(WIFI_IF_STA, &default_cfg));
+    ESP_ERROR_CHECK(esp_wifi_start());
+
+    return ESP_OK;
+}
+
+esp_err_t master_reconfig(void){
+
+    wifi_config_t master_cfg = {
+        .sta = {
+            .ssid = "",
+            .password = "",
+            .channel = ESP_NOW_CHANNEL
+        }
+    };
+
+    ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_APSTA));
+    ESP_ERROR_CHECK(esp_wifi_set_config(WIFI_IF_STA, &master_cfg));
+    ESP_ERROR_CHECK(esp_wifi_start());
+
+    return ESP_OK;
+}
+
+esp_err_t slave_reconfig(void){
+
+     wifi_config_t slave_cfg = {
+        .ap = {
+            .ssid = DEVICE_PAIRING_NAME,
+            .password = "",
+            .channel = ESP_NOW_CHANNEL,
+            .ssid_len = strlen(DEVICE_PAIRING_NAME),
+            .authmode = WIFI_AUTH_OPEN,
+            .max_connection = DEFAULT_SCAN_LIST_SIZE,
+        },
+    };
+
+    ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_APSTA));
+    ESP_ERROR_CHECK(esp_wifi_set_config(WIFI_IF_AP, &slave_cfg));
     ESP_ERROR_CHECK(esp_wifi_start());
 
     return ESP_OK;
@@ -58,7 +105,62 @@ void esp_now_sent_cb(const uint8_t *mac_addr, esp_now_send_status_t status){
 }
 
 void esp_now_recv_cb(const uint8_t *mac_addr,  const uint8_t *data, int data_len){
+    switch (walkie_pairing_mode)
+    {
+    case NONE:
+        if(data_len > 1){
 
+        }else{
+            if(esp_now_is_peer_exist(mac_addr) == true && data_len < 6){
+                //send to walkie
+            }
+        }
+        break;
+    
+    case MASTER:
+        if(memcmp(temp_peer_addr, mac_addr,ESP_NOW_ETH_ALEN ) == 0){ // for future use
+
+        }
+        break;
+
+    case SLAVE:
+        if(data_len == 6){
+            
+            esp_now_peer_info_t peer_info = {0};
+            memcpy(peer_info.peer_addr, data, ESP_NOW_ETH_ALEN);
+            peer_info.channel = ESP_NOW_CHANNEL;
+            peer_info.encrypt = false;
+
+            if (esp_now_add_peer(&peer_info) == ESP_OK) {
+                if (number_paired_peers < mesh_system_max_connection) {
+                    memcpy(peer_addresses[number_paired_peers], peer_info.peer_addr, ESP_NOW_ETH_ALEN);
+                    // Optional: give time for connection
+                    vTaskDelay(pdMS_TO_TICKS(5));
+                    uint8_t msg = number_paired_peers; // for future use
+                    esp_now_send(peer_addresses[number_paired_peers], &msg, sizeof(msg));
+                    walkie_pairing_mode = SYNC;
+                    number_paired_peers = 0;
+                } else {
+                    // Max connections reached, remove peer
+                   walkie_pairing_max(data);
+                }
+            }
+
+            
+        }
+        break;
+
+    case SYNC:
+        if(data_len == 6){
+            walkie_pairing_sync(data);
+        }else{
+            host_uart_write_str(WALKIE_PAIRING_COMPLETE);
+            walkie_pairing_mode = NONE;
+        }
+        break;
+    default:
+        break;
+    }
 }
 
 void walkie_discover_peers(void){
@@ -76,13 +178,13 @@ void walkie_discover_peers(void){
         
         for (int i = 0; i < ap_count; i++){
             if(strcmp((const char *)ap_info[i].ssid, DEVICE_PAIRING_NAME) == 0){
-
                 bool is_inList = false; // check if mac addr is already in list
                 for(int j = 0; j < number_paired_peers; j++){
                     if(memcmp(peer_addresses[j], ap_info[i].bssid, 6) == 0){
                         is_inList = true;
                         break;
                     }
+                    
                 }
 
                 if(is_inList == false){
@@ -96,32 +198,61 @@ void walkie_discover_peers(void){
 
 }
 
-esp_err_t add_peer_to_mesh(uint8_t *mac_addr){
-
+esp_err_t add_peer_to_mesh(uint8_t *mac_addr) {
     esp_now_peer_info_t peer_info = {0};
     memcpy(peer_info.peer_addr, mac_addr, ESP_NOW_ETH_ALEN);
     peer_info.channel = ESP_NOW_CHANNEL;
     peer_info.encrypt = false;
 
     if (esp_now_add_peer(&peer_info) == ESP_OK) {
-        if(number_paired_peers < mesh_system_max_connection){
-            memcpy(peer_addresses[number_paired_peers], mac_addr, 6);
-            number_paired_peers++;
+        if (number_paired_peers < mesh_system_max_connection) {
+            memcpy(peer_addresses[number_paired_peers], mac_addr, ESP_NOW_ETH_ALEN);
+            // Optional: give time for connection
+            vTaskDelay(pdMS_TO_TICKS(5));
+            // Send test byte
+            esp_now_send(mac_addr, device_sta_mac, sizeof(device_sta_mac));
+            memcpy(temp_peer_addr, mac_addr,ESP_NOW_ETH_ALEN);
+            number_paired_peers += 1;
+            vTaskDelay(pdMS_TO_TICKS(500));
             return ESP_OK;
         } else {
+            // Max connections reached, remove peer
             esp_now_del_peer(mac_addr);
             return ESP_FAIL;
         }
-    } else {
-        return ESP_FAIL;
     }
-    
-    vTaskDelay(pdMS_TO_TICKS(5)); // Gives time for connection
-    number_paired_peers += 1;
-    return ESP_OK;
+
+    return ESP_FAIL;
 }
+
 
 esp_err_t remove_peer_from_mesh(uint8_t *mac_addr){
 
     return esp_now_del_peer(mac_addr);
+}
+
+void walkie_pairing_max(uint8_t *addr){
+    esp_now_del_peer(addr);
+    //send message beep flash some color idk
+}
+
+void walkie_pairing_new_mesh(uint8_t *addr){
+
+    esp_now_peer_info_t peer_info = {0};
+    memcpy(peer_info.peer_addr, addr, ESP_NOW_ETH_ALEN);
+    peer_info.channel = ESP_NOW_CHANNEL;
+    peer_info.encrypt = false;
+
+    if (esp_now_add_peer(&peer_info) == ESP_OK) {
+        if (number_paired_peers < mesh_system_max_connection) {
+            memcpy(peer_addresses[number_paired_peers], addr, ESP_NOW_ETH_ALEN);
+
+            // Optional: give time for connection
+            vTaskDelay(pdMS_TO_TICKS(5));
+
+            // Send test byte
+            number_paired_peers += 1;
+        }
+    }
+
 }

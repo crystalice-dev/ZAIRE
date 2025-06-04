@@ -19,21 +19,27 @@ void gpio_run_task(void *vpParam){
                 vTaskDelay(pdMS_TO_TICKS(2000));
                 if(gpio_get_level(WALKIE_BTN) == HIGH){
                     host_uart_write_str(WALKIE_PAIRING_MASTER); // SEND COMMAND FOR LIGHTS
+                    printf("master\n");
                     vTaskDelay(pdMS_TO_TICKS(2000));
                     if(gpio_get_level(WALKIE_BTN) == 1){
                         host_uart_write_str(WALKIE_PAIRING_SLAVE); // SEND COMMAND FOR LIGHTS
+                        printf("slave\n");
                         vTaskDelay(pdMS_TO_TICKS(2000));
                         if(gpio_get_level(WALKIE_BTN) == 1){
                             host_uart_write_str(WALKIE_PAIRING_COMPLETE); // SEND COMMAND FOR LIGHTS
                         }else{
                             // LAUNCH SLAVE PAIRING HERE
+                            walkie_pairing_mode = SLAVE;
                             walkie_pairing_slave();
                         }
                     }else{
                         // LAUNCH MASTER PAIRING HERE
+                        walkie_pairing_mode = MASTER;
                         walkie_pairing_master();
                     }
                     vTaskDelay(pdMS_TO_TICKS(2000));
+                    station_reconfig();
+                    host_uart_write_str(WALKIE_PAIRING_COMPLETE);
                 }
             }
         }else{

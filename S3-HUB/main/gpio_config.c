@@ -4,6 +4,9 @@
 esp_err_t gpio_pin_init(void){
     esp_err_t err;
 
+    gpio_set_direction(GPIO_NUM_2, GPIO_MODE_OUTPUT);
+    gpio_set_level(GPIO_NUM_2, LOW);
+
     #ifdef DISPLAY_INCLUDED
         gpio_config_t camera_on_config = { // Init at 0
             .pin_bit_mask = (1ULL << WALKIE_BTN), // Select GPIO pin
