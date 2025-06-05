@@ -32,7 +32,6 @@ void walkie_pairing_master(void){
                     esp_now_send(peer_addresses[i],peer_addresses[j],sizeof(peer_addresses[j]));
                     vTaskDelay(pdMS_TO_TICKS(50)); // slow down a bit
                 }
-                printf("0x%2x to 0x%2x\n", WALKIE_PAIRING_DONE, peer_addresses[i][5]);
                 uint8_t msg = WALKIE_PAIRING_DONE;
                 esp_now_send(peer_addresses[i], &msg,sizeof(msg));
             }
@@ -89,14 +88,19 @@ void walkie_pairing_sync(uint8_t *addr){
 }
 
 
-void walkie(void){
+void walkie_snt(uint16_t i2s_data){
     for(int i = 0; i < number_paired_peers; i++){
         if(memcmp(peer_addresses[i], device_sta_mac, ESP_NOW_ETH_ALEN) != 0){
-            uint8_t msg = WALKIE_NEW_MESH;
+            uint8_t msg = i2s_data;
             esp_now_send(peer_addresses[i],&msg, sizeof(msg));
+            printf("sent\n");
         }
 
     }
+}
+
+void walkie_rcvd(uint16_t i2s_data){
+
 }
 
 

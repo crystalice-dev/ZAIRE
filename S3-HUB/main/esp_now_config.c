@@ -103,15 +103,18 @@ esp_err_t init_esp_now(void){
 
 }
 void esp_now_sent_cb(const uint8_t *mac_addr, esp_now_send_status_t status){
+    if(status == ESP_OK){
+        printf("SUCCESS\n");
+    }else{
+        printf("FAIL\n");
+    }
 }
 
 void esp_now_recv_cb(const uint8_t *mac_addr,  const uint8_t *data, int data_len){
     switch (walkie_pairing_mode)
     {
         case NONE:
-            if(esp_now_is_peer_exist(mac_addr) == true && data_len == 1){
-                printf("%d\n", data[0]);
-            }
+            printf("%d\n", data[0]);
             break;
         
         case MASTER:

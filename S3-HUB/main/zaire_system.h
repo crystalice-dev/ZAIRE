@@ -117,7 +117,8 @@
     esp_err_t init_esp_now(void);
     void esp_now_sent_cb(const uint8_t *mac_addr, esp_now_send_status_t status);
     void esp_now_recv_cb(const uint8_t *mac_addr,  const uint8_t *data, int data_len);
-    void walkie(void);
+    void walkie_snt(uint16_t i2s_data);
+    void walkie_rcvd(uint16_t i2s_data);
     void walkie_discover_peers(void);
     void request_sta_mac_addr(uint8_t *addr);
     esp_err_t remove_peer_from_mesh(uint8_t *addr);

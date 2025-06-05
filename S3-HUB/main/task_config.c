@@ -48,7 +48,7 @@ void gpio_run_task(void *vpParam){
                     }else{
                         
                         if(number_paired_peers > 1){
-                            walkie();
+                            
                             printf("MUTE WALKIE\n");
                         }
                     }
@@ -134,7 +134,8 @@ void walkie_run_task(void *vpParam){
     while (1)
     {
         if(speakOut == 1){
-            printf("WALKIE OUT\n");
+            walkie_snt(1);
+            vTaskDelay(pdMS_TO_TICKS(28));
         }
         vTaskDelay(pdMS_TO_TICKS(TASK_HOLD_DELAY));
     }
