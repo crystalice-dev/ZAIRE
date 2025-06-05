@@ -16,7 +16,19 @@ void gpio_run_task(void *vpParam){
     while (1)
     {
 
-        #ifdef LIGHTS_INCLUDED
+        if(gpio_get_level(PURPOSE_BTN) == HIGH){
+            vTaskDelay(pdMS_TO_TICKS(250));
+            if(gpio_get_level(PURPOSE_BTN) == HIGH){
+                vTaskDelay(pdMS_TO_TICKS(2000));
+                if(gpio_get_level(PURPOSE_BTN) == HIGH){
+                    printf("SETTINGS\n");
+                }
+            }else{
+                printf("PURPOSE PRESSED\n");
+            }
+        }
+
+        #ifdef DISPLAY_INCLUDED
             if(gpio_get_level(DISPLAY_EN_BTN)){
                 vTaskDelay(pdMS_TO_TICKS(250));
                 display_quick_show();
@@ -149,6 +161,9 @@ void i2c_run_task(void *vpParam){
                 case FRONT_WHITE_ON:
                     led_front_white_on();
                     break;
+
+                case LOW_BATTERY:
+                    led_battery_low_on();
                 default:
                     break;
             }

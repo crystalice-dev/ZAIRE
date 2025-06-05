@@ -63,6 +63,7 @@
     typedef enum {
         LED_OFF = 0,
         FRONT_WHITE_ON = 1,
+        LOW_BATTERY = 2,
         BACK_BRAKE_ON = 1,
         LEFT_TURN = 2,
         RIGHT_TURN = 3
@@ -72,6 +73,8 @@
     void led_welcome_animation(led_strip_handle_t led_strip);
     void led_front_white_on(void);
     void led_front_white_off(void);
+    void led_battery_low_on(void);
+    void led_battery_low_off(void);
     void led_right_turn(led_strip_handle_t led_strip);
     void led_left_turn(led_strip_handle_t led_strip);
     void led_brake_red(led_strip_handle_t led_strip);

@@ -27,7 +27,6 @@
 
 
 //DEVICE
-#define WALKIE_BTN      GPIO_NUM_8
 #define PURPOSE_BTN     GPIO_NUM_15
 
 //DEVICE TYPES

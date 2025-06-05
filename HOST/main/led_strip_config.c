@@ -95,6 +95,14 @@ void led_front_white_off(void){
 
 }
 
+void led_battery_low_on(void){
+    gpio_set_level(FRONT_RED_LED, LOW);
+}
+
+void led_battery_low_off(void){
+    gpio_set_level(FRONT_RED_LED, HIGH);
+}
+
 void led_right_turn(led_strip_handle_t led_strip){
 
     const int start_led = 5;  // LED 6
