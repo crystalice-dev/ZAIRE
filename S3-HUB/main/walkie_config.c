@@ -13,6 +13,7 @@ int16_t *output_16bit;
 
 
 void walkie_pairing_master(void){
+    master_reconfig();
     while (walkie_pairing_mode == MASTER){
         if(gpio_get_level(WALKIE_BTN)){
             host_uart_write_str(WALKIE_PAIRING_COMPLETE);
@@ -22,20 +23,25 @@ void walkie_pairing_master(void){
         vTaskDelay(pdMS_TO_TICKS(10));
     }
 
-    host_uart_write_str(WALKIE_PAIRING_SYNC);
-    vTaskDelay(pdMS_TO_TICKS(2000));
-    // station_reconfig();
-    // for(int i = 0; i < number_paired_peers; i++){
-    //     if(memcmp(peer_addresses[i],device_sta_mac,ESP_NOW_ETH_ALEN) != 0){ // chech it is not us
-    //         for(int j = 0; j < number_paired_peers; j++){
-    //             esp_now_send(peer_addresses[i],peer_addresses[j],sizeof(peer_addresses[j]));
-    //             vTaskDelay(pdMS_TO_TICKS(50)); // slow down a bit
-    //         }
-    //         uint8_t msg = WALKIE_PAIRING_COMPLETE;
-    //         esp_now_send(peer_addresses[i], msg,sizeof(msg));
-    //     }
-        
-    // }
+    if(new_peers > 0){
+        host_uart_write_str(WALKIE_PAIRING_SYNC);
+        for(int i = 0; i < number_paired_peers; i++){
+            if(memcmp(peer_addresses[i],device_sta_mac,ESP_NOW_ETH_ALEN) != 0){ // chech it is not us
+                
+                for(int j = 0; j < number_paired_peers; j++){
+                    esp_now_send(peer_addresses[i],peer_addresses[j],sizeof(peer_addresses[j]));
+                    vTaskDelay(pdMS_TO_TICKS(50)); // slow down a bit
+                }
+                printf("0x%2x to 0x%2x\n", WALKIE_PAIRING_DONE, peer_addresses[i][5]);
+                uint8_t msg = WALKIE_PAIRING_DONE;
+                esp_now_send(peer_addresses[i], &msg,sizeof(msg));
+            }
+            
+        }
+    }
+
+    station_reconfig();
+    host_uart_write_str(WALKIE_PAIRING_COMPLETE);
 }
 
 void walkie_pairing_slave(void){
@@ -49,6 +55,11 @@ void walkie_pairing_slave(void){
     }
     host_uart_write_str(WALKIE_PAIRING_SYNC);
     station_reconfig();
+    while (walkie_pairing_mode == SYNC){ // AWAIT SYNC
+        vTaskDelay(pdMS_TO_TICKS(10));
+    }
+    
+
 }
 
 void walkie_pairing_sync(uint8_t *addr){
@@ -60,10 +71,16 @@ void walkie_pairing_sync(uint8_t *addr){
 
     if (esp_now_add_peer(&peer_info) == ESP_OK) {
         if (number_paired_peers < mesh_system_max_connection) {
-            memcpy(peer_addresses[number_paired_peers], addr, ESP_NOW_ETH_ALEN);
             // Optional: give time for connection
             vTaskDelay(pdMS_TO_TICKS(5));
+            memcpy(peer_addresses[number_paired_peers], addr, ESP_NOW_ETH_ALEN);
             number_paired_peers += 1;
+
+            if(memcmp(peer_addresses[number_paired_peers], device_sta_mac, ESP_NOW_ETH_ALEN) == 0){ // CHECK IF WE JUST ADDED OURSELVES
+                esp_now_del_peer(peer_addresses[number_paired_peers - 1]);
+            }
+
+            printf("added: 0x%2x:0x%2x:0x%2x:0x%2x:0x%2x:0x%2x\n", addr[0],addr[1],addr[2],addr[3],addr[4],addr[5]);
         } else {
             // Max connections reached, remove peer
             walkie_pairing_max(addr);
@@ -72,6 +89,14 @@ void walkie_pairing_sync(uint8_t *addr){
 }
 
 
+void walkie(void){
+    for(int i = 0; i < number_paired_peers; i++){
+        if(memcmp(peer_addresses[i], device_sta_mac, ESP_NOW_ETH_ALEN) != 0){
+            uint8_t msg = WALKIE_NEW_MESH;
+            esp_now_send(peer_addresses[i],&msg, sizeof(msg));
+        }
 
+    }
+}
 
 

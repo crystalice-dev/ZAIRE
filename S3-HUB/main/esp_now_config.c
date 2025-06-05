@@ -7,6 +7,8 @@ uint8_t device_sta_mac[6];
 uint8_t peer_addresses[8][6];
 uint8_t temp_peer_addr[6];
 uint8_t number_paired_peers = 1; // 1 is us
+uint8_t new_peers  = 0;
+
 
 
 esp_err_t init_wifi(void){
@@ -59,7 +61,7 @@ esp_err_t master_reconfig(void){
         }
     };
 
-    ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_APSTA));
+    ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_STA));
     ESP_ERROR_CHECK(esp_wifi_set_config(WIFI_IF_STA, &master_cfg));
     ESP_ERROR_CHECK(esp_wifi_start());
 
@@ -101,65 +103,67 @@ esp_err_t init_esp_now(void){
 
 }
 void esp_now_sent_cb(const uint8_t *mac_addr, esp_now_send_status_t status){
-
 }
 
 void esp_now_recv_cb(const uint8_t *mac_addr,  const uint8_t *data, int data_len){
     switch (walkie_pairing_mode)
     {
-    case NONE:
-        if(data_len > 1){
-
-        }else{
-            if(esp_now_is_peer_exist(mac_addr) == true && data_len < 6){
-                //send to walkie
+        case NONE:
+            if(esp_now_is_peer_exist(mac_addr) == true && data_len == 1){
+                printf("%d\n", data[0]);
             }
-        }
-        break;
-    
-    case MASTER:
-        if(memcmp(temp_peer_addr, mac_addr,ESP_NOW_ETH_ALEN ) == 0){ // for future use
+            break;
+        
+        case MASTER:
+            if(esp_now_is_peer_exist(data) == false){
+                walkie_pairing_new_mesh(data);
+            }
+            break;
 
-        }
-        break;
-
-    case SLAVE:
-        if(data_len == 6){
+        case SLAVE:
             
-            esp_now_peer_info_t peer_info = {0};
-            memcpy(peer_info.peer_addr, data, ESP_NOW_ETH_ALEN);
-            peer_info.channel = ESP_NOW_CHANNEL;
-            peer_info.encrypt = false;
+            if(data_len == 6){
+                esp_now_peer_info_t peer_info = {0};
+                memcpy(peer_info.peer_addr, data, ESP_NOW_ETH_ALEN);
+                peer_info.channel = ESP_NOW_CHANNEL;
+                peer_info.encrypt = false;
 
-            if (esp_now_add_peer(&peer_info) == ESP_OK) {
-                if (number_paired_peers < mesh_system_max_connection) {
-                    memcpy(peer_addresses[number_paired_peers], peer_info.peer_addr, ESP_NOW_ETH_ALEN);
-                    // Optional: give time for connection
-                    vTaskDelay(pdMS_TO_TICKS(5));
-                    uint8_t msg = number_paired_peers; // for future use
-                    esp_now_send(peer_addresses[number_paired_peers], &msg, sizeof(msg));
-                    walkie_pairing_mode = SYNC;
-                    number_paired_peers = 0;
-                } else {
-                    // Max connections reached, remove peer
-                   walkie_pairing_max(data);
+                if (esp_now_add_peer(&peer_info) == ESP_OK) {
+                    if (number_paired_peers < mesh_system_max_connection) {
+                        // Optional: give time for connection
+                        vTaskDelay(pdMS_TO_TICKS(5));
+                        esp_now_send( data, device_sta_mac, sizeof(device_sta_mac));
+                        esp_now_del_peer(peer_info.peer_addr);
+                        walkie_pairing_mode = SYNC;
+                        number_paired_peers = 0;
+                    } else {
+                        // Max connections reached, remove peer
+                        walkie_pairing_max(data);
+                    }
                 }
             }
+            // if(data_len == 6){
+                
+            
 
             
-        }
-        break;
+            //     }
 
-    case SYNC:
-        if(data_len == 6){
-            walkie_pairing_sync(data);
-        }else{
-            host_uart_write_str(WALKIE_PAIRING_COMPLETE);
-            walkie_pairing_mode = NONE;
-        }
-        break;
-    default:
-        break;
+                
+            // }
+            break;
+
+        case SYNC:
+            if(data_len == 6){
+                walkie_pairing_sync(data);
+            }else{
+                
+                //host_uart_write_str(WALKIE_PAIRING_COMPLETE);
+                walkie_pairing_mode = NONE;
+            }
+            break;
+        default:
+            break;
     }
 }
 
@@ -188,7 +192,7 @@ void walkie_discover_peers(void){
                 }
 
                 if(is_inList == false){
-                    add_peer_to_mesh(ap_info[i].bssid);
+                    request_sta_mac_addr(ap_info[i].bssid);
                 }
 
             }
@@ -198,31 +202,23 @@ void walkie_discover_peers(void){
 
 }
 
-esp_err_t add_peer_to_mesh(uint8_t *mac_addr) {
+void request_sta_mac_addr(uint8_t *mac_addr){
+    
     esp_now_peer_info_t peer_info = {0};
     memcpy(peer_info.peer_addr, mac_addr, ESP_NOW_ETH_ALEN);
     peer_info.channel = ESP_NOW_CHANNEL;
     peer_info.encrypt = false;
 
     if (esp_now_add_peer(&peer_info) == ESP_OK) {
-        if (number_paired_peers < mesh_system_max_connection) {
-            memcpy(peer_addresses[number_paired_peers], mac_addr, ESP_NOW_ETH_ALEN);
-            // Optional: give time for connection
-            vTaskDelay(pdMS_TO_TICKS(5));
-            // Send test byte
-            esp_now_send(mac_addr, device_sta_mac, sizeof(device_sta_mac));
-            memcpy(temp_peer_addr, mac_addr,ESP_NOW_ETH_ALEN);
-            number_paired_peers += 1;
-            vTaskDelay(pdMS_TO_TICKS(500));
-            return ESP_OK;
-        } else {
-            // Max connections reached, remove peer
-            esp_now_del_peer(mac_addr);
-            return ESP_FAIL;
-        }
+        // Request STA
+        uint8_t msg = WALKIE_REQUEST_STA_MAC;
+        esp_now_send(mac_addr, device_sta_mac, sizeof(device_sta_mac));
+        vTaskDelay(pdMS_TO_TICKS(50));
+        // remove from peer stack
+        esp_now_del_peer(mac_addr);
+
     }
 
-    return ESP_FAIL;
 }
 
 
@@ -246,12 +242,11 @@ void walkie_pairing_new_mesh(uint8_t *addr){
     if (esp_now_add_peer(&peer_info) == ESP_OK) {
         if (number_paired_peers < mesh_system_max_connection) {
             memcpy(peer_addresses[number_paired_peers], addr, ESP_NOW_ETH_ALEN);
-
             // Optional: give time for connection
             vTaskDelay(pdMS_TO_TICKS(5));
-
             // Send test byte
             number_paired_peers += 1;
+            new_peers += 1;
         }
     }
 

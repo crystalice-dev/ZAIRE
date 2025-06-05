@@ -15,12 +15,7 @@
 #define mesh_system_max_connection  (10)
 
 #if DEVICE_TYPE == DEVICE_TYPE_BICYCLE_HELMET // Bicycle Helmet specific logic
-    //UART PASSING CODES
-    #define WALKIE_PAIRING_MASTER     "P0"
-    #define WALKIE_PAIRING_SLAVE      "P1"
-    #define WALKIE_PAIRING_SYNC       "P2"
-    #define WALKIE_PAIRING_COMPLETE   "P3"
-
+   
     #if AUDIO_CHIP != AUDIO_CHIP_NONE
         #define AUDIO_PLAYER_TARGET         'B'
         #define AUDIO_PLAYER_TARGET_NAME    ':' // Change name
@@ -80,12 +75,18 @@
     #endif
 
     //WALKIE
+    #define WALKIE_INCLUDED
+    #define WALKIE_PAIRING_MASTER     "P0"
+    #define WALKIE_PAIRING_SLAVE      "P1"
+    #define WALKIE_PAIRING_SYNC       "P2"
+    #define WALKIE_PAIRING_COMPLETE   "P3"
     #define DEVICE_PAIRING_NAME         "zairehelmetsPairing_0" 
     #define ESP_NOW_CHANNEL             1
     #define DEFAULT_SCAN_LIST_SIZE      10
     #define WALKIE_BTN                  GPIO_NUM_46
+    #define WALKIE_REQUEST_STA_MAC      0xB1
     #define WALKIE_NEW_MESH             0xF5
-    #define WALKIE_PAIRING_DONE     0xA2
+    #define WALKIE_PAIRING_DONE         0xA2
     typedef enum{
         NONE = 0,
         MASTER = 1,
@@ -98,6 +99,7 @@
     extern uint8_t peer_addresses[8][6];
     extern uint8_t temp_peer_addr[6];
     extern uint8_t number_paired_peers;
+    extern uint8_t new_peers;
     extern bool sendOver;
     extern bool recOver;
     extern bool speakOut;
@@ -115,9 +117,9 @@
     esp_err_t init_esp_now(void);
     void esp_now_sent_cb(const uint8_t *mac_addr, esp_now_send_status_t status);
     void esp_now_recv_cb(const uint8_t *mac_addr,  const uint8_t *data, int data_len);
+    void walkie(void);
     void walkie_discover_peers(void);
-    void walkie_discoverable_peer(void);
-    esp_err_t add_peer_to_mesh(uint8_t *addr);
+    void request_sta_mac_addr(uint8_t *addr);
     esp_err_t remove_peer_from_mesh(uint8_t *addr);
     void walkie_pairing_master(void);
     void walkie_pairing_slave(void);

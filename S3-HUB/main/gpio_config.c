@@ -4,21 +4,19 @@
 esp_err_t gpio_pin_init(void){
     esp_err_t err;
 
-    gpio_set_direction(GPIO_NUM_2, GPIO_MODE_OUTPUT);
-    gpio_set_level(GPIO_NUM_2, LOW);
-
-    #ifdef DISPLAY_INCLUDED
-        gpio_config_t camera_on_config = { // Init at 0
+    #ifdef WALKIE_INCLUDED
+        gpio_config_t walkie_config = { // Init at 0
             .pin_bit_mask = (1ULL << WALKIE_BTN), // Select GPIO pin
             .mode = GPIO_MODE_INPUT,
             .pull_up_en = GPIO_PULLUP_DISABLE,
             .pull_down_en = GPIO_PULLDOWN_ENABLE,  // Enable pull-down resistor
             .intr_type = GPIO_INTR_DISABLE
         };
-        err = gpio_config(&camera_on_config);
+        err = gpio_config(&walkie_config);
         if(err){
             return ESP_FAIL;
         }
+    
     #endif
     
     return ESP_OK;

@@ -16,7 +16,7 @@ void gpio_run_task(void *vpParam){
             if(gpio_get_level(WALKIE_BTN) == HIGH){
                 speakOut = 1;
             }else{
-                vTaskDelay(pdMS_TO_TICKS(2000));
+                vTaskDelay(pdMS_TO_TICKS(500));
                 if(gpio_get_level(WALKIE_BTN) == HIGH){
                     host_uart_write_str(WALKIE_PAIRING_MASTER); // SEND COMMAND FOR LIGHTS
                     printf("master\n");
@@ -39,7 +39,19 @@ void gpio_run_task(void *vpParam){
                     }
                     vTaskDelay(pdMS_TO_TICKS(2000));
                     station_reconfig();
+                    new_peers = 0;
+                    walkie_pairing_mode = NONE;
                     host_uart_write_str(WALKIE_PAIRING_COMPLETE);
+                }else{
+                    if(speakOut == 1){
+                        speakOut = 0;
+                    }else{
+                        
+                        if(number_paired_peers > 1){
+                            walkie();
+                            printf("MUTE WALKIE\n");
+                        }
+                    }
                 }
             }
         }else{
