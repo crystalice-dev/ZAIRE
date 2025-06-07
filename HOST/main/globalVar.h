@@ -44,8 +44,7 @@
 #define DEVICE_TYPE     DEVICE_TYPE_BICYCLE_HELMET// Must come before zaire_system.h -- avoid loop defination
 #include <zaire_system.h>
 
-//BUZZER
-#define BUZZER GPIO_NUM_40
+
 
 //UART
 #define UART_TARGET_BK  "B"
@@ -105,6 +104,7 @@ float bh1750_read_lux();
 //NETWORK
 #define EXAMPLE_MAX_STA_CONN 4
 esp_err_t wifi_init();
+esp_err_t wifi_settings_mode();
 
 //DNS-CAPTIVE-PORTAL
 extern TaskHandle_t dns_task_handle;

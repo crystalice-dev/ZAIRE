@@ -1,5 +1,6 @@
 idf_component_register(
     SRCS 
+        "buzzer_config.c"
         "blindspot_config.c"
         "led_strip_config.c"
         "gps_config.c"

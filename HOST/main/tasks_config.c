@@ -21,7 +21,22 @@ void gpio_run_task(void *vpParam){
             if(gpio_get_level(PURPOSE_BTN) == HIGH){
                 vTaskDelay(pdMS_TO_TICKS(2000));
                 if(gpio_get_level(PURPOSE_BTN) == HIGH){
-                    printf("SETTINGS\n");
+
+                    dns_server_active = !dns_server_active;
+
+                    if(dns_server_active == 1){
+                        double_quick_buzz();
+                        start_dns_server();
+                    }else{
+                        
+                        if(stop_dns_server() == ESP_OK){
+                            quick_buzz();
+                        }else{
+                            esp_restart();
+                        }
+                    }
+                    
+                    vTaskDelay(pdMS_TO_TICKS(1000));
                 }
             }else{
                 printf("PURPOSE PRESSED\n");

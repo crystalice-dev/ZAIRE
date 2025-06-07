@@ -9,6 +9,20 @@
 #define LOW         0
 
 #if DEVICE_TYPE == DEVICE_TYPE_BICYCLE_HELMET // Bicycle Helmet specific logic
+
+    //BUZZER
+    #define BUZZER_INCLUDED
+    #include "driver/ledc.h"
+    #define BUZZER_FREQ_HZ      2000  // Default tone
+    #define BUZZER_DUTY         4096  // Duty out of 8192 (50%)
+    #define BUZZER_LEDC_CHANNEL LEDC_CHANNEL_0
+    #define BUZZER GPIO_NUM_40
+    void buzzer_init();
+    void buzzer_off();
+    void buzzer_on();
+    void quick_buzz();
+    void double_quick_buzz();
+
     //UART PASSING CODES
     #define WALKIE_PAIRING_MASTER     "P0"
     #define WALKIE_PAIRING_SLAVE      "P1"

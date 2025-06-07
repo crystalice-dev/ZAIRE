@@ -80,6 +80,19 @@ void walkie_uart_received(const char* str){
                 led_target_stage = NORMAL;
                 break;
         }
+    }else if(str[0] == 'B'){
+        switch (n)
+        {
+        case 1:
+            quick_buzz();
+            break;
+        case 0:
+            double_quick_buzz();
+            break;
+        
+        default:
+            break;
+        }
     }
 
 }

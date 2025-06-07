@@ -13,6 +13,7 @@
 extern "C" {
 #endif
 
+extern bool dns_server_active;
 void start_dns_server(void);
 esp_err_t stop_dns_server(void);
 void register_dns_catch_all(httpd_handle_t server);

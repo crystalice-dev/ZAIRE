@@ -5,7 +5,7 @@
 #include <globalVar.h>
 
 
-
+bool dns_server_active = 0;
 const char *DNS_TAG = "dns_server";
 int dns_sock = -1;
 TaskHandle_t dns_task_handle = NULL;
