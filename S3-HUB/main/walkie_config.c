@@ -4,6 +4,8 @@
 bool sendOver=1;
 bool recOver=0;
 bool speakOut=0;
+bool walkie_mute=0;
+
 int32_t *samples_32bit;
 int16_t *samples_16bit;
 uint8_t *samples_8bit ;
@@ -89,17 +91,23 @@ void walkie_pairing_sync(uint8_t *addr){
 
 
 void walkie_snt(uint16_t i2s_data){
-    for(int i = 0; i < number_paired_peers; i++){
-        if(memcmp(peer_addresses[i], device_sta_mac, ESP_NOW_ETH_ALEN) != 0){
-            uint8_t msg = i2s_data;
-            esp_now_send(peer_addresses[i],&msg, sizeof(msg));
-            printf("sent\n");
-        }
+    if(walkie_mute == 0){
+        for(int i = 0; i < number_paired_peers; i++){
+            if(memcmp(peer_addresses[i], device_sta_mac, ESP_NOW_ETH_ALEN) != 0){
+                uint8_t msg = i2s_data;
+                esp_now_send(peer_addresses[i],&msg, sizeof(msg));
+                printf("sent\n");
+            }
 
+        }
     }
 }
 
 void walkie_rcvd(uint16_t i2s_data){
+
+    if(walkie_mute == 0){
+        printf("%d\n", i2s_data);
+    }
 
 }
 

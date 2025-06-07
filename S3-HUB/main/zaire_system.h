@@ -80,6 +80,8 @@
     #define WALKIE_PAIRING_SLAVE      "P1"
     #define WALKIE_PAIRING_SYNC       "P2"
     #define WALKIE_PAIRING_COMPLETE   "P3"
+    #define WALKIE_MUTE_ON            "B1"
+    #define WALKIE_MUTE_OFF           "B0"
     #define DEVICE_PAIRING_NAME         "zairehelmetsPairing_0" 
     #define ESP_NOW_CHANNEL             1
     #define DEFAULT_SCAN_LIST_SIZE      10
@@ -94,15 +96,16 @@
         SYNC = 3
     }walkie_pairing_mode_t;
     extern walkie_pairing_mode_t walkie_pairing_mode;
-    extern bool mesh_system_active;
     extern uint8_t device_sta_mac[6];
     extern uint8_t peer_addresses[8][6];
     extern uint8_t temp_peer_addr[6];
     extern uint8_t number_paired_peers;
     extern uint8_t new_peers;
+    extern bool mesh_system_active;
     extern bool sendOver;
     extern bool recOver;
     extern bool speakOut;
+    extern bool walkie_mute;
     extern int32_t *samples_32bit;
     extern int16_t *samples_16bit;
     extern uint8_t *samples_8bit ;

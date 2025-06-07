@@ -49,7 +49,12 @@ void gpio_run_task(void *vpParam){
                         
                         if(number_paired_peers > 1){
                             
-                            printf("MUTE WALKIE\n");
+                            walkie_mute = !walkie_mute;
+                            if(walkie_mute == 1){
+                                host_uart_write_str(WALKIE_MUTE_ON);
+                            }else{
+                                host_uart_write_str(WALKIE_MUTE_OFF);
+                            }
                         }
                     }
                 }

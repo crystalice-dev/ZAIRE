@@ -12,13 +12,6 @@ uint8_t new_peers  = 0;
 
 
 esp_err_t init_wifi(void){
-    wifi_config_t default_cfg = {
-        .sta = {
-            .ssid = "",
-            .password = "",
-            .channel = ESP_NOW_CHANNEL
-        }
-    };
 
     ESP_ERROR_CHECK(esp_netif_init());
     ESP_ERROR_CHECK(esp_event_loop_create_default());
@@ -114,7 +107,7 @@ void esp_now_recv_cb(const uint8_t *mac_addr,  const uint8_t *data, int data_len
     switch (walkie_pairing_mode)
     {
         case NONE:
-            printf("%d\n", data[0]);
+            walkie_rcvd(data[0]);
             break;
         
         case MASTER:
