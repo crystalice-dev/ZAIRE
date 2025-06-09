@@ -57,21 +57,20 @@ esp_err_t uart_init(void){
     return ESP_OK;
 }
 
-
-void host_uart_received(const char* str){
-    if (str[0] == AUDIO_PLAYER_TARGET) {
-        if(str[1] == AUDIO_PLAYER_TARGET_NAME){
-            const char *name = strchr(str, ':');
-            if (name && *(name + 1) != '\0') {
-                name++;  // Move past the colon
-                bk_set_device_name(name);
+    void host_uart_received(const char* str){
+        if (str[0] == AUDIO_PLAYER_TARGET) {
+            if(str[1] == AUDIO_PLAYER_TARGET_NAME){
+                const char *name = strchr(str, ':');
+                if (name && *(name + 1) != '\0') {
+                    name++;  // Move past the colon
+                    bk_set_device_name(name);
+                }
+            }else{
+                int value = atoi(&str[1]);  // Pass pointer to the string starting at str[1]
+                audio_chip_uart_handler(value);
             }
-        }else{
-            int value = atoi(&str[1]);  // Pass pointer to the string starting at str[1]
-            audio_chip_uart_handler(value);
         }
     }
-}
 
 void host_uart_write_str(const char* str){
     uart_write_bytes(HOST_UART_NUM, str, strlen(str));

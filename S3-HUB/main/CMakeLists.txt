@@ -1,5 +1,6 @@
 idf_component_register(
     SRCS 
+    "i2s_config.c"
     "esp_now_config.c"
     "bk_config.c"
     "task_config.c"

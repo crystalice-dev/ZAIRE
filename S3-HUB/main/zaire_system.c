@@ -14,7 +14,10 @@ esp_err_t zaire_system_check(){
     
     //i2c_init();
    // uart_init();
-   // init_i2s();
+   
+   #ifdef WALKIE_INCLUDED
+        I2SInit();
+    #endif
 
    //UART
     ESP_ERROR_CHECK(uart_init());

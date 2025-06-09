@@ -35,9 +35,9 @@ void app_main(void){
         xTaskCreate(test_run_task, "TEST TASK", 4096, NULL, 7, NULL);
     #endif
 
+    
     bk_init();
     vTaskDelay(pdMS_TO_TICKS(1000));
-    bk_init();
 
     // walkie_discover_peers();
 

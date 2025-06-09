@@ -103,11 +103,22 @@ void esp_now_sent_cb(const uint8_t *mac_addr, esp_now_send_status_t status){
     }
 }
 
-void esp_now_recv_cb(const uint8_t *mac_addr,  const uint8_t *data, int data_len){
+esp_now_recv_cb_t esp_now_recv_cb(const uint8_t *mac_addr,  const uint8_t *data, int data_len){
     switch (walkie_pairing_mode)
     {
         case NONE:
-            walkie_rcvd(data[0]);
+            
+            if(0==speakOut){
+                return 0;  
+            }
+            for (int i = 0; i < data_len; i++){
+                recive_16bit[i] = (data[i] - 128) << 5;
+                output_16bit[i * 2 ] = recive_16bit[i];
+                output_16bit[i * 2 + 1] = recive_16bit[i];
+            
+            }
+            I2Swrite(output_16bit,data_len);
+
             break;
         
         case MASTER:
@@ -161,6 +172,8 @@ void esp_now_recv_cb(const uint8_t *mac_addr,  const uint8_t *data, int data_len
         default:
             break;
     }
+
+    return ESP_OK;
 }
 
 void walkie_discover_peers(void){

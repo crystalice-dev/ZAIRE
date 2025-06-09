@@ -1,18 +1,10 @@
 #include <globalVar.h>
 
 
-bool sendOver=1;
+bool sendOver=0;
 bool recOver=0;
 bool speakOut=0;
 bool walkie_mute=0;
-
-int32_t *samples_32bit;
-int16_t *samples_16bit;
-uint8_t *samples_8bit ;
-int16_t *recive_16bit;
-int16_t *output_16bit;
-
-
 
 void walkie_pairing_master(void){
     master_reconfig();
@@ -90,12 +82,11 @@ void walkie_pairing_sync(uint8_t *addr){
 }
 
 
-void walkie_snt(uint16_t i2s_data){
+void walkie_snt(const uint8_t *i2s_data, uint16_t i2s_len){
     if(walkie_mute == 0){
         for(int i = 0; i < number_paired_peers; i++){
             if(memcmp(peer_addresses[i], device_sta_mac, ESP_NOW_ETH_ALEN) != 0){
-                uint8_t msg = i2s_data;
-                esp_now_send(peer_addresses[i],&msg, sizeof(msg));
+                esp_now_send(peer_addresses[i],i2s_data, i2s_len);
                 printf("sent\n");
             }
 

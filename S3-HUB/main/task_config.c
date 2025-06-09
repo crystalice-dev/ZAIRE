@@ -14,7 +14,7 @@ void gpio_run_task(void *vpParam){
         if(gpio_get_level(WALKIE_BTN) == HIGH){
             vTaskDelay(pdMS_TO_TICKS(250));
             if(gpio_get_level(WALKIE_BTN) == HIGH){
-                speakOut = 1;
+                sendOver = 1;
             }else{
                 vTaskDelay(pdMS_TO_TICKS(500));
                 if(gpio_get_level(WALKIE_BTN) == HIGH){
@@ -43,8 +43,8 @@ void gpio_run_task(void *vpParam){
                     walkie_pairing_mode = NONE;
                     host_uart_write_str(WALKIE_PAIRING_COMPLETE);
                 }else{
-                    if(speakOut == 1){
-                        speakOut = 0;
+                    if(sendOver == 1){
+                        sendOver = 0;
                     }else{
                         
                         if(number_paired_peers > 1){
@@ -60,7 +60,7 @@ void gpio_run_task(void *vpParam){
                 }
             }
         }else{
-                speakOut = 0;
+                sendOver = 0;
             }
         vTaskDelay(pdMS_TO_TICKS(TASK_HOLD_DELAY));
     }
@@ -138,11 +138,16 @@ void walkie_run_task(void *vpParam){
 
     while (1)
     {
-        if(speakOut == 1){
-            walkie_snt(1);
+        if(sendOver == 1){
+            speakOut=0;
+            int samples_read = I2Sread(samples_16bit,128);
+            covert_bit(samples_16bit,samples_8bit,samples_read);
+            walkie_snt(samples_8bit,samples_read);
+            
+        }else{
             vTaskDelay(pdMS_TO_TICKS(28));
+            speakOut=1;
         }
-        vTaskDelay(pdMS_TO_TICKS(TASK_HOLD_DELAY));
     }
     
 } 

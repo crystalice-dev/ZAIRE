@@ -36,9 +36,6 @@
 #define DEVICE_TYPE     DEVICE_TYPE_BICYCLE_HELMET// Must come before zaire_system.h -- avoid loop defination
 #include <zaire_system.h>
 
-//BUZZER
-#define BUZZER GPIO_NUM_42
-
 //GPIO
 esp_err_t gpio_pin_init(void);
 

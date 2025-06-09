@@ -76,6 +76,7 @@
 
     //WALKIE
     #define WALKIE_INCLUDED
+    #include <driver/i2s.h>
     #define WALKIE_PAIRING_MASTER     "P0"
     #define WALKIE_PAIRING_SLAVE      "P1"
     #define WALKIE_PAIRING_SYNC       "P2"
@@ -86,6 +87,11 @@
     #define ESP_NOW_CHANNEL             1
     #define DEFAULT_SCAN_LIST_SIZE      10
     #define WALKIE_BTN                  GPIO_NUM_46
+    #define WALKIE_BCK                  GPIO_NUM_1
+    #define WALKIE_WS                   GPIO_NUM_2
+    #define WALKIE_DIN                  GPIO_NUM_3
+    #define WALKIE_DOUT                 GPIO_NUM_14
+    #define SAMPLE_RATE                 15500 //15500
     #define WALKIE_REQUEST_STA_MAC      0xB1
     #define WALKIE_NEW_MESH             0xF5
     #define WALKIE_PAIRING_DONE         0xA2
@@ -111,16 +117,20 @@
     extern uint8_t *samples_8bit ;
     extern int16_t *recive_16bit;
     extern int16_t *output_16bit;
-    esp_err_t init_i2s(void);
-    int init_i2s_read(int16_t *samples, int count);
+    extern const i2s_port_t REC_I2S_PORT;
+    extern const i2s_port_t SPK_I2S_PORT;
+    void I2SInit();
+    int I2Sread(int16_t *samples, int count);
+    void covert_bit(int16_t *temp_samples_16bit,uint8_t*temp_samples_8bit,uint8_t len );
+    void I2Swrite(int16_t *samples, int count);
     esp_err_t init_wifi(void);
     esp_err_t station_reconfig(void);
     esp_err_t master_reconfig(void);
     esp_err_t slave_reconfig(void);
     esp_err_t init_esp_now(void);
     void esp_now_sent_cb(const uint8_t *mac_addr, esp_now_send_status_t status);
-    void esp_now_recv_cb(const uint8_t *mac_addr,  const uint8_t *data, int data_len);
-    void walkie_snt(uint16_t i2s_data);
+    esp_now_recv_cb_t esp_now_recv_cb(const uint8_t *mac_addr,  const uint8_t *data, int data_len);
+    void walkie_snt(const uint8_t *i2s_data, uint16_t i2s_len);
     void walkie_rcvd(uint16_t i2s_data);
     void walkie_discover_peers(void);
     void request_sta_mac_addr(uint8_t *addr);
