@@ -10,6 +10,10 @@
 
 #if DEVICE_TYPE == DEVICE_TYPE_BICYCLE_HELMET // Bicycle Helmet specific logic
 
+    //REMOTE
+    #define REMOTE_INCLUDED
+    void remote_pairing_requested();
+
     //BUZZER
     #define BUZZER_INCLUDED
     #include "driver/ledc.h"
@@ -71,7 +75,8 @@
         NORMAL = 0,
         MASTER_PAIRING = 1,
         SLAVE_PAIRING = 2,
-        SYNC_PAIRING = 3
+        SYNC_PAIRING = 3,
+        REMOTE_PAIRING = 4
     }led_target_stage_t;
     extern led_target_stage_t led_target_stage;
     typedef enum {
@@ -96,6 +101,7 @@
     void led_pairing_slave_search_blue(led_strip_handle_t led_strip);
     void led_pairing_sync_blue(led_strip_handle_t led_strip);
     void led_pairing_complete(led_strip_handle_t led_strip);
+    void led_pairing_remote(led_strip_handle_t led_strip);
     void led_off_all(led_strip_handle_t led_strip);
 
     #define DISPLAY_INCLUDED

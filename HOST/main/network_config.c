@@ -56,3 +56,23 @@ esp_err_t wifi_standard_mode(){
 
     return ESP_OK;
 }
+
+esp_err_t wifi_remote_pairing_mode() {
+    
+    wifi_config_t slave_cfg = {
+        .ap = {
+            .ssid = DEVICE_REMOTE_PAIRING_NAME,
+            .password = "",
+            .channel = ESP_REMOTE_NOW_CHANNEL,
+            .ssid_len = strlen(DEVICE_REMOTE_PAIRING_NAME),
+            .authmode = WIFI_AUTH_OPEN,
+            .max_connection = 1,
+        },
+    };
+
+    ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_APSTA));
+    ESP_ERROR_CHECK(esp_wifi_set_config(WIFI_IF_AP, &slave_cfg));
+    ESP_ERROR_CHECK(esp_wifi_start());
+
+    return ESP_OK;
+}

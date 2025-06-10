@@ -6,7 +6,7 @@
 #include "lwip/inet.h"
 
 #define DNS_PORT                53
-#define DNS_TASK_STACK_SIZE     4096
+#define DNS_TASK_STACK_SIZE     8192
 #define DNS_TASK_PRIORITY       3
 
 #ifdef __cplusplus
@@ -14,6 +14,7 @@ extern "C" {
 #endif
 
 extern bool dns_server_active;
+extern bool remote_pairing_requested_btn;
 void start_dns_server(void);
 esp_err_t stop_dns_server(void);
 void register_dns_catch_all(httpd_handle_t server);

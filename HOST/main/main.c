@@ -52,6 +52,9 @@ void app_main(void){
         xTaskCreate(bs_left_monitor_task, "BLINDSPOT TASK LEFT", 2048, NULL,7, &bs_left_monitor_handler);
     #endif
 
+
+    
+
     // if(battery_init() == ESP_OK){
     //     float v = battery_get_voltage();
     //     float soc = battery_get_soc();

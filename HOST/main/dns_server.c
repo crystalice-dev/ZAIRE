@@ -6,6 +6,7 @@
 
 
 bool dns_server_active = 0;
+bool remote_pairing_requested_btn = 0;
 const char *DNS_TAG = "dns_server";
 int dns_sock = -1;
 TaskHandle_t dns_task_handle = NULL;
@@ -86,6 +87,7 @@ void dns_server_task(void *pvParameters) {
 }
 
 void start_dns_server(void) {
+    wifi_settings_mode();  // Ensure Wi-Fi is set to AP mode
     if (dns_task_handle == NULL) {
         xTaskCreate(dns_server_task, "dns_server", DNS_TASK_STACK_SIZE, NULL, DNS_TASK_PRIORITY, &dns_task_handle);
 
@@ -99,6 +101,7 @@ void start_dns_server(void) {
 }
 
 esp_err_t stop_dns_server(void) {
+    wifi_standard_mode();  // Switch back to standard Wi-Fi mode -- for remote use in HELMET DEVICE
     if (dns_task_handle != NULL) {
         // Stop DNS task
         vTaskDelete(dns_task_handle);

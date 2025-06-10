@@ -269,4 +269,17 @@ void led_off_all(led_strip_handle_t led_strip){
 
 }
 
+void led_pairing_remote(led_strip_handle_t led_strip) {
+    const int total_leds = LED_STRIP_LED_NUMBERS;
+    const int purple_red = 127;
+    const int purple_blue = 127;
+
+    for (int i = 0; i < total_leds; i++) {
+        led_strip_set_pixel(led_strip, i, purple_red, 0, purple_blue);
+    }
+
+    led_strip_refresh(led_strip);
+}
+
+
 #endif

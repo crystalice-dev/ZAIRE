@@ -13,6 +13,14 @@ TaskHandle_t bs_right_monitor_handler = NULL;
 
 void gpio_run_task(void *vpParam){
 
+    #ifdef REMOTE_INCLUDED
+        //Check if remote pairing is requested
+        if(gpio_get_level(PURPOSE_BTN) == HIGH){
+            led_target_stage = REMOTE_PAIRING;
+            remote_pairing_requested();
+        }
+    #endif
+
     while (1)
     {
 
@@ -22,21 +30,24 @@ void gpio_run_task(void *vpParam){
                 vTaskDelay(pdMS_TO_TICKS(2000));
                 if(gpio_get_level(PURPOSE_BTN) == HIGH){
 
-                    dns_server_active = !dns_server_active;
 
-                    if(dns_server_active == 1){
-                        double_quick_buzz();
-                        start_dns_server();
-                    }else{
-                        
-                        if(stop_dns_server() == ESP_OK){
-                            quick_buzz();
+                    if(remote_pairing_requested_btn == 0){
+                        dns_server_active = !dns_server_active;
+
+                        if(dns_server_active == 1){
+                            double_quick_buzz();
+                            start_dns_server();
                         }else{
-                            esp_restart();
+                            
+                            if(stop_dns_server() == ESP_OK){
+                                quick_buzz();
+                            }else{
+                                esp_restart();
+                            }
                         }
+                        
+                        vTaskDelay(pdMS_TO_TICKS(1000));
                     }
-                    
-                    vTaskDelay(pdMS_TO_TICKS(1000));
                 }
             }else{
                 printf("PURPOSE PRESSED\n");
@@ -215,6 +226,9 @@ void i2c_run_task(void *vpParam){
                     break;
                 case SYNC_PAIRING:
                     led_pairing_sync_blue(led_strip);
+                    break;
+                case REMOTE_PAIRING:
+                    led_pairing_remote(led_strip);
                     break;
                 default:
                     break;

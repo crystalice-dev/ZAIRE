@@ -105,6 +105,13 @@ float bh1750_read_lux();
 #define EXAMPLE_MAX_STA_CONN 4
 esp_err_t wifi_init();
 esp_err_t wifi_settings_mode();
+esp_err_t wifi_standard_mode();
+
+#ifdef REMOTE_INCLUDED
+    esp_err_t wifi_remote_pairing_mode();
+    #define DEVICE_REMOTE_PAIRING_NAME  "Zaire_Remote_Pairing_01"
+    #define ESP_REMOTE_NOW_CHANNEL      7
+#endif
 
 //DNS-CAPTIVE-PORTAL
 extern TaskHandle_t dns_task_handle;

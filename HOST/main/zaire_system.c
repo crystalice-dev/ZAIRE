@@ -57,3 +57,15 @@ esp_err_t init_spiffs(void) {
 
     return res;
 }
+
+#ifdef REMOTE_INCLUDED
+
+    void remote_pairing_requested() {
+        remote_pairing_requested_btn = 1; // Set the flag to indicate remote pairing is requested -- prevent dns server from starting automatically
+        dns_server_active = 0; // Disable DNS server if it was active
+        stop_dns_server(); // Stop DNS server if it was running
+        double_quick_buzz();
+        wifi_remote_pairing_mode(); //set wifi to remote pairing mode
+    }
+
+#endif
