@@ -10,10 +10,8 @@ sudo apt-get install -y build-essential gcc git libopencv-dev libc6-dev ffmpeg f
     libv4l-dev libxvidcore-dev libx264-dev \
     libgtk-3-dev libcanberra-gtk* \
     libatlas-base-dev gfortran python3-dev\
-    g++ wget unzip\
-    python3-dev libffi-dev build-essential\
-    python3-pip\
-    pip3 install esptool
+    g++ wget unzip
+    sudo apt-get install -y python3-dev libffi-dev build-essential python3-pip pip3 install esptool
 
 # Instal OpenCV
 sudo apt-get -y install libopencv-dev
