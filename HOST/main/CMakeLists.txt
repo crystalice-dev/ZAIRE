@@ -1,5 +1,6 @@
 idf_component_register(
     SRCS 
+        "espNow_config.c"
         "buzzer_config.c"
         "blindspot_config.c"
         "led_strip_config.c"

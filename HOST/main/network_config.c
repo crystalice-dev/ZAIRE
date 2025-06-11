@@ -74,5 +74,9 @@ esp_err_t wifi_remote_pairing_mode() {
     ESP_ERROR_CHECK(esp_wifi_set_config(WIFI_IF_AP, &slave_cfg));
     ESP_ERROR_CHECK(esp_wifi_start());
 
+    ESP_ERROR_CHECK(esp_now_init());
+    ESP_ERROR_CHECK(esp_now_register_send_cb(esp_now_sent_cb));
+    ESP_ERROR_CHECK(esp_now_register_recv_cb(esp_now_recv_cb));
+
     return ESP_OK;
 }

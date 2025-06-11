@@ -24,6 +24,8 @@
 #include <esp_netif.h>
 #include <sys/param.h>
 #include <dns_server.h>
+#include <esp_now.h>
+#include <esp_system.h>
 
 
 //DEVICE
@@ -106,6 +108,9 @@ float bh1750_read_lux();
 esp_err_t wifi_init();
 esp_err_t wifi_settings_mode();
 esp_err_t wifi_standard_mode();
+void esp_now_sent_cb(const uint8_t *mac_addr, esp_now_send_status_t status);
+esp_now_recv_cb_t esp_now_recv_cb(const uint8_t *mac_addr, const uint8_t *data, int data_len);
+
 
 #ifdef REMOTE_INCLUDED
     esp_err_t wifi_remote_pairing_mode();

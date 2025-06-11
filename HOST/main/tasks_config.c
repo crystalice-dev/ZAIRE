@@ -18,6 +18,8 @@ void gpio_run_task(void *vpParam){
         if(gpio_get_level(PURPOSE_BTN) == HIGH){
             led_target_stage = REMOTE_PAIRING;
             remote_pairing_requested();
+            vTaskDelay(pdMS_TO_TICKS(1500));
+        
         }
     #endif
 
