@@ -87,7 +87,6 @@ void walkie_snt(const uint8_t *i2s_data, uint16_t i2s_len){
         for(int i = 0; i < number_paired_peers; i++){
             if(memcmp(peer_addresses[i], device_sta_mac, ESP_NOW_ETH_ALEN) != 0){
                 esp_now_send(peer_addresses[i],i2s_data, i2s_len);
-                printf("sent\n");
             }
 
         }

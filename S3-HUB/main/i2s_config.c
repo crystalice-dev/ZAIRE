@@ -91,11 +91,10 @@ void covert_bit(int16_t *temp_samples_16bit,uint8_t*temp_samples_8bit,uint8_t le
   }
     
 }
-void I2Swrite(int16_t *samples, int count)//数据写入IIS
-{
+// write to i2s -- speaker
+void I2Swrite(int16_t *samples, int count){
     size_t bytes_written;
     i2s_write(SPK_I2S_PORT, samples, sizeof(uint16_t)*count*2, &bytes_written, portMAX_DELAY); 
-    printf("I2Swrite L: %d\n", bytes_written / sizeof(uint16_t) / 2);
 }
 
 
