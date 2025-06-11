@@ -18,13 +18,15 @@ void app_main(void)
 
     gpio_set_direction(GPIO_NUM_15, GPIO_MODE_OUTPUT); // Set GPIO15 as output
 
-    while (1)
-    {
-        gpio_set_level(GPIO_NUM_15, 1); // Set GPIO15 high
-        vTaskDelay(pdMS_TO_TICKS(500)); // Delay for 1 second
-        gpio_set_level(GPIO_NUM_15, 0); // Set GPIO15 low
-        vTaskDelay(pdMS_TO_TICKS(500)); // Delay for 1 second
-    }
+    xTaskCreate(gpio_top_btn_run_task, "gpio_top_btn_task", 4096, NULL, 5, &gpio_top_btn_task_handler);
+    xTaskCreate(gpio_left_btn_run_task, "gpio_left_btn_task", 2048, NULL, 5, &gpio_left_btn_task_handler);
+    xTaskCreate(gpio_right_btn_run_task, "gpio_right_btn_task", 2048, NULL, 5, &gpio_right_btn_task_handler);
+    xTaskCreate(gpio_left_led_run_task, "gpio_left_led_task", 2048, NULL, 5, &gpio_left_led_task_handler);
+    xTaskCreate(gpio_right_led_run_task, "gpio_right_led_task", 2048, NULL, 5, &gpio_right_led_task_handler);
+    xTaskCreate(gpio_top_led_run_task, "gpio_top_led_task", 2048, NULL, 5, &gpio_top_led_task_handler);
+    // Start the FreeRTOS scheduler
+
+   
     
     
 }

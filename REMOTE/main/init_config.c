@@ -2,6 +2,8 @@
 
 uint8_t device_sta_mac[6];
 uint8_t helmet_ap_mac[6];
+bool isPairingInvoked = 0; // Flag to indicate if pairing is invoked
+
 
 esp_err_t init_wifi(void){
 
@@ -34,7 +36,7 @@ esp_err_t espNow_init(void){
     esp_err_t err = esp_now_init();
 
     if(err != ESP_OK){
-        return ESP_FAIL;
+        esp_restart(); // Restart if ESP-NOW initialization fails
     }
 
     ESP_ERROR_CHECK(esp_now_register_send_cb(esp_now_sent_cb));
@@ -81,6 +83,41 @@ esp_err_t gpio_init(void){
     if(err){
         return ESP_FAIL;
     }
+
+    gpio_config_t left_led_config = { // Init at 3
+            .pin_bit_mask = (1ULL << LEFT_LED), // Select GPIO pin
+            .mode = GPIO_MODE_OUTPUT,
+            .pull_up_en = GPIO_PULLUP_DISABLE,
+            .pull_down_en = GPIO_PULLDOWN_DISABLE,  // Disable pull-down resistor
+            .intr_type = GPIO_INTR_DISABLE
+        };
+    err = gpio_config(&left_led_config);
+    if(err){
+        return ESP_FAIL;
+    }
+    gpio_config_t right_led_config = { // Init at 4
+            .pin_bit_mask = (1ULL << RIGHT_LED), // Select GPIO pin
+            .mode = GPIO_MODE_OUTPUT,
+            .pull_up_en = GPIO_PULLUP_DISABLE,
+            .pull_down_en = GPIO_PULLDOWN_DISABLE,  // Disable pull-down resistor
+            .intr_type = GPIO_INTR_DISABLE
+        };
+    err = gpio_config(&right_led_config);
+    if(err){
+        return ESP_FAIL;
+    }   
+    gpio_config_t top_led_config = { // Init at 5
+            .pin_bit_mask = (1ULL << TOP_LED), // Select GPIO pin
+            .mode = GPIO_MODE_OUTPUT,
+            .pull_up_en = GPIO_PULLUP_DISABLE,
+            .pull_down_en = GPIO_PULLDOWN_DISABLE,  // Disable pull-down resistor
+            .intr_type = GPIO_INTR_DISABLE
+        };
+    err = gpio_config(&top_led_config);
+    if(err){
+        return ESP_FAIL;
+    }
+    // Initialize GPIO pins for LEDs and buttons
     
     return ESP_OK; // Placeholder for actual GPIO initialization code
 
