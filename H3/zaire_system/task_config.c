@@ -3,6 +3,9 @@
 
 pthread_t host_Pthread;
 pthread_t walkie_Pthread;
+pthread_t onBoardLED_Pthread;
+
+onBoardLED_t onBoardLED = NONE;
 
 int init_pthread(void){
 
@@ -16,6 +19,10 @@ int init_pthread(void){
         return ZAIRE_FAIL;
     }
 
+    if(pthread_create(&onBoardLED_Pthread, NULL, onBoard_LED_task, NULL) != ZAIRE_OK){
+        printf("onBoard_LED_task failed init\n");
+        return ZAIRE_FAIL;
+    }
 
     return ZAIRE_OK;
 }
@@ -28,6 +35,12 @@ int start_pthread(void){
     }
 
     if(pthread_join(host_Pthread, NULL) != ZAIRE_OK){
+
+        printf("host_uart_task failed start\n");
+        return ZAIRE_FAIL;
+    }
+
+    if(pthread_join(onBoardLED_Pthread, NULL) != ZAIRE_OK){
         printf("host_uart_task failed start\n");
         return ZAIRE_FAIL;
     }
@@ -53,7 +66,7 @@ void* walkie_uart_task(void* arg) {
                 buffer[buffer_index] = '\0';
 
                 if (buffer_index > 0) {
-                    printf("Received: %s\n", buffer);
+                    printf("walkie: %s\n", buffer);
                     fflush(stdout);
                 }
 
@@ -63,9 +76,7 @@ void* walkie_uart_task(void* arg) {
         }
 
         // Avoid busy-waiting
-        usleep(1000); // sleep 1ms
-
-        walkie_uart_snd("HELLO from BPI \n\r");
+        usleep(10); // sleep 1ms
     }
 
     return NULL;
@@ -88,7 +99,7 @@ void* host_uart_task(void* arg) {
                 buffer[buffer_index] = '\0';
 
                 if (buffer_index > 0) {
-                    walkie_uart_rec(buffer);
+                    host_uart_rec(buffer);
                     fflush(stdout);
                 }
 
@@ -98,8 +109,38 @@ void* host_uart_task(void* arg) {
         }
 
         // Avoid busy-waiting
-        usleep(1000); // sleep 1ms
+        usleep(10); // sleep 1ms
     }
 
     return NULL;
+}
+
+
+void* onBoard_LED_task(void* arg){
+    while(1){
+
+        switch(onBoardLED){
+
+            case NONE:
+                digitalWrite(ON_BOARD_LED, LOW);
+                break;
+
+            case STANDBY:
+                digitalWrite(ON_BOARD_LED, HIGH);
+		digitalWrite(ESP_RST, LOW);
+                digitalWrite(ESP_BOOT0, HIGH);
+		break;
+
+            case FLASHING:
+		digitalWrite(ESP_RST, HIGH);
+		digitalWrite(ESP_BOOT0, LOW);
+                digitalWrite(ON_BOARD_LED, HIGH);
+                delay(50);
+                digitalWrite(ON_BOARD_LED, LOW);
+                delay(40);
+		break;
+        }
+
+        usleep(10);
+    }
 }

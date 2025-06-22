@@ -21,8 +21,31 @@ int init_uart(void){
     return ZAIRE_OK;
 }
 
-// void host_uart_rec(char* str);
-// void host_uart_snd(char* str);
+void host_uart_rec(char* str){
+
+	if(str[0] == 'H'){
+		if(http_server_running == 0){
+			get_dns_ssid_bssid(str);
+			delay(200); // time for dns to start
+			int err = start_http_server();
+			delay(200);
+			if(err == ZAIRE_FAIL)host_uart_snd("D|R\n"); //Re-try connection
+		}else{
+			stop_http_server();
+			delay(200);
+		}
+	}else{
+		//printf("HOST: %s\n", str);
+	}
+}
+
+void host_uart_snd(char* str){
+	printf("Sending: %s\n", str);
+    	serialPuts(host_serialPort, str);
+    	delay(100);
+}
+
+
 void walkie_uart_rec(char* str){
 
     printf("%s\n", str);

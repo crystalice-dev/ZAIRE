@@ -3,11 +3,13 @@
 
 
 void init_gpio(void){
-    pinMode(HOST_BOOT0, OUTPUT);
-    pinMode(WALKIE_BOOT0, OUTPUT);
+    pinMode(ESP_RST, OUTPUT);
+    pinMode(ESP_BOOT0, OUTPUT);
     pinMode(CAMERA_EN, OUTPUT);
+    pinMode(ON_BOARD_LED, OUTPUT);
 
-    digitalWrite(HOST_BOOT0, LOW);
-    digitalWrite(WALKIE_BOOT0, LOW);
+    digitalWrite(ESP_RST, LOW);
+    digitalWrite(ESP_BOOT0, LOW);
     digitalWrite(CAMERA_EN, LOW);
+    digitalWrite(ON_BOARD_LED, LOW);
 }
