@@ -17,7 +17,7 @@ idf_component_register(
         "gpio_config.c" 
         "uart_config.c" 
         "remote_config.c" 
-        "usb_mic_config.c" 
+        "usb_mic_config.c"
         "zaire_system.c" 
         "test_config.c"
         "main.c"

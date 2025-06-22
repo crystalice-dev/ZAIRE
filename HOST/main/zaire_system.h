@@ -8,6 +8,14 @@
 #define HIGH        1
 #define LOW         0
 
+//SYSTEM
+#define IMG_SIZE  (1024)
+typedef enum {
+    STANDARD = 0x00,
+    IMG = 0x01,
+} uart_data_type_t;
+extern uart_data_type_t uart_data_type;
+
 #if DEVICE_TYPE == DEVICE_TYPE_BICYCLE_HELMET // Bicycle Helmet specific logic
 
     //REMOTE

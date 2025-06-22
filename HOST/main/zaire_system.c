@@ -10,15 +10,15 @@ esp_err_t zaire_system_check(){
     wifi_init();
     gpio_pin_init();
 
-    #ifdef BLINDSPOT_INCLUDED
-        bs_monitor_init();
-    #endif
+    // #ifdef BLINDSPOT_INCLUDED
+    //     bs_monitor_init();
+    // #endif
 
-    #ifdef DISPLAY_INCLUDED
-        if(display_init() != ESP_OK){
-            return ESP_FAIL;
-        }
-    #endif   
+    // #ifdef DISPLAY_INCLUDED
+    //     if(display_init() != ESP_OK){
+    //         return ESP_FAIL;
+    //     }
+    // #endif   
     
     i2c_init();
     bh1750_init();

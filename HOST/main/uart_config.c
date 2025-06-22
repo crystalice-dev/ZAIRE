@@ -1,5 +1,6 @@
 #include <globalVar.h>
 
+uart_data_type_t uart_data_type = IMG; // Default to standard data type
 
 
 esp_err_t uart_init(void){
@@ -97,12 +98,27 @@ void walkie_uart_received(const char* str){
 
 }
 
-
-
-void walkie_uart_write_str(const char* str){
-
+void walkie_uart_send_data(const char* str){
+    // This function is used to send data to the Walkie UART
+    // It can be used for debugging or sending status messages
+    uart_write_bytes(WALKIE_UART_NUM, str, strlen(str));
+    vTaskDelay(pdMS_TO_TICKS(100)); // Ensure the data is sent before proceeding
 }
 
-void walkie_uart_write_int(int data){
+void h3_uart_send_data(const char* str){
+    // This function is used to send data to the h3 via UART
+    // It can be used for debugging or sending status messages
+    uart_write_bytes(H3_UART_NUM, str, strlen(str));
+    uart_flush(H3_UART_NUM);
+    vTaskDelay(pdMS_TO_TICKS(100)); // Ensure the data is sent before proceeding
+}
 
+void h3_uart_received(const char* str){
+    if(strlen(str) < 6){
+        if(str[0] == 'D'){
+            if(str[2] == 'R'){
+                wifi_send_ap_bssid();
+            }
+        }
+    }
 }

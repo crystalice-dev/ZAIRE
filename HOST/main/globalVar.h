@@ -25,6 +25,7 @@
 #include <sys/param.h>
 #include <dns_server.h>
 #include <esp_now.h>
+#include <esp_vfs.h>
 #include <esp_system.h>
 
 
@@ -63,11 +64,12 @@
 #define H3_RX           GPIO_NUM_44
 #define H3_BAUD         115200
 #define BUF_SIZE        1024
+#define IMG_END                     "IMG_END"
 esp_err_t uart_init(void);
 void walkie_uart_received(const char* str);
-void walkie_uart_write_str(const char* str);
-void walkie_uart_write(int data);
-
+void walkie_uart_send_data(const char* str);
+void h3_uart_send_data(const char* str);
+void h3_uart_received(const char* str);
 
 
 //GPS
@@ -108,6 +110,7 @@ float bh1750_read_lux();
 esp_err_t wifi_init();
 esp_err_t wifi_settings_mode();
 esp_err_t wifi_standard_mode();
+void wifi_send_ap_bssid();
 void esp_now_sent_cb(const uint8_t *mac_addr, esp_now_send_status_t status);
 esp_now_recv_cb_t esp_now_recv_cb(const uint8_t *mac_addr, const uint8_t *data, int data_len);
 

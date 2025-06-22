@@ -25,21 +25,55 @@ esp_err_t wifi_init(void) {
 
 }
 
-esp_err_t wifi_settings_mode(){
-    wifi_config_t default_cfg = { 0 };  // Zero out the struct
+void wifi_send_ap_bssid(){
 
-    // Copy SSID string safely
-    strncpy((char *)default_cfg.ap.ssid, system_settings.WIFI_SSID, sizeof(default_cfg.ap.ssid) - 1);
-    default_cfg.ap.ssid_len = strlen(system_settings.WIFI_SSID);
-    default_cfg.ap.max_connection = 4;
-    default_cfg.ap.authmode = WIFI_AUTH_OPEN;
+    char http_server_start[512];
+    uint8_t mac[6];
 
+    //Get MAC address (BSSID) of our AP
+    esp_wifi_get_mac(WIFI_IF_AP, mac);
+
+    vTaskDelay(pdMS_TO_TICKS(100));
+    snprintf(dns_server_bssid, sizeof(dns_server_bssid),
+             "%02X:%02X:%02X:%02X:%02X:%02X",
+             mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
+
+    
+    snprintf(http_server_start, sizeof(http_server_start), "H|%s|%s\n", dns_server_ssid, dns_server_bssid);
+    h3_uart_send_data(http_server_start);
+
+}
+
+
+esp_err_t wifi_settings_mode() {
+
+    wifi_config_t default_cfg = { 
+        .ap = {
+            .ssid = "ZAIRE_SETTING",
+            .password = "",
+            .channel = 3,
+            .ssid_len = strlen("ZAIRE_SETTING"),
+            .authmode = WIFI_AUTH_OPEN,
+            .max_connection = 10,
+        },
+    };
+
+    // Copy SSID string from system settings
+    // strncpy((char *)default_cfg.ap.ssid, system_settings.WIFI_SSID, sizeof(default_cfg.ap.ssid) - 1);
+    // default_cfg.ap.ssid_len = strlen(system_settings.WIFI_SSID);
+
+    // Set Wi-Fi to Access Point mode
     ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_APSTA));
     ESP_ERROR_CHECK(esp_wifi_set_config(WIFI_IF_AP, &default_cfg));
     ESP_ERROR_CHECK(esp_wifi_start());
 
+    vTaskDelay(pdMS_TO_TICKS(200));
+    wifi_send_ap_bssid();
+
     return ESP_OK;
 }
+
+
 
 esp_err_t wifi_standard_mode(){
     wifi_config_t default_cfg = {

@@ -6,6 +6,8 @@
 
 
 bool dns_server_active = 0;
+char dns_server_ssid[128] = "ZAIRE_SETTING";
+char dns_server_bssid[128];
 bool remote_pairing_requested_btn = 0;
 const char *DNS_TAG = "dns_server";
 int dns_sock = -1;
@@ -94,6 +96,7 @@ void start_dns_server(void) {
         web_server = start_webserver();  // make sure start_webserver() returns httpd_handle_t
         if (web_server) {
             register_dns_catch_all(web_server);  // your handler to redirect all HTTP to settings page
+            
         }
 
         ESP_LOGI(DNS_TAG, "DNS + Web server started");
@@ -101,7 +104,11 @@ void start_dns_server(void) {
 }
 
 esp_err_t stop_dns_server(void) {
+    char http_server_stop[512];
     wifi_standard_mode();  // Switch back to standard Wi-Fi mode -- for remote use in HELMET DEVICE
+
+    snprintf(http_server_stop, sizeof(http_server_stop), "%s\n", HTTP_SERVER_CLOSE);
+    h3_uart_send_data(http_server_stop);
     if (dns_task_handle != NULL) {
         // Stop DNS task
         vTaskDelete(dns_task_handle);
@@ -121,6 +128,8 @@ esp_err_t stop_dns_server(void) {
             web_server = NULL;
             ESP_LOGI(DNS_TAG, "Web server stopped");
         }
+
+       
 
         return ESP_OK;
     }

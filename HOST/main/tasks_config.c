@@ -56,12 +56,12 @@ void gpio_run_task(void *vpParam){
             }
         }
 
-        #ifdef DISPLAY_INCLUDED
-            if(gpio_get_level(DISPLAY_EN_BTN)){
-                vTaskDelay(pdMS_TO_TICKS(250));
-                display_quick_show();
-            }
-        #endif
+        // #ifdef DISPLAY_INCLUDED
+        //     if(gpio_get_level(DISPLAY_EN_BTN)){
+        //         vTaskDelay(pdMS_TO_TICKS(250));
+        //         display_quick_show();
+        //     }
+        // #endif
         vTaskDelay(pdMS_TO_TICKS(TASK_HOLD_DELAY));
     }
     
@@ -73,10 +73,10 @@ void h3_uart_run_task(void *vpParam){
 
     while (1)
     {
-        // Read and process Walkie UART data
         int h3_len = uart_read_bytes(H3_UART_NUM, h3_data, BUF_SIZE, pdMS_TO_TICKS(100));
         if (h3_len > 0) {
-            printf("%s\n", (const char *)h3_data);
+            
+            h3_uart_received((const char *)h3_data);
             memset(h3_data, 0, sizeof(h3_data));  // Clears the buffer
         }
         vTaskDelay(pdMS_TO_TICKS(TASK_HOLD_DELAY));
@@ -99,6 +99,7 @@ void walkie_uart_run_task(void *vpParam){
     }
 
 }
+
 
 void gps_uart_run_task(void *vpParam){
     
