@@ -11,7 +11,6 @@
 //SYSTEM
 #define OPENED                      (1)
 #define CLOSED                      (0)
-#define ESP_NOW_CHANNEL             (3)
 #define mesh_system_max_connection  (10)
 
 #if DEVICE_TYPE == DEVICE_TYPE_BICYCLE_HELMET // Bicycle Helmet specific logic
@@ -140,6 +139,33 @@
     void walkie_pairing_sync(uint8_t *addr);
     void walkie_pairing_max(uint8_t *addr);
     void walkie_pairing_new_mesh(uint8_t *addr);
+
+    //USB-CAM
+    #define PWDN_GPIO_NUM               (-1)
+    #define RESET_GPIO_NUM              (-1)
+    #define XCLK_GPIO_NUM               GPIO_NUM_15
+    #define SIOD_GPIO_NUM               GPIO_NUM_4
+    #define SIOC_GPIO_NUM               GPIO_NUM_5
+
+    #define Y9_GPIO_NUM                 GPIO_NUM_16
+    #define Y8_GPIO_NUM                 GPIO_NUM_17
+    #define Y7_GPIO_NUM                 GPIO_NUM_18
+    #define Y6_GPIO_NUM                 GPIO_NUM_12
+    #define Y5_GPIO_NUM                 GPIO_NUM_10
+    #define Y4_GPIO_NUM                 GPIO_NUM_8
+    #define Y3_GPIO_NUM                 GPIO_NUM_9 // 1
+    #define Y2_GPIO_NUM                 GPIO_NUM_11 //0
+
+    #define VSYNC_GPIO_NUM              GPIO_NUM_6
+    #define HREF_GPIO_NUM               GPIO_NUM_7
+    #define PCLK_GPIO_NUM               GPIO_NUM_13
+    #define UVC_MAX_FRAMESIZE_SIZE      (60*1024)
+    esp_err_t usb_init(void);
+    esp_err_t camera_init(void);
+    uvc_fb_t* camera_fb_get_cb(void *cb_ctx);
+    void camera_fb_return_cb(uvc_fb_t *fb, void *cb_ctx);
+    void camera_stop_cb(void *cb_ctx);
+    esp_err_t camera_start_cb(uvc_format_t format, int width, int height, int rate, void *cb_ctx);
     
 #elif DEVICE_TYPE == DEVICE_TYPE_SKI_GOGGLES // SKI Goggles-specific logic
     

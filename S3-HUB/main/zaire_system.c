@@ -23,8 +23,8 @@ esp_err_t zaire_system_check(){
     ESP_ERROR_CHECK(uart_init());
 
     //USB CAMERA
-    // ESP_ERROR_CHECK(camera_init());
-    // ESP_ERROR_CHECK(usb_init());
+    ESP_ERROR_CHECK(camera_init());
+    ESP_ERROR_CHECK(usb_init());
 
     //AUDIO CHIP
     #if AUDIO_CHIP == AUDIO_CHIP_BK3266

@@ -31,6 +31,9 @@ void app_main(void){
         xTaskCreate(bk_run_task, "BK TASK", 4096, NULL, 6, &h3_task_handler);
         xTaskCreate(walkie_run_task, "BK TASK", 4096, NULL, 7, &walkie_task_handler);
 
+        #ifdef CAMERA_INCLUDED
+            xTaskCreate(camera_btn_run_task, "camera_btn_run_task",4096, NULL, 2, &camera_btn_task_handler);
+        #endif
     #else
         xTaskCreate(test_run_task, "TEST TASK", 4096, NULL, 7, NULL);
     #endif

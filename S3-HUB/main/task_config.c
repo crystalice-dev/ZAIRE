@@ -6,6 +6,7 @@ TaskHandle_t bk_task_handler = NULL;
 TaskHandle_t h3_task_handler = NULL;
 TaskHandle_t i2c_task_handler = NULL;
 TaskHandle_t walkie_task_handler = NULL;
+TaskHandle_t camera_btn_task_handler = NULL;
 
 void gpio_run_task(void *vpParam){
 
@@ -16,7 +17,7 @@ void gpio_run_task(void *vpParam){
             if(gpio_get_level(WALKIE_BTN) == HIGH){
                 sendOver = 1;
             }else{
-                vTaskDelay(pdMS_TO_TICKS(500));
+                vTaskDelay(pdMS_TO_TICKS(250));
                 if(gpio_get_level(WALKIE_BTN) == HIGH){
                     host_uart_write_str(WALKIE_PAIRING_MASTER); // SEND COMMAND FOR LIGHTS
                     printf("master\n");
@@ -134,21 +135,23 @@ void h3_run_task(void *vpParam) {
     }
 }
 
-void walkie_run_task(void *vpParam){
 
-    while (1)
-    {
-        if(sendOver == 1){
-            speakOut=0;
-            int samples_read = I2Sread(samples_16bit,128);
-            covert_bit(samples_16bit,samples_8bit,samples_read);
-            walkie_snt(samples_8bit,samples_read);
-            
-        }else{
-            vTaskDelay(pdMS_TO_TICKS(28));
-            speakOut=1;
+#ifdef WALKIE_INCLUDED
+    void walkie_run_task(void *vpParam){
+
+        while (1)
+        {
+            if(sendOver == 1){
+                speakOut=0;
+                int samples_read = I2Sread(samples_16bit,128);
+                covert_bit(samples_16bit,samples_8bit,samples_read);
+                walkie_snt(samples_8bit,samples_read);
+                
+            }else{
+                vTaskDelay(pdMS_TO_TICKS(28));
+                speakOut=1;
+            }
         }
-    }
-    
-} 
-
+        
+    } 
+#endif
