@@ -22,7 +22,7 @@ let totalIMG = 4;
 let index = 0;
 
 function updateImage() {
-  img.src = `http://${ip}:${port}/pic${index}.jpg`;
+  img.src = `http://${ip}:${port}/Photos/pic.png`;
 }
 
 viewPhotosBTN_Left.addEventListener('click', () => {

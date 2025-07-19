@@ -39,7 +39,8 @@ esp_err_t i2c_init(void){
     #endif
 
     if(ret_0 != ESP_OK || ret_1 != ESP_OK){
-        vTaskDelay(pdMS_TO_TICKS(2000));
+        //vTaskDelay(pdMS_TO_TICKS(2000));
+        //esp_restart();
         return ESP_FAIL;
     }
 
@@ -138,8 +139,8 @@ esp_err_t bh1750_init() {
     i2c_cmd_link_delete(cmd);
     
     if(ret == ESP_FAIL){
-        
-        vTaskDelay(pdMS_TO_TICKS(5000));
+        vTaskDelay(pdMS_TO_TICKS(1000));
+        //esp_restart();
     }
 
     return ret;

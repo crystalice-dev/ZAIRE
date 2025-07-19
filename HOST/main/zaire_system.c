@@ -2,6 +2,8 @@
 
 
 settings_t system_settings;
+bool is_camera_recording = 0;
+
 
 esp_err_t zaire_system_check(){
     init_spiffs();
@@ -14,11 +16,11 @@ esp_err_t zaire_system_check(){
     //     bs_monitor_init();
     // #endif
 
-    // #ifdef DISPLAY_INCLUDED
-    //     if(display_init() != ESP_OK){
-    //         return ESP_FAIL;
-    //     }
-    // #endif   
+    #ifdef DISPLAY_INCLUDED
+        if(display_init() != ESP_OK){
+            return ESP_FAIL;
+        }
+    #endif   
     
     i2c_init();
     bh1750_init();
@@ -63,7 +65,7 @@ esp_err_t init_spiffs(void) {
     void remote_pairing_requested() {
         remote_pairing_requested_btn = 1; // Set the flag to indicate remote pairing is requested -- prevent dns server from starting automatically
         dns_server_active = 0; // Disable DNS server if it was active
-        stop_dns_server(); // Stop DNS server if it was running
+        //stop_dns_server(); // Stop DNS server if it was running
         double_quick_buzz();
         wifi_remote_pairing_mode(); //set wifi to remote pairing mode
     }

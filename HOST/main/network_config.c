@@ -20,6 +20,7 @@ esp_err_t wifi_init(void) {
 
     wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
     ESP_ERROR_CHECK(esp_wifi_init(&cfg));
+
     
     return ESP_OK;
 
@@ -111,6 +112,8 @@ esp_err_t wifi_remote_pairing_mode() {
     ESP_ERROR_CHECK(esp_now_init());
     ESP_ERROR_CHECK(esp_now_register_send_cb(esp_now_sent_cb));
     ESP_ERROR_CHECK(esp_now_register_recv_cb(esp_now_recv_cb));
+
+    
 
     return ESP_OK;
 }

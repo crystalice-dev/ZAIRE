@@ -206,6 +206,7 @@ extern TaskHandle_t i2c_task_handler;
 extern TaskHandle_t display_task_handler;
 extern TaskHandle_t led_strip_task_handler;
 extern TaskHandle_t bs_left_monitor_handler;
+extern TaskHandle_t display_camera_btn_task_handler;
 extern TaskHandle_t bs_right_monitor_handler;
 void gpio_run_task(void *vpParam);
 void gps_uart_run_task(void *vpParam);
@@ -216,6 +217,7 @@ void display_run_task(void *vpParam);
 void led_strip_run_task(void *vpParam);
 void bs_left_monitor_task(void *vpParam);
 void bs_right_monitor_task(void *vpParam);
+void display_camera_btn_run_task(void *vpParam);
 
 
 #if DEVICE_TYPE == DEVICE_TYPE_TEST

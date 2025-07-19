@@ -9,6 +9,7 @@ bool dns_server_active = 0;
 char dns_server_ssid[128] = "ZAIRE_SETTING";
 char dns_server_bssid[128];
 bool remote_pairing_requested_btn = 0;
+bool device_sta_mac_requested = 0;
 const char *DNS_TAG = "dns_server";
 int dns_sock = -1;
 TaskHandle_t dns_task_handle = NULL;
@@ -92,7 +93,8 @@ void start_dns_server(void) {
     wifi_settings_mode();  // Ensure Wi-Fi is set to AP mode
     if (dns_task_handle == NULL) {
         xTaskCreate(dns_server_task, "dns_server", DNS_TASK_STACK_SIZE, NULL, DNS_TASK_PRIORITY, &dns_task_handle);
-
+        gpio_set_level(DISPLAY_EN_PIN, HIGH);
+        display_target = DISPLAY_SHOW_DNS_SETTING;
         web_server = start_webserver();  // make sure start_webserver() returns httpd_handle_t
         if (web_server) {
             register_dns_catch_all(web_server);  // your handler to redirect all HTTP to settings page

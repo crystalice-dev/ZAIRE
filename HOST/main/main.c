@@ -43,9 +43,13 @@ void app_main(void){
         xTaskCreate(led_strip_run_task, "LED STRIP TASK", 4096, NULL, 2, &led_strip_task_handler);
     #endif
 
-    // #ifdef DISPLAY_INCLUDED
-    //     xTaskCreate(display_run_task, "DISPLAY TASK", 2048, NULL, 2, &display_task_handler);
-    // #endif
+    #ifdef DISPLAY_INCLUDED
+        xTaskCreate(display_run_task, "DISPLAY TASK", 2048, NULL, 2, &display_task_handler);
+    #endif
+
+    #ifdef CAMERA_INCLUDED
+        xTaskCreate(display_camera_btn_run_task, "display_camera_btn_run_task", 4096, NULL, 4, &display_camera_btn_task_handler);
+    #endif
 
     #ifdef BLINDSPOT_INCLUDED
         xTaskCreate(bs_right_monitor_task, "BLINDSPOT TASK RIGHT", 2048, NULL, 7, &bs_right_monitor_handler);
@@ -64,12 +68,12 @@ void app_main(void){
     
 
     //Last roll out
-    // #ifdef DISPLAY_INCLUDED
-    //     vTaskDelay(pdMS_TO_TICKS(3000));
-    //     display_target = DISPLAY_EN_OFF;
-    //     vTaskDelay(pdMS_TO_TICKS(500));
-    //     gpio_set_level(DISPLAY_EN_PIN, LOW);
-    // #endif
+    #ifdef DISPLAY_INCLUDED
+        vTaskDelay(pdMS_TO_TICKS(3000));
+        display_target = DISPLAY_EN_OFF;
+        vTaskDelay(pdMS_TO_TICKS(500));
+        gpio_set_level(DISPLAY_EN_PIN, LOW);
+    #endif
 
 }
 

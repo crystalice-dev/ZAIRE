@@ -14,14 +14,12 @@ extern char dns_server_bssid[128];
 
 //HTTP SERVER
 #define MAX_HTTP_RECV_BUFFER    512
-#define FILE_URL_FORMAT         "http://%s:8801/%s"
-#define HTTP_SERVER_CLOSE       "H|CLOSE"
+
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 extern bool dns_server_active;
-extern bool remote_pairing_requested_btn;
 void start_dns_server(void);
 esp_err_t stop_dns_server(void);
 void register_dns_catch_all(httpd_handle_t server);

@@ -20,6 +20,9 @@ extern uart_data_type_t uart_data_type;
 
     //REMOTE
     #define REMOTE_INCLUDED
+    #define REMOTE_REQUEST_STA_MAC      0xF3
+    extern bool remote_pairing_requested_btn;
+    extern bool device_sta_mac_requested;
     void remote_pairing_requested();
 
     //BUZZER
@@ -40,6 +43,11 @@ extern uart_data_type_t uart_data_type;
     #define WALKIE_PAIRING_SLAVE      "P1"
     #define WALKIE_PAIRING_SYNC       "P2"
     #define WALKIE_PAIRING_COMPLETE   "P2"
+    #define FILE_URL_FORMAT         "http://%s:8801/%s"
+    #define HTTP_SERVER_CLOSE       "H|CLOSE"
+    #define CAMERA_TAKE_PHOTO       "C|P\n"
+    #define CAMERA_START_VIDEO      "C|V1\n"
+    #define CAMERA_STOP_VIDEO       "C|V0\n"
 
     //AUDIO CHIP
     #if AUDIO_CHIP != AUDIO_CHIP_NONE
@@ -116,13 +124,12 @@ extern uart_data_type_t uart_data_type;
     #include <u8g2.h>
     #include <u8g2_esp32_hal.h>
     #define DISPLAY_EN_PIN     GPIO_NUM_18
-    #define DISPLAY_EN_BTN     GPIO_NUM_8
-    #define CAMERA_ON_PIN      GPIO_NUM_14
+    
     typedef enum {
         DISPLAY_EN_OFF = 0,
         DISPLAY_MAIN_UI = 1,
         DISPLAY_SHOW_LOW_BAT = 2,
-        DISPLAY_SHOW_DNS_IP = 3,
+        DISPLAY_SHOW_DNS_SETTING = 3,
     }display_target_t;
     extern display_target_t display_target;
 
@@ -146,7 +153,13 @@ extern uart_data_type_t uart_data_type;
         void display_quick_show(void);
         //FULL SCREEN DISPLAY 
         void display_low_battery_warning(void);
-        void display_dns_IP(void);
+        void display_dns_setting(void);
+
+    //CAMERA
+    #define CAMERA_INCLUDED
+    #define CAMERA_ON_PIN             GPIO_NUM_14
+    #define DISPLAY_CAMERA_EN_BTN     GPIO_NUM_8
+    extern bool is_camera_recording;
     
 #elif DEVICE_TYPE == DEVICE_TYPE_SKI_GOGGLES
     // SKI Goggles-specific logic
@@ -156,7 +169,7 @@ extern uart_data_type_t uart_data_type;
     #include <u8g2.h>
     #include <u8g2_esp32_hal.h>
     #define DISPLAY_EN_PIN     GPIO_NUM_18
-    #define DISPLAY_EN_BTN     GPIO_NUM_8
+    #define DISPLAY_CAMERA_EN_BTN     GPIO_NUM_8
     #define CAMERA_ON_PIN      GPIO_NUM_14
     typedef enum {
         DISPLAY_EN_OFF = 0,
@@ -186,7 +199,7 @@ extern uart_data_type_t uart_data_type;
         void display_quick_show(void);
         //FULL SCREEN DISPLAY 
         void display_low_battery_warning(void);
-        void display_dns_IP(void);
+        void display_dns_setting(void);
 
 #elif DEVICE_TYPE == DEVICE_TYPE_MOTOR_HELMET
     // Motor Helmet specific logic
@@ -205,7 +218,7 @@ extern uart_data_type_t uart_data_type;
     #include <u8g2.h>
     #include <u8g2_esp32_hal.h>
     #define DISPLAY_EN_PIN     GPIO_NUM_18
-    #define DISPLAY_EN_BTN     GPIO_NUM_8
+    #define DISPLAY_CAMERA_EN_BTN     GPIO_NUM_8
     #define CAMERA_ON_PIN      GPIO_NUM_14
     typedef enum {
         DISPLAY_EN_OFF = 0,
@@ -235,7 +248,7 @@ extern uart_data_type_t uart_data_type;
         void display_quick_show(void);
         //FULL SCREEN DISPLAY 
         void display_low_battery_warning(void);
-        void display_dns_IP(void);
+        void display_dns_setting(void);
 
 #elif DEVICE_TYPE == DEVICE_TYPE_TEST
 

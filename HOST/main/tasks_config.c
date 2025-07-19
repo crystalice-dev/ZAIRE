@@ -8,6 +8,7 @@ TaskHandle_t walkie_uart_task_handler = NULL;
 TaskHandle_t i2c_task_handler = NULL;
 TaskHandle_t display_task_handler = NULL;
 TaskHandle_t led_strip_task_handler = NULL;
+TaskHandle_t display_camera_btn_task_handler = NULL;
 TaskHandle_t bs_left_monitor_handler = NULL;
 TaskHandle_t bs_right_monitor_handler = NULL;
 
@@ -56,12 +57,7 @@ void gpio_run_task(void *vpParam){
             }
         }
 
-        // #ifdef DISPLAY_INCLUDED
-        //     if(gpio_get_level(DISPLAY_EN_BTN)){
-        //         vTaskDelay(pdMS_TO_TICKS(250));
-        //         display_quick_show();
-        //     }
-        // #endif
+        
         vTaskDelay(pdMS_TO_TICKS(TASK_HOLD_DELAY));
     }
     
@@ -160,8 +156,8 @@ void i2c_run_task(void *vpParam){
                     case DISPLAY_SHOW_LOW_BAT:
                         display_low_battery_warning();
                         break;
-                    case DISPLAY_SHOW_DNS_IP:
-                        display_dns_IP();
+                    case DISPLAY_SHOW_DNS_SETTING:
+                        display_dns_setting();
                         break;
                     default:
                         break;
@@ -242,6 +238,45 @@ void i2c_run_task(void *vpParam){
         
 
     }
+#endif
+
+#ifdef CAMERA_INCLUDED
+    void display_camera_btn_run_task(void *vpParam){
+        while (1)
+        {
+            if(gpio_get_level(DISPLAY_CAMERA_EN_BTN) == HIGH){
+                vTaskDelay(pdMS_TO_TICKS(250));
+                if(gpio_get_level(DISPLAY_CAMERA_EN_BTN) == HIGH){
+                    vTaskDelay(pdMS_TO_TICKS(1000));
+                    if(is_camera_recording){
+                        is_camera_recording = false;
+                        h3_uart_send_data(CAMERA_STOP_VIDEO);
+                        quick_buzz();
+                        vTaskDelay(pdMS_TO_TICKS(1000));
+                    }else{
+                        is_camera_recording = true;
+                        h3_uart_send_data(CAMERA_START_VIDEO);
+                        double_quick_buzz();
+                        vTaskDelay(pdMS_TO_TICKS(1000));
+                    }
+                }else{
+                    vTaskDelay(pdMS_TO_TICKS(250));
+                    if(gpio_get_level(DISPLAY_CAMERA_EN_BTN) == HIGH){
+                        h3_uart_send_data(CAMERA_TAKE_PHOTO);
+                        quick_buzz();
+                        vTaskDelay(pdMS_TO_TICKS(250));
+                    }else{
+                        vTaskDelay(pdMS_TO_TICKS(250));
+                        display_quick_show();
+                    }
+                }
+            }
+            
+            vTaskDelay(TASK_HOLD_DELAY);
+        }
+        
+    }
+
 #endif
 
 #ifdef BLINDSPOT_INCLUDED

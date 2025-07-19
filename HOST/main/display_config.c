@@ -27,7 +27,7 @@ esp_err_t display_init(void){
 
     
     display_welcome_animation();
-    vTaskDelay(pdMS_TO_TICKS(500));
+    vTaskDelay(pdMS_TO_TICKS(750)); // Hold display text 
     display_target = DISPLAY_MAIN_UI;
     return ESP_OK;
 }
@@ -53,7 +53,7 @@ void display_welcome_animation(void){
         vTaskDelay(pdMS_TO_TICKS(5)); //50ms
     }
 
-    vTaskDelay(pdMS_TO_TICKS(200)); //
+    //vTaskDelay(pdMS_TO_TICKS(200)); //
 
 
     // int bar_x = 3;
@@ -98,14 +98,14 @@ void init_display_gpio(void){
     };
     gpio_config(&camera_on_config);
 
-    gpio_config_t dispaly_btn_config = { // Init at 0
-        .pin_bit_mask = (1ULL << DISPLAY_EN_BTN), // Select GPIO pin
+    gpio_config_t dispaly_camera_btn_config = { // Init at 0
+        .pin_bit_mask = (1ULL << DISPLAY_CAMERA_EN_BTN), // Select GPIO pin
         .mode = GPIO_MODE_INPUT,
         .pull_up_en = GPIO_PULLUP_DISABLE,
         .pull_down_en = GPIO_PULLDOWN_ENABLE,  // Enable pull-down resistor
         .intr_type = GPIO_INTR_DISABLE
     };
-    gpio_config(&dispaly_btn_config);
+    gpio_config(&dispaly_camera_btn_config);
 
     gpio_config_t display_pin_config = { // 
         .pin_bit_mask = (1ULL << DISPLAY_EN_PIN), // Select GPIO pin
@@ -180,11 +180,11 @@ void display_camera_icon(void){
 }
 
 void display_quick_show(void){
-    display_target = DISPLAY_MAIN_UI;
     gpio_set_level(DISPLAY_EN_PIN, HIGH);
+    display_target = DISPLAY_MAIN_UI;
     vTaskDelay(pdMS_TO_TICKS(7000));
     display_target = DISPLAY_EN_OFF;
-    vTaskDelay(pdMS_TO_TICKS(1000));
+    vTaskDelay(pdMS_TO_TICKS(200));
     gpio_set_level(DISPLAY_EN_PIN, LOW);
 
 }
@@ -194,8 +194,17 @@ void display_low_battery_warning(void){
 
 }
 
-void display_dns_IP(void){
+void display_dns_setting(void){
 
+    gpio_set_level(DISPLAY_EN_PIN, HIGH);
+    u8g2_ClearBuffer(&display);
+    u8g2_SetFont(&display, u8g2_font_ncenR18_tr);
+    u8g2_DrawStr(&display, 1, 30, "SETTINGS");
+    u8g2_SendBuffer(&display);
+    vTaskDelay(pdMS_TO_TICKS(7000));
+    display_target = DISPLAY_EN_OFF;
+    vTaskDelay(pdMS_TO_TICKS(1000));
+    gpio_set_level(DISPLAY_EN_PIN, LOW);
 }
 
 #endif
