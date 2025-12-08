@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ZAIRE VISION – Dashboard</title>
+  <link rel="stylesheet" href="./dashStyle.css" />
+</head>
+<body>
+  <div class="app-shell">
+
+    <!-- HEADER -->
+    <header class="dash-header">
+      <div class="dash-header-left">
+        <div class="dash-username" id="dash-username">Rider</div>
+        <div class="dash-subtitle">ZAIRE VISION overview</div>
+      </div>
+      <div class="dash-header-right">
+        <button class="dash-icon-btn" aria-label="Bluetooth status" id="bt-icon-btn">
+          &#128246;
+        </button>
+        <div class="dash-avatar" id="dash-avatar">
+          <span>RV</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- DASHBOARD GRID VIEW -->
+    <main class="dash-grid" id="dashboard-view">
+
+      <!-- HERO CARD: BLUETOOTH STATUS -->
+      <section class="dash-card dash-card--hero zaire-accent-bg">
+        <div class="dash-card-row">
+          <div>
+            <div class="dash-card-title">Bluetooth</div>
+            <div class="dash-card-main">
+              <span id="bt-state">Disconnected</span>
+            </div>
+          </div>
+          <div class="dash-session-pill" id="bt-device-pill">
+            <span id="bt-device-name">No device</span>
+          </div>
+        </div>
+        <div class="dash-card-footer">
+          Auto-connect: <span id="bt-autoconnect">OFF</span> ·
+          Audio link: <span id="bt-audio">Idle</span>
+        </div>
+      </section>
+
+      <!-- PHOTOS CARD (clickable to open photos view) -->
+      <section class="dash-card" id="photos-card">
+        <div class="dash-card-title">Photos in storage</div>
+        <div class="dash-card-main">
+          <span id="photos-count">0</span>/<span id="photos-max">30</span>
+        </div>
+        <div class="dash-card-footer">
+          Last photo: <span id="photos-last">--:--</span>
+        </div>
+      </section>
+
+      <!-- TOP SPEED CARD -->
+      <section class="dash-card">
+        <div class="dash-card-title">Top speed</div>
+        <div class="dash-card-main">
+          <span id="top-speed">0</span>
+          <span class="dash-unit" id="top-speed-unit">mph</span>
+        </div>
+        <div class="dash-card-footer">
+          Session best recorded.
+        </div>
+      </section>
+
+      <!-- TOP HEIGHT CARD -->
+      <section class="dash-card">
+        <div class="dash-card-title">Top altitude</div>
+        <div class="dash-card-main">
+          <span id="top-height">0</span>
+          <span class="dash-unit">m</span>
+        </div>
+        <div class="dash-card-footer">
+          From GPS elevation.
+        </div>
+      </section>
+
+      <!-- TOP ACCELERATION CARD -->
+      <section class="dash-card">
+        <div class="dash-card-title">Top acceleration</div>
+        <div class="dash-card-main">
+          <span id="top-accel">0.0</span>
+          <span class="dash-unit">m/s²</span>
+        </div>
+        <div class="dash-card-footer">
+          Peak during this session.
+        </div>
+      </section>
+
+      <!-- WALKIE PEERS CARD -->
+      <section class="dash-card">
+        <div class="dash-card-row">
+          <div>
+            <div class="dash-card-title">Walkie peers</div>
+            <div class="dash-card-main">
+              <span id="walkie-peers">0</span>
+            </div>
+          </div>
+        </div>
+        <div class="dash-card-footer">
+          Number of connected walkie peers.
+        </div>
+      </section>
+
+    </main>
+
+    <!-- PHOTOS GRID VIEW -->
+    <section class="photos-view hidden" id="photos-view">
+      <div class="photos-header">
+        <div class="photos-title">Photos</div>
+        <div class="photos-count-label">
+          <span id="photos-total-label">0</span> photos in storage
+        </div>
+      </div>
+
+      <div class="photos-grid" id="photos-grid">
+        <!-- JS will create thumbnails -->
+      </div>
+    </section>
+
+    <!-- WALKIE VIEW -->
+    <section class="walkie-view hidden" id="walkie-view">
+      <div class="walkie-header">
+        <div class="walkie-title">Walkie peers</div>
+        <div class="walkie-count-label">
+          <span id="walkie-total-label">0</span> connected
+        </div>
+      </div>
+
+      <div class="walkie-list" id="walkie-list">
+        <!-- JS will create peer rows -->
+      </div>
+    </section>
+
+    <!-- SETTINGS VIEW -->
+    <section class="settings-view hidden" id="settings-view">
+      <div class="walkie-header">
+        <div class="walkie-title">Settings</div>
+        <div class="walkie-count-label">
+          <span id="walkie-total-label">0</span> connected
+        </div>
+      </div>
+
+      <div class="walkie-list" id="walkie-list">
+        <!-- JS will create peer rows -->
+      </div>
+    </section>
+
+    <!-- PHOTO OVERLAY (full-screen preview) -->
+    <div class="photo-overlay hidden" id="photo-overlay">
+      <div class="photo-overlay-backdrop" id="photo-overlay-backdrop"></div>
+      <div class="photo-overlay-inner">
+        <div class="photo-large" id="photo-large"></div>
+      </div>
+    </div>
+
+    <!-- WALKIE OVERLAY (peer details) -->
+    <div class="walkie-overlay hidden" id="walkie-overlay">
+      <div class="walkie-overlay-backdrop" id="walkie-overlay-backdrop"></div>
+      <div class="walkie-overlay-inner">
+        <div class="walkie-overlay-header">
+          <div class="walkie-overlay-name" id="walkie-overlay-name">Peer</div>
+          <div class="walkie-overlay-id" id="walkie-overlay-id">ID</div>
+        </div>
+        <div class="walkie-overlay-body">
+          <div class="walkie-overlay-status" id="walkie-overlay-status">
+            <!-- Filled by JS -->
+          </div>
+          <div class="walkie-overlay-actions">
+            <button class="walkie-action-btn" id="walkie-mute-audio-btn">
+              🔇 Audio
+            </button>
+            <button class="walkie-action-btn" id="walkie-mute-mic-btn">
+              🤫 Mic
+            </button>
+            <button class="walkie-action-btn walkie-action-btn--danger" id="walkie-mute-all-btn">
+              ⛔ All
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BOTTOM NAV -->
+    <nav class="dash-nav">
+      <button class="nav-item nav-item--active" id="nav-dashboard">
+        <span class="nav-icon">&#128202;</span>
+        <span class="nav-label">Dashboard</span>
+      </button>
+      <button class="nav-item" id="nav-photos">
+        <span class="nav-icon">&#128247;</span>
+        <span class="nav-label">Photos</span>
+      </button>
+      <button class="nav-item" id="nav-walkie">
+        <span class="nav-icon">&#128225;</span>
+        <span class="nav-label">Walkie</span>
+      </button>
+      <button class="nav-item" id="nav-settings">
+        <span class="nav-icon">&#9881;</span>
+        <span class="nav-label">Settings</span>
+      </button>
+    </nav>
+
+  </div>
+
+  <!-- All JS now lives in data.js -->
+  <script src="./data.js"></script>
+</body>
+</html>
