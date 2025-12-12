@@ -75,22 +75,65 @@ typedef enum{
 extern display_button_target_t display_button_target;
 
 
-//<-------------- USER SETTINGS--------------->//
+// ======================
+// 1. USER SETTINGS (stored in NVS, survives reboot)
+// ======================
+typedef struct {
+    char user_name[64];      // "Alex", "ZAIRE Rider", etc.
+    char device_name[64];    // "ZAIRE-VISION-001", "SnowBeast"
+} user_prefs_t;
+
+// ======================
+// 2. SYSTEM SETTINGS (user preferences, stored in NVS)
+// ======================
+typedef struct {
+    uint8_t device_lang;            // 0 = English, 1 = French, etc.
+    uint8_t units;                    // 0 = metric (km/h, m), 1 = imperial (mph, ft)
+    uint8_t theme;                   // 0 = light, 1 = dark
+    uint8_t lower_bt_volume_on_walkie;// 0 = no, 1 = yes
+    uint8_t auto_bt_on_powerup;       // 0 = off, 1 = on
+    uint8_t device_auto_record;      // 0 = off, 1 = on
+    uint8_t device_mute_record_audio; // 0 = off, 1 = on
+    // Add more user prefs here later (vibration, HUD brightness, etc.)
+} system_prefs_t;
+
+// ======================
+// 3. DEVICE STATE (live/runtime data, NOT saved to flash)
+// ======================
+typedef struct {
+    uint16_t photos_count;            // current number of photos in /media/photos/
+    uint8_t  walkie_peers_count;       // how many walkie helmets/goggles are connected
+    bool     bt_connected;            // is Bluetooth currently linked?
+    bool     bt_audio_active;         // is audio streaming?
+    char     bt_device_name[64];      // "Alex’s iPhone",
+    bool     walkie_active;           // is walkie-talkie session running?
+    bool     walkie_paired;           // has at least one peer been paired ever?
+    float    top_speed;               // current session best (in current units)
+    uint16_t top_height;              // meters or feet
+    float    top_accel;               // ft/s or m/s²
+    char     last_photo_time[6];      // "14:32"
+    // Add live sensors here: battery %, temperature, GPS fix, etc.
+} device_state_t;
+
+// ======================
+// 4. WALKIE PEER INFO STRUCTURE AND GLOBAL ARRAY
+// ======================
 
 typedef struct {
-    char user_name[64];
-    char device_name[256];
-    char device_lang[4]; // "ar", "en", "es", "fr", "de", "it", "jp", "kr", "ru", "cn"
-    char device_units[2]; // 1 = imperial, 0 = metric
-    char device_color_theme[2]; // 1 = dark, 0 = light
-    char device_auto_record[2]; // 1 = on, 0 = off -- tart recording when > ~5 km/h
-    char device_mute_record_audio[2]; // 1 = on, 0 = off -- does not record audio with video
-    char device_lower_bt_volume_on_walkie[2]; // 1 = on, 0 = off -- lower bt volume when communicating on walkie
-    char device_auto_bt_enable_on_powerup[2]; // 1 = on, 0 = off -- enable bluetooth on power up
+    uint8_t  id;                        // 0–8 → matches array index
+    char     name[32];                  // "Alex", "Helmet #5"
+    char     last_position[64];         // "Ridge lookout", "GPS: 46.8123,-121.7456"
+    uint32_t last_comm_timestamp;       // Unix timestamp (seconds since 1970)
+    int16_t  rssi;                      // signed! RSSI is always negative (-30 to -100)
+    uint8_t  battery_level;             // 0–100%
+    uint8_t  __padding[1];              // align to 128 bytes (nice for flash/JSON)
+} walkie_peer_zState_t;
 
-}user_settings_t;
-
-extern user_settings_t user_settings;
-
+// ======================
+// Global instances
+// ======================
+extern user_prefs_t    g_user_prefs;
+extern system_prefs_t  g_system_prefs;
+extern device_state_t  g_device_state;
 
 #endif

@@ -52,10 +52,7 @@
 #include "u8g2.h"
 #include <u8g2_esp32_hal.h>
 #include "esp_camera.h"
-#include "usb_device_uvc.h"
-#include "uvc_frame_config.h"
 #include <assert.h>
-#include <tusb.h>
 
 
 //NETWORK
@@ -104,6 +101,7 @@ void request_sta_mac_addr(uint8_t *mac_addr);
 void add_pairing_new_mesh(uint8_t *addr);
 
 //WALKIE-TALKIE
+#define MAX_WALKIE_PEERS 9
 extern bool walkie_speak;
 extern bool sendOver;
 extern bool recOver;
@@ -146,7 +144,7 @@ void covert_bit(int16_t *temp_samples_16bit, uint8_t *temp_samples_8bit, uint8_t
 #define BUZZER_FREQ_HZ      2000  // Default tone
 #define BUZZER_DUTY         6144  // Duty out of 8192 (75%)
 #define BUZZER_LEDC_CHANNEL LEDC_CHANNEL_0
-#define BUZZER              GPIO_NUM_45
+#define BUZZER              GPIO_NUM_47
 esp_err_t buzzer_init();
 void buzzer_off();
 void buzzer_on();
@@ -178,12 +176,6 @@ extern TaskHandle_t dns_task_handle;
 extern httpd_handle_t web_server;
 
 //SETTINGS-WEBSERVER
-#define H3_UART_RX              GPIO_NUM_1
-#define H3_UART_TX              GPIO_NUM_14
-#define H3_UART_BAUD            115200
-#define H3_UART_NUM             UART_NUM_2
-void start_uart_streamer(void);
-uint8_t* get_latest_jpeg(size_t *out_len);
 httpd_handle_t start_webserver(void);
 esp_err_t main_page_get_handler(httpd_req_t *req);
 
@@ -209,7 +201,7 @@ esp_err_t main_page_get_handler(httpd_req_t *req);
 #define PCLK_GPIO_NUM               GPIO_NUM_13
 #define UVC_MAX_FRAMESIZE_SIZE     (60*1024)      
 esp_err_t camera_init(void);
-esp_err_t usb_init(void);
+void camera_take_picture(void);
 
 //I2C PINS
 #define ACC_I2C_MASTER_NUM              I2C_NUM_0
@@ -224,7 +216,7 @@ esp_err_t init_gpio();
 //BK3266
 #define BK3266_UART_RX              GPIO_NUM_42
 #define BK3266_UART_TX              GPIO_NUM_41
-#define BK3266_PP_CALL              GPIO_NUM_47
+#define BK3266_PP_CALL              GPIO_NUM_1
 #define BK3266_UART_BAUD            9600
 #define BK3266_UART_NUM             UART_NUM_1
 #define RX_BUF_SIZE                 2048

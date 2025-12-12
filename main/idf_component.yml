@@ -16,5 +16,4 @@ dependencies:
   #   public: true
   espressif/esp32-camera: '*'
 
-  espressif/usb_device_uvc: =*
 

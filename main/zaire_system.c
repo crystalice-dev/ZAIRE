@@ -8,7 +8,11 @@ bool is_walkie_on = false;
 bool is_walkie_mute = true;
 uint8_t current_BT_vol = 11;
 int top_speed_gps = 0;
-user_settings_t user_settings;
+user_prefs_t    g_user_prefs;
+system_prefs_t  g_system_prefs;
+device_state_t  g_device_state;
+// Global array — this replaces your 9 externs
+walkie_peer_zState_t g_walkie_peers[MAX_WALKIE_PEERS] = {0};  // zero-init → all inactive
 
 esp_err_t zaire_system_init(){
 
@@ -19,9 +23,8 @@ esp_err_t zaire_system_init(){
     if(NVS_init() != ZAIRE_OK) return ZAIRE_FAIL;
     if(init_gpio() != ZAIRE_OK)return ZAIRE_FAIL;
     if(buzzer_init() != ZAIRE_OK)return ZAIRE_FAIL;
-    // if(init_walkie() != ZAIRE_OK)return ZAIRE_FAIL;
+    //if(init_walkie() != ZAIRE_OK)return ZAIRE_FAIL;
     if(camera_init() != ZAIRE_OK)return ZAIRE_FAIL;// -- DO NOT FORGET TO COMMENT OUT u8g2's i2c before taking thi comment out
-    if(usb_init() != ZAIRE_OK)return ZAIRE_FAIL;
     if(init_display() != ZAIRE_OK)return ZAIRE_FAIL;
 //    // if(max17043_init() != ZAIRE_OK)return ZAIRE_FAIL;
     if(network_init() != ZAIRE_OK)return ZAIRE_FAIL;

@@ -1,12 +1,12 @@
 // -----------------------
 // ZAIRE VISION UI STATE
 // -----------------------
-const ZState = {
+let ZState = {
   userName: "ZAIRE Rider",
   avatarInitials: "ZR",
 
   // Units
-  speedUnits: "mph", // or "km/h"
+  speedUnits: 0, // 0 = mph, 1 = km/h
 
   // Bluetooth
   btConnected: true,
@@ -15,14 +15,14 @@ const ZState = {
   btAudioActive: true,
 
   // Photos
-  photosCount: 12,
+  photosCount: 0,
   photosMax: 30,
-  photosLastTime: "14:32",
+  photosLastTime: "00:00",
 
   // Top stats (session)
-  topSpeed: 28.4, // mph
-  topHeight: 212, // meters
-  topAccel: 4.7,  // m/s²
+  topSpeed: 0, // mph or km/h
+  topHeight: 0, // feet or meters
+  topAccel: 0,  // ft/s² or m/s²
 
   // Walkie peers (max 8) — 3 fake connections
   walkiePeers: [
@@ -40,18 +40,48 @@ const ZState = {
       lastComm: "14:18",
       lastPosition: "Lift 3 base",
       audioMuted: false,
-      micMuted: true,
+      micMuted: false,
     },
     {
       id: "C4",
       name: "Helmet #4",
       lastComm: "14:10",
       lastPosition: "Ridge lookout",
-      audioMuted: true,
+      audioMuted: false,
       micMuted: false,
     },
   ],
 };
+
+// <------------------ SYSTEM SETTINGS LOADING ------------------> //
+
+window.addEventListener("load", async () => {
+  // Optional: show something immediately with defaults
+  renderDashboard();
+
+  try {
+    const response = await fetch('/settings_fetch_onLoad_data', { method: 'POST' });
+    const data = await response.text();           // ESP32 sends plain text like "12"
+
+    console.log("ESP32 answered:", data);
+
+    // Update the real live values
+    // ZState.photosCount = Number(data);            // this will now be 12 (or whatever the ESP sent)
+    // ZState.topSpeed    = 34.7;
+    // ZState.btConnected = true;
+    // ZState.btDeviceName = "Alex’s iPhone";
+
+    // RE-RENDER everything with the fresh data
+    renderDashboard();
+
+  } catch (err) {
+    console.error("Could not talk to ESP32:", err);
+    ZState.photosCount = 0;
+    renderDashboard();
+  }
+});
+
+// ----------------------- END SYSTEM SETTINGS LOADING -----------------------//
 
 // -----------------------
 // RENDER HELPERS
@@ -146,12 +176,6 @@ function renderDashboard() {
 function tickDemo() {
   // Fake a tiny bit of life for demo:
 
-  // Simulate photo count creeping up
-  if (Math.random() < 0.2 && ZState.photosCount < ZState.photosMax) {
-    ZState.photosCount += 1;
-    ZState.photosLastTime = new Date().toTimeString().slice(0, 5);
-  }
-
   // Simulate minor top stat changes
   if (Math.random() < 0.15) {
     ZState.topSpeed += 0.2;
@@ -175,7 +199,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // For live demo only. On device, remove this
   // and just call renderDashboard() when new data arrives.
-  setInterval(tickDemo, 1500);
+  //setInterval(tickDemo, 1500);
 });
 
 // -----------------------
@@ -279,25 +303,30 @@ document.addEventListener("DOMContentLoaded", () => {
   // -----------------------------
   // PHOTOS: build fake thumbnails
   // -----------------------------
-  const totalPhotos =
-    window.ZState && typeof ZState.photosCount === "number"
-      ? ZState.photosCount
-      : Math.floor(Math.random() * 15) + 8; // 8–22 photos
+  const totalPhotos = ZState.photosCount;
 
   const totalLabel = document.getElementById("photos-total-label");
-  if (totalLabel) totalLabel.textContent = totalPhotos.toString();
+  totalLabel.textContent = ZState.photosCount;
 
   const dashPhotosCount = document.getElementById("photos-count");
-  if (dashPhotosCount) dashPhotosCount.textContent = totalPhotos.toString();
+  dashPhotosCount.textContent = ZState.photosCount;
 
-  for (let i = 0; i < totalPhotos; i++) {
+ for (let i = 0; i < totalPhotos; i++) {
     const thumb = document.createElement("div");
     thumb.className = "photo-thumb";
     thumb.dataset.index = i.toString();
-    thumb.style.backgroundImage = `linear-gradient(135deg,
-      rgba(255,255,255,0.06),
-      rgba(0,0,0,0.9)),
-      url('')`;
+
+    // This creates: /media/photos/photo_0.jpg, /media/photos/photo_1.jpg, etc.
+    const photoUrl = `/media/photos/photo_${i}.jpg`;
+
+    thumb.style.backgroundImage = `
+      linear-gradient(135deg, rgba(255,255,255,0.06), rgba(0,0,0,0.9)),
+      url("${photoUrl}")
+    `;
+
+    thumb.style.backgroundSize = "cover";
+    thumb.style.backgroundPosition = "center";
+
     photosGrid.appendChild(thumb);
   }
 
@@ -518,3 +547,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 });
+
+
+
+

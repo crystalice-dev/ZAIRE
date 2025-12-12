@@ -1,12 +1,6 @@
 #include <globalVar.h>
 
 
-typedef struct {
-    camera_fb_t *cam_fb_p;
-    uvc_fb_t uvc_fb;
-} fb_t;
-fb_t s_fb;
-
 esp_err_t camera_init(void){
 
     camera_config_t config;
@@ -74,66 +68,43 @@ esp_err_t camera_init(void){
 
 }
 
-uvc_fb_t* camera_fb_get_cb(void *cb_ctx){
-    (void)cb_ctx;
-    vTaskDelay(pdMS_TO_TICKS(10));
-    s_fb.cam_fb_p = esp_camera_fb_get();
-    if (!s_fb.cam_fb_p) {
-        return NULL;
-    }
-    s_fb.uvc_fb.buf = s_fb.cam_fb_p->buf;
-    s_fb.uvc_fb.len = s_fb.cam_fb_p->len;
-    s_fb.uvc_fb.width = s_fb.cam_fb_p->width;
-    s_fb.uvc_fb.height = s_fb.cam_fb_p->height;
-    s_fb.uvc_fb.format = s_fb.cam_fb_p->format;
-    s_fb.uvc_fb.timestamp = s_fb.cam_fb_p->timestamp;
-
-    if (s_fb.uvc_fb.len > UVC_MAX_FRAMESIZE_SIZE) {
-        ESP_LOGE("CAMERA", "Frame size %d is larger than max frame size %d", s_fb.uvc_fb.len, UVC_MAX_FRAMESIZE_SIZE);
-        esp_camera_fb_return(s_fb.cam_fb_p);
-        return NULL;
-    }
-    return &s_fb.uvc_fb;
-
-}
-
-static void camera_fb_return_cb(uvc_fb_t *fb, void *cb_ctx){
-    (void)cb_ctx;
-    assert(fb == &s_fb.uvc_fb);
-    esp_camera_fb_return(s_fb.cam_fb_p);
-}
-
-static void camera_stop_cb(void *cb_ctx){
-    (void)cb_ctx;
-    
-}
-
-static esp_err_t camera_start_cb(uvc_format_t format, int width, int height, int rate, void *cb_ctx){
-    return ZAIRE_OK;
-}
-
-esp_err_t usb_init(void){
-
-    uint8_t *uvc_buffer = (uint8_t *)malloc(UVC_MAX_FRAMESIZE_SIZE);
-    uvc_device_config_t config = {
-        .uvc_buffer = uvc_buffer,
-        .uvc_buffer_size = UVC_MAX_FRAMESIZE_SIZE,
-        .start_cb = camera_start_cb,
-        .fb_get_cb = camera_fb_get_cb,
-        .fb_return_cb = camera_fb_return_cb,
-        .stop_cb = camera_stop_cb,
-    };
-
-    esp_err_t ret = uvc_device_config(0, &config);
-    if(ret != ESP_OK){
-        ESP_LOGE("USB", "Could not config device %s", esp_err_to_name(ret));
-        return ESP_FAIL;
-    }
-    ret = uvc_device_init();
-    if(ret != ESP_OK){
-        ESP_LOGE("USB", "Could not init device %s", esp_err_to_name(ret));
-        return ESP_FAIL;
+int count  = 0;
+char buffer[128];
+void camera_take_picture(void){
+    //Get a frame buffer from the camera
+    camera_fb_t *fb = esp_camera_fb_get();
+    if (!fb) {
+        return;
     }
 
-    return ESP_OK;
+    //JPG based on config
+    if (fb->format != PIXFORMAT_JPEG) {
+
+        //could convert here if needed, but for now just return it.
+        esp_camera_fb_return(fb);
+        return;
+    }
+
+    sniprintf(buffer, sizeof(buffer), "/spiffs/media/photos/photo_%d.jpg", count++);
+
+    const char *file_path = buffer;
+
+    // Open file on SPIFFS
+    FILE *f = fopen(file_path, "wb");
+    if (!f) {
+
+        esp_camera_fb_return(fb);
+        return;
+    }
+
+    // Write the JPEG data to file
+    size_t written = fwrite(fb->buf, 1, fb->len, f);
+    fclose(f);                 // close file
+    esp_camera_fb_return(fb);  // return frame buffer to driver
+
+    if (written != fb->len) {
+
+        return;
+    }
+
 }

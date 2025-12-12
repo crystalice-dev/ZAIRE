@@ -98,7 +98,8 @@ void purpose_left_btn_task_run(void *vpParam){
             }else if(gpio_get_level(PURPOSE_LEFT) == HIGH && gpio_get_level(PURPOSE_RIGHT) == LOW && gpio_get_level(WALKIE_BTN) == HIGH){
                 vTaskDelay(pdMS_TO_TICKS(LONG_PRESS_DELAY));
                 double_quick_buzz();
-                printf("video\n");
+                camera_take_picture();
+                printf("photo\n");
                 vTaskDelay(pdMS_TO_TICKS(LONG_PRESS_DELAY));
             }
             
