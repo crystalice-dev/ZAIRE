@@ -14,7 +14,7 @@ char* _get_RTC_time(void){
     i2c_master_write_byte(cmd, (DS3231_ADDR<<1) | I2C_MASTER_READ, true);
     i2c_master_read(cmd, d, 3, I2C_MASTER_LAST_NACK); // sec,min,hour
     i2c_master_stop(cmd);
-    esp_err_t ret = i2c_master_cmd_begin(I2C_NUM_1, cmd, pdMS_TO_TICKS(100));
+    esp_err_t ret = i2c_master_cmd_begin(ACC_I2C_MASTER_NUM, cmd, pdMS_TO_TICKS(100));
     i2c_cmd_link_delete(cmd);
     if (ret != ESP_OK){ snprintf(time_str, sizeof(time_str), "ERR"); return time_str; }
 
@@ -47,7 +47,7 @@ char* _get_RTC_date(void){
     i2c_master_write_byte(cmd, (DS3231_ADDR<<1) | I2C_MASTER_READ, true);
     i2c_master_read(cmd, d, 4, I2C_MASTER_LAST_NACK);
     i2c_master_stop(cmd);
-    esp_err_t ret = i2c_master_cmd_begin(I2C_NUM_1, cmd, pdMS_TO_TICKS(100));
+    esp_err_t ret = i2c_master_cmd_begin(ACC_I2C_MASTER_NUM, cmd, pdMS_TO_TICKS(100));
     i2c_cmd_link_delete(cmd);
     if (ret != ESP_OK){ snprintf(date_str, sizeof(date_str), "ERR"); return date_str; }
 
